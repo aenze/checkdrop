@@ -1,0 +1,27 @@
+---
+import "@fontsource-variable/inter";
+// biome-ignore lint/correctness/noUnusedImports: Astro renders this component in the template below.
+import ShadowMonitor from "../components/ShadowMonitor";
+import "../styles/global.css";
+import "../styles/shadow-monitor.css";
+import "../styles/admin-navigation.css";
+import "../styles/monitor-light.css";
+import "../styles/admin-light.css";
+---
+
+<!doctype html>
+<html lang="cs" class="monitor-light admin-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Živý shadow monitor bezpečně maskovaných kontrol e-shopových kontaktů."
+    />
+    <meta name="theme-color" content="#f5f6f8" />
+    <title>Shadow monitor e-shopu | Checkdrop</title>
+  </head>
+  <body>
+    <ShadowMonitor client:only="react" />
+  </body>
+</html>

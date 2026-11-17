@@ -1,0 +1,28 @@
+{
+  "name": "@checkdrop/contracts",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types.gen.d.ts",
+      "default": "./dist/types.gen.js"
+    }
+  },
+  "scripts": {
+    "build": "openapi-ts -i openapi.yaml -o dist",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
+    "@types/node": "26.6.6",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10",
+    "yaml": "2.9.1"
+  },
+  "license": "MIT"
+}

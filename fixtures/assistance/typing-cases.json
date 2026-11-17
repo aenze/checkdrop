@@ -1,0 +1,1141 @@
+{
+  "version": 1,
+  "description": "Syntetické psací sekvence pro měření nápovědy. Neobsahují zákaznická data; adresy jsou veřejná adresní místa RÚIAN, jména a e-maily jsou smyšlené.",
+  "ruianDataset": "ruian-st-uads 2026-08-03T21:02:43Z (da0f3578-6229-4d72-8761-3abd25dfdaeb)",
+  "typing": {
+    "charDelayMs": 120
+  },
+  "counts": {
+    "email": 20,
+    "address": 22,
+    "rewrite": 10,
+    "context": 10
+  },
+  "cases": [
+    {
+      "id": "email-typo-gmial",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana.novakova@gmial.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-gamil",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "petr.svoboda@gamil.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-gmail-cz",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "eva.dvorakova@gmail.cz"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-seznan",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "tomas.cerny@seznan.cz"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-seznam-com",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "lucie.prochazkova@seznam.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-emial",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "martin.kucera@emial.cz"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-centum",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana.vesela@centum.cz"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-outllok",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "karel.horak@outllok.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-hotmial",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "anna.nemcova@hotmial.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-typo-iclud",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jakub.pokorny@iclud.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-valid-gmail",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana.novakova@gmail.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "no_match"
+      }
+    },
+    {
+      "id": "email-valid-seznam",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "tomas.cerny@seznam.cz"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "no_match"
+      }
+    },
+    {
+      "id": "email-valid-plus-tag",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "Jana.Novakova+obchod@gmail.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "no_match"
+      }
+    },
+    {
+      "id": "email-valid-uppercase-domain",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "petr.svoboda@SEZNAM.CZ"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "no_match"
+      }
+    },
+    {
+      "id": "email-valid-custom-domain",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "objednavky@checkdrop.dev"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "no_match"
+      }
+    },
+    {
+      "id": "email-unknown-domain",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "zakaznik@neexistuje-checkdrop-bench.cz"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-syntax-missing-domain",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana.novakova@"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      },
+      "note": "Po opuštění pole se zobrazí upozornění na neúplnou adresu."
+    },
+    {
+      "id": "email-syntax-double-at",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana@@gmail.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-syntax-space",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana novakova@gmail.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "email-offline-api",
+      "category": "email",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana.novakova@gmial.com"
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "unavailable"
+      },
+      "offline": true
+    },
+    {
+      "id": "address-exact-jihlava",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Žižkova 4763/110"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-exact-plzen",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Staniční 733/29"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-no-diacritics-brno",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Cernovicky 1130"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-no-diacritics-olomouc",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Pruchodni 756/19"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-orientation-only-with-city",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Olomouc"
+        },
+        {
+          "type": "billing.street",
+          "text": "Ztracená 30"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-city-first-praha",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Praha"
+        },
+        {
+          "type": "billing.street",
+          "text": "Lovčická 379"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-zip-first-brno",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.zip",
+          "text": "61200"
+        },
+        {
+          "type": "billing.street",
+          "text": "Kostelní zmola 3042"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-partial-number",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Hruškova 16"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      },
+      "note": "Očekávané chování. Ve výchozím měření 24. 9. dotaz trvá déle než 2,5 s a skončí jako unavailable."
+    },
+    {
+      "id": "address-partial-street",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Potoční 49"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-typo-ostrava",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Mitrovicka 141/122 Ostrava"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-typo-letter",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Ke Zbuzanum 1104"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-orientation-letter",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Dlouhá 555/54a"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-full-line-with-zip",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Libocká 703/21 16200"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-hyphen-street",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Do vršku 3301"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-village-without-streets",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Kacanovy"
+        },
+        {
+          "type": "billing.street",
+          "text": "58"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-city-number-bilina",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Bílina"
+        },
+        {
+          "type": "billing.street",
+          "text": "874"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-unknown-street",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Jihlava"
+        },
+        {
+          "type": "billing.street",
+          "text": "Neexistující ulice 9999"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "no_match"
+      },
+      "note": "Od etapy 4 se varování během psaní nezobrazuje; objeví se až po opuštění pole."
+    },
+    {
+      "id": "address-short-query",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Ž"
+        }
+      ],
+      "expect": {
+        "none": true
+      }
+    },
+    {
+      "id": "address-empty-street-blur",
+      "category": "address",
+      "steps": [
+        {
+          "focus": "billing.street"
+        },
+        {
+          "blur": "billing.street"
+        }
+      ],
+      "expect": {
+        "none": true
+      }
+    },
+    {
+      "id": "address-offline-api",
+      "category": "address",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Žižkova 4763/110"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "unavailable"
+      },
+      "offline": true
+    },
+    {
+      "id": "rewrite-address-1",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Žižkova 47"
+        },
+        {
+          "pause": 700
+        },
+        {
+          "type": "billing.street",
+          "text": "63/110",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-2",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Staniční 7"
+        },
+        {
+          "pause": 700
+        },
+        {
+          "type": "billing.street",
+          "text": "33/29",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-3",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Černovičky"
+        },
+        {
+          "pause": 700
+        },
+        {
+          "type": "billing.street",
+          "text": " 1130/18",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-4",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Libocká 70"
+        },
+        {
+          "pause": 700
+        },
+        {
+          "type": "billing.street",
+          "text": "3/21",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-5",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Dlouhá 5"
+        },
+        {
+          "pause": 700
+        },
+        {
+          "type": "billing.street",
+          "text": "55/54a",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-email-1",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "jana.novakova@gmial.co"
+        },
+        {
+          "blur": "billing.email"
+        },
+        {
+          "pause": 30
+        },
+        {
+          "type": "billing.email",
+          "text": "m",
+          "append": true
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-email-2",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "tomas.cerny@seznan"
+        },
+        {
+          "blur": "billing.email"
+        },
+        {
+          "pause": 30
+        },
+        {
+          "type": "billing.email",
+          "text": ".cz",
+          "append": true
+        },
+        {
+          "blur": "billing.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-replace",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Hruškova 1643"
+        },
+        {
+          "pause": 700
+        },
+        {
+          "clear": "billing.street"
+        },
+        {
+          "type": "billing.street",
+          "text": "Potoční 498/1"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-backspace",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Mitrovická 1419"
+        },
+        {
+          "press": "billing.street",
+          "key": "Backspace"
+        },
+        {
+          "type": "billing.street",
+          "text": "/122",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "rewrite-address-blur-during-debounce",
+      "category": "rewrite",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Ztracená 266/30"
+        },
+        {
+          "blur": "billing.street"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "context-country-sk-before",
+      "category": "context",
+      "steps": [
+        {
+          "select": "billing.country",
+          "value": "SK"
+        },
+        {
+          "type": "billing.street",
+          "text": "Žižkova 4763/110"
+        }
+      ],
+      "expect": {
+        "none": true
+      }
+    },
+    {
+      "id": "context-country-sk-during",
+      "category": "context",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Staniční 733/29"
+        },
+        {
+          "select": "billing.country",
+          "value": "SK"
+        }
+      ],
+      "expect": {
+        "none": true
+      }
+    },
+    {
+      "id": "context-country-back-to-cz",
+      "category": "context",
+      "steps": [
+        {
+          "select": "billing.country",
+          "value": "SK"
+        },
+        {
+          "type": "billing.street",
+          "text": "Libocká 703/21"
+        },
+        {
+          "select": "billing.country",
+          "value": "CZ"
+        },
+        {
+          "type": "billing.street",
+          "text": " ",
+          "append": true
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "context-shipping-street",
+      "category": "context",
+      "steps": [
+        {
+          "check": "shipping.toggle"
+        },
+        {
+          "type": "shipping.street",
+          "text": "Dlouhá 555/54a"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown",
+        "context": "shipping"
+      }
+    },
+    {
+      "id": "context-shipping-hidden-during",
+      "category": "context",
+      "steps": [
+        {
+          "check": "shipping.toggle"
+        },
+        {
+          "type": "shipping.street",
+          "text": "Do vršku 3301"
+        },
+        {
+          "uncheck": "shipping.toggle"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "no_match",
+        "context": "shipping"
+      }
+    },
+    {
+      "id": "context-both-addresses",
+      "category": "context",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Žižkova 4763/110"
+        },
+        {
+          "check": "shipping.toggle"
+        },
+        {
+          "type": "shipping.street",
+          "text": "Staniční 733/29"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown",
+        "context": "shipping"
+      }
+    },
+    {
+      "id": "context-city-change-during",
+      "category": "context",
+      "steps": [
+        {
+          "type": "billing.street",
+          "text": "Ztracená 30"
+        },
+        {
+          "fill": "billing.city",
+          "text": "Olomouc"
+        }
+      ],
+      "expect": {
+        "none": true
+      },
+      "note": "Psaní do obce zruší čekající kontrolu ulice; nová kontrola přijde až po opuštění pole obce."
+    },
+    {
+      "id": "context-newsletter-email",
+      "category": "context",
+      "steps": [
+        {
+          "type": "newsletter.email",
+          "text": "jana.novakova@gmial.com"
+        },
+        {
+          "blur": "newsletter.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "shown",
+        "context": "shared"
+      }
+    },
+    {
+      "id": "context-newsletter-valid",
+      "category": "context",
+      "steps": [
+        {
+          "type": "newsletter.email",
+          "text": "tomas.cerny@seznam.cz"
+        },
+        {
+          "blur": "newsletter.email"
+        }
+      ],
+      "expect": {
+        "field": "email",
+        "outcome": "no_match",
+        "context": "shared"
+      }
+    },
+    {
+      "id": "context-email-then-address",
+      "category": "context",
+      "steps": [
+        {
+          "type": "billing.email",
+          "text": "eva.dvorakova@gmail.cz"
+        },
+        {
+          "blur": "billing.email"
+        },
+        {
+          "type": "billing.street",
+          "text": "Kostelní zmola 3042/5"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      }
+    },
+    {
+      "id": "address-wrong-postal-code",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Plzeň"
+        },
+        {
+          "fill": "billing.zip",
+          "text": "31201"
+        },
+        {
+          "type": "billing.street",
+          "text": "Staniční 733/29"
+        },
+        {
+          "blur": "billing.street"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      },
+      "note": "Server s komponentami doporučí PSČ 312 00."
+    },
+    {
+      "id": "address-missing-number",
+      "category": "address",
+      "steps": [
+        {
+          "fill": "billing.city",
+          "text": "Plzeň"
+        },
+        {
+          "type": "billing.street",
+          "text": "Staniční"
+        },
+        {
+          "blur": "billing.street"
+        }
+      ],
+      "expect": {
+        "field": "street_line",
+        "outcome": "shown"
+      },
+      "note": "Server s komponentami doporučí doplnit číslo domu."
+    }
+  ],
+  "expectationsRevised": "2026-09-24: tři očekávání opravena podle ověřeného správného chování po výchozím měření; výsledky v baseline.json nesou původní očekávání."
+}

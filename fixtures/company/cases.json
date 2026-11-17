@@ -1,0 +1,6 @@
+[
+  { "input": "047 12 617", "status": "valid", "normalized": "04712617" },
+  { "input": "270 82 440", "status": "valid", "normalized": "27082440" },
+  { "input": "27082441", "status": "invalid", "issue": "company.ico_checksum_invalid" },
+  { "input": "123", "status": "invalid", "issue": "company.ico_format_invalid" }
+]

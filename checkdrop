@@ -1,0 +1,475 @@
+#!/usr/bin/env bash
+# Checkdrop installation manager. Every command is non-interactive, safe to repeat and, with
+# --json, prints one JSON object as its last line, so a person or an AI agent can run it.
+#
+#   ./checkdrop install --domain checks.example.com [--no-auto-update]
+#   ./checkdrop install --local [--http-port 8080 --https-port 8443]   # trial: http://localhost:8080
+#   ./checkdrop status [--json]
+#   ./checkdrop update [--check] [--auto] [--json]
+#   ./checkdrop backup | restore <file.dump> | reset-password <email> | setup-code | logs [service]
+#   ./checkdrop apply                           # after editing .env by hand
+#
+# Secrets live only in .env next to this script (mode 600) and are never printed. The one-time
+# setup code is printed on purpose: a person needs it to create the administrator account.
+set -Eeuo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="${CHECKDROP_REPO:-aenze/checkdrop}"
+# Overridable only to test updates against a local copy of the release files.
+RELEASES="${CHECKDROP_RELEASES_URL:-https://github.com/${REPO}/releases}"
+ENV_FILE="$DIR/.env"
+STATE_DIR="$DIR/state"
+BACKUP_DIR="$DIR/backups"
+JSON=0
+SOURCE_MODE=0
+[ -f "$DIR/infra/server.Dockerfile" ] && [ -f "$DIR/compose.build.yaml" ] && SOURCE_MODE=1
+
+# Whatever ends the script (error, Ctrl-C, closed SSH session), these leave the installation running:
+# an interrupted update puts the previous files back, a restore starts the services again.
+UPDATE_WORK=""; UPDATE_PREVIOUS=""; RESTART_ON_EXIT=0; LOCK_DIR=""
+on_exit() {
+  local code=$?
+  if [ -n "$UPDATE_WORK" ]; then
+    cp "$UPDATE_WORK/compose.previous.yaml" "$DIR/compose.yaml" 2>/dev/null || true
+    env_set CHECKDROP_VERSION "$UPDATE_PREVIOUS" || true
+    compose up -d --remove-orphans >&2 || true
+  fi
+  [ "$RESTART_ON_EXIT" = 1 ] && { compose up -d >&2 || true; }
+  [ -n "$UPDATE_WORK" ] && rm -rf "$UPDATE_WORK"
+  [ -n "$LOCK_DIR" ] && rm -rf "$LOCK_DIR"
+  exit "$code"
+}
+trap on_exit EXIT
+trap 'exit 130' INT TERM HUP
+
+acquire_lock() {
+  local lock="$DIR/.update.lock" pid
+  if ! mkdir "$lock" 2>/dev/null; then
+    pid="$(cat "$lock/pid" 2>/dev/null || true)"
+    if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then fail busy "Another update or restore is running."; fi
+    rm -rf "$lock"; mkdir "$lock"
+  fi
+  echo "$$" > "$lock/pid"; LOCK_DIR="$lock"
+}
+
+say() { [ "$JSON" = 1 ] && printf '%s\n' "$*" >&2 || printf '%s\n' "$*"; }
+fail() {
+  local code="$1"; shift
+  if [ "$JSON" = 1 ]; then printf '{"status":"error","error":"%s","message":"%s"}\n' "$code" "$(json_escape "$*")"
+  else printf 'Error: %s\n' "$*" >&2; fi
+  exit 1
+}
+json_escape() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | tr -d '\n\r'; }
+env_get() { [ -f "$ENV_FILE" ] && grep -E "^$1=" "$ENV_FILE" | tail -n 1 | cut -d= -f2- || true; }
+env_set() {
+  local key="$1" value="$2" tmp
+  tmp="$(mktemp "$DIR/.env.XXXXXX")"
+  { [ -f "$ENV_FILE" ] && grep -vE "^$key=" "$ENV_FILE" || true; printf '%s=%s\n' "$key" "$value"; } > "$tmp"
+  chmod 600 "$tmp"; mv "$tmp" "$ENV_FILE"
+}
+random_hex() { openssl rand -hex "$1"; }
+random_b64url() { openssl rand "$1" | openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+
+compose() {
+  local files=(-f "$DIR/compose.yaml")
+  [ "$SOURCE_MODE" = 1 ] && files+=(-f "$DIR/compose.build.yaml")
+  docker compose --project-directory "$DIR" --env-file "$ENV_FILE" "${files[@]}" "$@"
+}
+pull_images() { [ "${CHECKDROP_SKIP_PULL:-0}" = 1 ] || compose pull --quiet >&2; }
+server_image() { printf '%s-server:%s' "$(env_get CHECKDROP_IMAGE_PREFIX)" "$(env_get CHECKDROP_VERSION)"; }
+# JSON parsing and version comparison without jq or python: the server image already has Node.
+node_eval() { docker run --rm -i --network none --entrypoint node "$(server_image)" -e "$1"; }
+
+require_tools() {
+  command -v docker >/dev/null || fail docker_missing "Docker is not installed. Install Docker Engine first: https://docs.docker.com/engine/install/"
+  docker compose version >/dev/null 2>&1 || fail compose_missing "Docker Compose v2 is missing (docker compose)."
+  docker info >/dev/null 2>&1 || fail docker_unavailable "Docker is installed but not running, or this user may not use it."
+  command -v openssl >/dev/null || fail openssl_missing "openssl is required to generate secrets."
+  command -v curl >/dev/null || fail curl_missing "curl is required."
+}
+
+wait_healthy() {
+  local service="$1" seconds="$2" id state
+  for _ in $(seq 1 "$seconds"); do
+    id="$(compose ps -q "$service" 2>/dev/null || true)"
+    if [ -n "$id" ]; then
+      state="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$id" 2>/dev/null || true)"
+      [ "$state" = healthy ] && return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
+
+running_release() {
+  compose exec -T app node -e "fetch('http://127.0.0.1:8787/v1/health').then(r=>r.json()).then(j=>process.stdout.write(String(j.release))).catch(()=>process.exit(1))" 2>/dev/null || true
+}
+
+migration_count() { psql_value "SELECT count(*) FROM public.checkdrop_schema_migrations"; }
+psql_value() { compose exec -T postgres psql -U checkdrop -d checkdrop -At -c "$1" 2>/dev/null | head -n 1 || true; }
+
+write_update_state() {
+  # write_update_state <latest|""> [<state> <from> <to> <message>]
+  mkdir -p "$STATE_DIR"; chmod 755 "$STATE_DIR"
+  local auto="true" latest="$1" last="null" now previous
+  [ "$(env_get CHECKDROP_AUTO_UPDATE)" = "false" ] && auto="false"
+  # A source checkout updates with git, never by itself.
+  [ "$SOURCE_MODE" = 1 ] && auto="false"
+  now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  if [ "$#" -ge 5 ]; then
+    last="{\"state\":\"$2\",\"from\":\"$3\",\"to\":\"$4\",\"at\":\"$now\",\"message\":\"$(json_escape "$5")\"}"
+  elif [ -f "$STATE_DIR/update.json" ]; then
+    previous="$(sed -n 's/.*"last_update":\({[^}]*}\).*/\1/p' "$STATE_DIR/update.json")"
+    [ -n "$previous" ] && last="$previous"
+  fi
+  [ -n "$latest" ] && latest="\"$latest\"" || latest="null"
+  printf '{"auto_update":%s,"channel":"stable","latest_version":%s,"checked_at":"%s","last_update":%s}\n' \
+    "$auto" "$latest" "$now" "$last" > "$STATE_DIR/update.json.tmp"
+  chmod 644 "$STATE_DIR/update.json.tmp"; mv "$STATE_DIR/update.json.tmp" "$STATE_DIR/update.json"
+}
+
+generate_env() {
+  local public_url="$1" site_address="$2" http_bind="$3" https_bind="$4" version="$5" prefix="$6"
+  if [ ! -f "$ENV_FILE" ]; then
+    # Only this file is private; state/ must stay readable for the server inside its container.
+    ( umask 077
+    {
+      echo "# Checkdrop installation settings. Keep this file secret and back it up:"
+      echo "# without CHECKDROP_OBSERVATION_ENCRYPTION_KEY stored observations cannot be read."
+      echo "CHECKDROP_POSTGRES_PASSWORD=$(random_hex 24)"
+      echo "CHECKDROP_OPERATOR_TOKEN=$(random_b64url 48)"
+      echo "CHECKDROP_EMBED_SIGNING_SECRET=$(random_b64url 48)"
+      echo "CHECKDROP_OBSERVATION_ENCRYPTION_KEY=$(random_b64url 32)"
+      echo "CHECKDROP_PILOT_API_KEY=cdp_$(random_hex 6)_$(random_b64url 32)"
+      echo "CHECKDROP_ADMIN_SETUP_CODE=$(random_hex 4)-$(random_hex 4)-$(random_hex 4)"
+      echo "CHECKDROP_ADMIN_AUTH=password"
+      echo "CHECKDROP_OPERATOR_PROJECT_REF=default"
+      echo "CHECKDROP_AUTO_UPDATE=true"
+    } > "$ENV_FILE" )
+    chmod 600 "$ENV_FILE"
+  fi
+  env_set CHECKDROP_PUBLIC_URL "$public_url"
+  env_set CHECKDROP_SITE_ADDRESS "$site_address"
+  env_set CHECKDROP_HTTP_BIND "$http_bind"
+  env_set CHECKDROP_HTTPS_BIND "$https_bind"
+  [ -n "$(env_get CHECKDROP_VERSION)" ] || env_set CHECKDROP_VERSION "$version"
+  [ -n "$(env_get CHECKDROP_IMAGE_PREFIX)" ] || env_set CHECKDROP_IMAGE_PREFIX "$prefix"
+}
+
+source_version() { sed -n 's/^  "version": "\([^"]*\)".*/\1/p' "$DIR/package.json" | head -n 1; }
+
+admin_exists() { [ "$(psql_value "SELECT EXISTS (SELECT 1 FROM app.admin_users)")" = "t" ]; }
+
+install_auto_update() {
+  [ "$(env_get CHECKDROP_AUTO_UPDATE)" = "false" ] && { echo "disabled"; return; }
+  [ "$SOURCE_MODE" = 1 ] && { echo "source_checkout"; return; }
+  if [ "$(id -u)" = 0 ] && command -v systemctl >/dev/null && [ -d /run/systemd/system ]; then
+    cat > /etc/systemd/system/checkdrop-update.service <<UNIT
+[Unit]
+Description=Checkdrop automatic update
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=$DIR/checkdrop update --auto
+UNIT
+    cat > /etc/systemd/system/checkdrop-update.timer <<UNIT
+[Unit]
+Description=Check daily for a new Checkdrop release
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+RandomizedDelaySec=3h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+UNIT
+    systemctl daemon-reload && systemctl enable --now checkdrop-update.timer >/dev/null 2>&1 && { echo "systemd"; return; }
+  fi
+  if command -v crontab >/dev/null; then
+    ( crontab -l 2>/dev/null | grep -v 'checkdrop update --auto' || true
+      echo "$((RANDOM % 60)) $((2 + RANDOM % 3)) * * * $DIR/checkdrop update --auto >/dev/null 2>&1" ) | crontab - && { echo "cron"; return; }
+  fi
+  echo "unavailable"
+}
+
+cmd_install() {
+  local domain="" local_mode=0 auto=1 http_port="" https_port=""
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --domain) domain="${2:-}"; shift 2 ;;
+      --local) local_mode=1; shift ;;
+      --no-auto-update) auto=0; shift ;;
+      --http-port) http_port="${2:-}"; shift 2 ;;
+      --https-port) https_port="${2:-}"; shift 2 ;;
+      --json) JSON=1; shift ;;
+      *) fail invalid_argument "Unknown option $1" ;;
+    esac
+  done
+  require_tools
+  local public_url site http_bind https_bind
+  if [ "$local_mode" = 1 ]; then
+    # A trial on this computer never schedules updates on the host.
+    auto=0
+    http_port="${http_port:-8080}"
+    public_url="http://localhost:$http_port"; site="http://localhost"
+    http_bind="127.0.0.1:$http_port"; https_bind="127.0.0.1:${https_port:-8443}"
+  else
+    [ -n "$domain" ] || domain="$(env_get CHECKDROP_PUBLIC_URL | sed -n 's#^https://##p')"
+    [ -n "$domain" ] || fail domain_required "Use --domain checks.example.com (a DNS name pointing to this server) or --local."
+    printf '%s' "$domain" | grep -Eq '^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$' \
+      || fail invalid_domain "The domain must be a plain name such as checks.example.com."
+    public_url="https://$domain"; site="$domain"
+    http_bind="${http_port:-80}"; https_bind="${https_port:-443}"
+  fi
+  local version prefix
+  if [ "$SOURCE_MODE" = 1 ]; then version="$(source_version)-source"; prefix="checkdrop-local"
+  else version="${CHECKDROP_INSTALL_VERSION:-}"; prefix="ghcr.io/$(printf '%s' "$REPO" | tr '[:upper:]' '[:lower:]')"
+    [ -n "$version" ] || [ -n "$(env_get CHECKDROP_VERSION)" ] || fail version_unknown "Run install.sh, which knows the release version."
+  fi
+  generate_env "$public_url" "$site" "$http_bind" "$https_bind" "$version" "$prefix"
+  [ "$auto" = 0 ] && env_set CHECKDROP_AUTO_UPDATE false
+  mkdir -p "$STATE_DIR" "$BACKUP_DIR"; chmod 755 "$STATE_DIR"; chmod 700 "$BACKUP_DIR"
+  [ -f "$STATE_DIR/update.json" ] || write_update_state ""
+
+  if [ "$SOURCE_MODE" = 1 ]; then say "Building images from source (a few minutes the first time)…"; compose build >&2
+  else say "Downloading Checkdrop $(env_get CHECKDROP_VERSION)…"; pull_images; fi
+  say "Starting…"
+  compose up -d --remove-orphans >&2
+  wait_healthy app 180 || fail app_unhealthy "The server did not become healthy. See: ./checkdrop logs app"
+  wait_healthy web 60 || fail web_unhealthy "The web server did not start. See: ./checkdrop logs web"
+  local updates; updates="$(install_auto_update)"
+
+  local setup_code="" admin="true"
+  if ! admin_exists; then admin="false"; setup_code="$(env_get CHECKDROP_ADMIN_SETUP_CODE)"; fi
+  local url; url="$(env_get CHECKDROP_PUBLIC_URL)"
+  if [ "$JSON" = 1 ]; then
+    printf '{"status":"installed","admin_url":"%s/sign-in","version":"%s","admin_account_exists":%s,"setup_code":%s,"auto_update":"%s","address_data":"importing","next_step":"%s"}\n' \
+      "$url" "$(env_get CHECKDROP_VERSION)" "$admin" \
+      "$([ -n "$setup_code" ] && printf '"%s"' "$setup_code" || printf null)" "$updates" \
+      "$([ "$admin" = false ] && echo 'Give the setup code to the person who will administer Checkdrop; they open admin_url and create the account.' || echo 'Sign in at admin_url.')"
+  else
+    echo
+    echo "Checkdrop is running: $url"
+    if [ "$admin" = false ]; then
+      echo "Create the administrator account at $url/sign-in"
+      echo "One-time setup code: $setup_code"
+    fi
+    echo "Automatic updates: $updates. Czech addresses are downloading in the background (see ./checkdrop status)."
+  fi
+}
+
+cmd_status() {
+  [ "${1:-}" = "--json" ] && JSON=1
+  [ -f "$ENV_FILE" ] || fail not_installed "Checkdrop is not installed here. Run ./checkdrop install."
+  local services="" svc id state url version release external="false" address jobs admin update
+  for svc in postgres app jobs web; do
+    id="$(compose ps -q "$svc" 2>/dev/null || true)"
+    state="$( [ -n "$id" ] && docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$id" 2>/dev/null || echo missing)"
+    services="$services\"$svc\":\"$state\","
+  done
+  url="$(env_get CHECKDROP_PUBLIC_URL)"; version="$(env_get CHECKDROP_VERSION)"; release="$(running_release)"
+  case "$url" in
+    http://localhost*) external="null" ;;  # a local trial is not meant to be reachable
+    *) curl -fsS --max-time 10 "$url/v1/health" >/dev/null 2>&1 && external="true" ;;
+  esac
+  address="$(psql_value "SELECT version || ' (' || row_count || ' addresses)' FROM reference_cz.dataset_versions WHERE source='ruian-st-uads' AND state='active' ORDER BY effective_at DESC LIMIT 1")"
+  jobs="$(psql_value "SELECT state || ':' || CASE WHEN state = 'running' THEN 'running since ' || to_char(started_at, 'HH24:MI') || ' UTC' ELSE coalesce(message,'') END FROM app.instance_jobs WHERE name='address-data'")"
+  admin="$(admin_exists && echo true || echo false)"
+  update="$(cat "$STATE_DIR/update.json" 2>/dev/null || echo null)"
+  local address_state="missing"
+  if [ -n "$address" ]; then address_state="ready"
+  elif [ "${jobs%%:*}" = running ]; then address_state="importing"
+  elif [ "${jobs%%:*}" = failed ]; then address_state="failed"; fi
+  local healthy="true"
+  case "$services" in *unhealthy*|*missing*|*exited*|*restarting*) healthy="false" ;; esac
+  [ "$release" = "$version" ] || healthy="false"
+  if [ "$JSON" = 1 ]; then
+    printf '{"status":"%s","url":"%s","version":"%s","running_release":"%s","services":{%s},"reachable_from_internet":%s,"admin_account_exists":%s,"address_data":{"state":"%s","detail":"%s"},"update":%s}\n' \
+      "$([ "$healthy" = true ] && echo ok || echo degraded)" "$url" "$version" "$release" "${services%,}" "$external" "$admin" \
+      "$address_state" "$(json_escape "${address:-${jobs#*:}}")" "$update"
+  else
+    echo "Checkdrop $version at $url ($([ "$healthy" = true ] && echo healthy || echo 'needs attention'))"
+    echo "Services: $(printf '%s' "${services%,}" | tr -d '"' | sed 's/,/, /g')"
+    echo "Reachable from the internet: $external"
+    echo "Administrator account: $admin"
+    echo "Czech address data: $address_state ${address:-}"
+    echo "Updates: $update"
+  fi
+  [ "$healthy" = true ]
+}
+
+cmd_backup() {
+  [ -f "$ENV_FILE" ] || fail not_installed "Checkdrop is not installed here."
+  mkdir -p "$BACKUP_DIR"; chmod 700 "$BACKUP_DIR"
+  local stamp file
+  stamp="$(date -u +%Y%m%dT%H%M%SZ)"; file="$BACKUP_DIR/checkdrop-$(env_get CHECKDROP_VERSION)-$stamp.dump"
+  # Addresses are public data that the jobs service downloads again; they are left out to keep backups small.
+  compose exec -T postgres pg_dump -U checkdrop -d checkdrop -Fc --exclude-table-data='reference_cz.*' > "$file.part"
+  mv "$file.part" "$file"; chmod 600 "$file"
+  cp "$ENV_FILE" "$BACKUP_DIR/env-$stamp"; chmod 600 "$BACKUP_DIR/env-$stamp"
+  # Keep the newest ten backups.
+  ls -1t "$BACKUP_DIR"/checkdrop-*.dump 2>/dev/null | tail -n +11 | while read -r old; do rm -f "$old"; done
+  ls -1t "$BACKUP_DIR"/env-* 2>/dev/null | tail -n +11 | while read -r old; do rm -f "$old"; done
+  echo "$file"
+}
+
+# Restores into a scratch database first and swaps it in only when the whole dump loaded, so a bad
+# file never leaves the installation empty or stopped.
+restore_database() {
+  local file="$1"
+  compose exec -T postgres pg_restore --list < "$file" >/dev/null 2>&1 \
+    || fail backup_invalid "$file is not a Checkdrop database backup. Nothing was changed."
+  compose exec -T postgres psql -U checkdrop -d postgres -qc "DROP DATABASE IF EXISTS checkdrop_restore" >&2
+  compose exec -T postgres psql -U checkdrop -d postgres -qc "CREATE DATABASE checkdrop_restore OWNER checkdrop" >&2
+  if ! compose exec -T postgres pg_restore -U checkdrop -d checkdrop_restore --no-owner --exit-on-error --single-transaction < "$file" >&2; then
+    compose exec -T postgres psql -U checkdrop -d postgres -qc "DROP DATABASE IF EXISTS checkdrop_restore" >&2 || true
+    fail restore_failed "The backup could not be loaded. The current data was not changed."
+  fi
+  RESTART_ON_EXIT=1
+  compose stop app jobs web >&2
+  compose exec -T postgres psql -U checkdrop -d postgres -qc "DROP DATABASE checkdrop WITH (FORCE)" >&2
+  compose exec -T postgres psql -U checkdrop -d postgres -qc "ALTER DATABASE checkdrop_restore RENAME TO checkdrop" >&2
+  compose up -d >&2
+  RESTART_ON_EXIT=0
+}
+
+cmd_restore() {
+  local file="${1:-}"
+  [ -f "$file" ] || fail backup_missing "Usage: ./checkdrop restore <backups/checkdrop-….dump>. Restore the matching env-… file as .env first if this is a new server."
+  acquire_lock
+  say "Restoring $file (the current data in this installation is replaced)…"
+  restore_database "$file"
+  wait_healthy app 180 || fail app_unhealthy "Restored, but the server did not become healthy."
+  say "Restored. Czech addresses download again in the background."
+}
+
+fetch_manifest() {
+  curl -fsSL --max-time 30 "$RELEASES/latest/download/release.json"
+}
+
+cmd_update() {
+  local check_only=0 auto=0
+  while [ "$#" -gt 0 ]; do
+    case "$1" in --check) check_only=1 ;; --auto) auto=1 ;; --json) JSON=1 ;; *) fail invalid_argument "Unknown option $1" ;; esac
+    shift
+  done
+  [ -f "$ENV_FILE" ] || fail not_installed "Checkdrop is not installed here."
+  [ "$auto" = 1 ] && [ "$(env_get CHECKDROP_AUTO_UPDATE)" = "false" ] && { say "Automatic updates are off."; exit 0; }
+  if [ "$SOURCE_MODE" = 1 ]; then
+    fail source_checkout "This installation runs from a source checkout: git pull, then ./checkdrop install again."
+  fi
+  local current manifest latest running
+  current="$(env_get CHECKDROP_VERSION)"
+  running="$(running_release)"
+  if [ -n "$running" ] && [ "$running" != "$current" ]; then
+    say "Running $running but configured $current; starting the configured version first."
+    compose up -d --remove-orphans >&2 || true
+  fi
+  manifest="$(fetch_manifest)" || { write_update_state ""; fail check_failed "Could not reach $RELEASES."; }
+  latest="$(printf '%s' "$manifest" | node_eval 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const m=JSON.parse(s);if(!/^\d+\.\d+\.\d+$/.test(m.version))process.exit(1);process.stdout.write(m.version)})')" \
+    || fail invalid_manifest "The release description is not valid."
+  write_update_state "$latest"
+  local newer
+  newer="$(node_eval "const p=v=>v.split('-')[0].split('.').map(Number);const a=p('$latest'),b=p('$current');let r=0;for(let i=0;i<3&&!r;i++)r=Math.sign(a[i]-b[i]);process.stdout.write(r>0?'yes':'no')")"
+  if [ "$newer" != yes ]; then
+    [ "$JSON" = 1 ] && printf '{"status":"up_to_date","version":"%s","latest":"%s"}\n' "$current" "$latest" || say "Up to date ($current)."
+    return 0
+  fi
+  if [ "$check_only" = 1 ]; then
+    [ "$JSON" = 1 ] && printf '{"status":"update_available","version":"%s","latest":"%s"}\n' "$current" "$latest" || say "Checkdrop $latest is available (running $current). Run ./checkdrop update."
+    return 0
+  fi
+
+  # A version that already failed here is not retried every night; a person can still run update.
+  if [ "$auto" = 1 ] && [ -f "$STATE_DIR/update.json" ] \
+    && grep -q "\"to\":\"$latest\"" "$STATE_DIR/update.json" \
+    && grep -Eq '"state":"(rolled_back|failed)"' "$STATE_DIR/update.json"; then
+    say "Skipping $latest: it failed on this installation before. Run ./checkdrop update to try again."
+    return 0
+  fi
+  acquire_lock
+
+  say "Updating $current → $latest. Backing up first…"
+  local backup_file migrations_before
+  backup_file="$(cmd_backup | tail -n 1)"
+  migrations_before="$(migration_count)"
+  local work; work="$(mktemp -d)"
+  curl -fsSL --max-time 60 -o "$work/compose.yaml" "$RELEASES/download/v$latest/compose.yaml"
+  curl -fsSL --max-time 60 -o "$work/checkdrop" "$RELEASES/download/v$latest/checkdrop"
+  local expected_compose expected_script
+  expected_compose="$(printf '%s' "$manifest" | node_eval 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s).files["compose.yaml"]))')"
+  expected_script="$(printf '%s' "$manifest" | node_eval 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s).files["checkdrop"]))')"
+  [ "$(openssl dgst -sha256 -r "$work/compose.yaml" | cut -d' ' -f1)" = "$expected_compose" ] \
+    && [ "$(openssl dgst -sha256 -r "$work/checkdrop" | cut -d' ' -f1)" = "$expected_script" ] \
+    || { rm -rf "$work"; write_update_state "$latest" failed "$current" "$latest" "Downloaded files did not match the release checksums."; fail checksum_mismatch "Downloaded files did not match the release checksums."; }
+
+  cp "$DIR/compose.yaml" "$work/compose.previous.yaml"
+  # From here until the new version is confirmed, any interruption puts the previous files back.
+  UPDATE_WORK="$work"; UPDATE_PREVIOUS="$current"
+  cp "$work/compose.yaml" "$DIR/compose.yaml"
+  env_set CHECKDROP_VERSION "$latest"
+  if pull_images && compose up -d --remove-orphans >&2 && wait_healthy app 240 && [ "$(running_release)" = "$latest" ] && wait_healthy web 90; then
+    chmod 755 "$work/checkdrop"; mv "$work/checkdrop" "$DIR/checkdrop"
+    UPDATE_WORK=""; rm -rf "$work"
+    write_update_state "$latest" succeeded "$current" "$latest" ""
+    [ "$JSON" = 1 ] && printf '{"status":"updated","from":"%s","to":"%s"}\n' "$current" "$latest" || say "Updated to $latest."
+    return 0
+  fi
+  say "The new version did not start correctly. Returning to $current…"
+  cp "$work/compose.previous.yaml" "$DIR/compose.yaml"
+  env_set CHECKDROP_VERSION "$current"
+  UPDATE_WORK=""; rm -rf "$work"
+  # Migrations of the new version already ran: return the data to the moment before the update.
+  if [ "$(migration_count)" != "$migrations_before" ]; then
+    say "Restoring the database from before the update…"
+    restore_database "$backup_file"
+  else
+    compose up -d --remove-orphans >&2 || true
+  fi
+  if wait_healthy app 240 && [ "$(running_release)" = "$current" ]; then
+    write_update_state "$latest" rolled_back "$current" "$latest" "Health check failed after update; returned to $current."
+    fail rolled_back "Update to $latest failed and was rolled back to $current. Logs: ./checkdrop logs app"
+  fi
+  write_update_state "$latest" failed "$current" "$latest" "Update and rollback both failed."
+  fail update_failed "Update failed and the previous version did not start. Restore the newest file in backups/ with ./checkdrop restore."
+}
+
+cmd_reset_password() {
+  local email="${1:-}"
+  [ -n "$email" ] || fail invalid_argument "Usage: ./checkdrop reset-password <email> (new password on stdin or prompt)"
+  local password
+  if [ -t 0 ]; then
+    IFS= read -r -s -p "New password (at least 12 characters): " password; echo >&2
+  else
+    IFS= read -r password || true
+  fi
+  printf '%s\n' "$password" | compose exec -T app node dist/admin-cli.js reset-password "$email"
+}
+
+cmd_setup_code() {
+  if admin_exists; then fail already_set_up "An administrator account exists. Use ./checkdrop reset-password <email>."; fi
+  env_get CHECKDROP_ADMIN_SETUP_CODE
+}
+
+command="${1:-help}"; [ "$#" -gt 0 ] && shift
+case "$command" in
+  install) cmd_install "$@" ;;
+  status) cmd_status "$@" ;;
+  update) cmd_update "$@" ;;
+  backup) cmd_backup ;;
+  restore) cmd_restore "$@" ;;
+  reset-password) cmd_reset_password "$@" ;;
+  setup-code) cmd_setup_code ;;
+  logs) compose logs --tail 200 "$@" ;;
+  apply)
+    [ -f "$ENV_FILE" ] || fail not_installed "Checkdrop is not installed here."
+    compose up -d --remove-orphans >&2
+    wait_healthy app 180 || fail app_unhealthy "The server did not become healthy. See: ./checkdrop logs app"
+    wait_healthy web 60 || fail web_unhealthy "The web server did not start. See: ./checkdrop logs web"
+    say "Settings applied." ;;
+  version) env_get CHECKDROP_VERSION ;;
+  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//' ;;
+esac

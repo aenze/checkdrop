@@ -1,0 +1,144 @@
+# Web server of one Checkdrop installation: the administration, its API proxy and the public
+# validation API for shoppers' browsers. Identical for every installation; only the environment
+# differs. CHECKDROP_SITE_ADDRESS is a domain (automatic HTTPS), http://localhost, or :8080 behind
+# another proxy that already terminates TLS.
+{
+	http_port {$CHECKDROP_HTTP_PORT:8080}
+	https_port {$CHECKDROP_HTTPS_PORT:8443}
+}
+
+# Checkdrop's own administrator sign-in: every page and admin API request is checked first.
+(admin-auth-password) {
+	forward_auth app:8787 {
+		uri /v1/admin/auth/verify
+		# The request as the browser sent it, before prefix stripping and try_files.
+		header_up X-Forwarded-Uri {http.request.orig_uri}
+	}
+}
+
+# Only for an installation whose access proxy already authenticates every operator.
+(admin-auth-external) {
+}
+
+{$CHECKDROP_SITE_ADDRESS::8080} {
+	encode zstd gzip
+
+	header {
+		# Applied after the response is built, so Caddy's own Server header is removed too.
+		defer
+		-Server
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-Robots-Tag "noindex, nofollow, noarchive"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+	}
+
+	# Astro bundles carry a content hash in the file name, so a changed file always gets a new URL.
+	@immutable_assets {
+		path /_astro/*
+		file {
+			root /srv
+		}
+	}
+	header @immutable_assets Cache-Control "public, max-age=31536000, immutable"
+
+	@checkdrop_validation path /checkdrop/v1/names/validate /checkdrop/v1/emails/validate /checkdrop/v1/phones/validate /checkdrop/v1/addresses/validate /checkdrop/v1/addresses/autocomplete /checkdrop/v1/company-ids/validate /checkdrop/v1/companies/autocomplete
+	handle @checkdrop_validation {
+		import admin-auth-{$CHECKDROP_ADMIN_AUTH:password}
+		request_body {
+			max_size 8KB
+		}
+		uri strip_prefix /checkdrop
+		reverse_proxy app:8787 {
+			header_up -Authorization
+			header_up -Cookie
+			header_up -X-Request-Id
+			header_up X-Checkdrop-Key {env.CHECKDROP_PILOT_API_KEY}
+			header_up X-Checkdrop-Client "checkdrop-review/0.1.0"
+			header_up X-Checkdrop-Mode "shadow"
+			header_up X-Checkdrop-Observe "preview"
+		}
+	}
+
+	@checkdrop_operator path /checkdrop/v1/operator/*
+	handle @checkdrop_operator {
+		import admin-auth-{$CHECKDROP_ADMIN_AUTH:password}
+		request_body {
+			max_size 64KB
+		}
+		uri strip_prefix /checkdrop
+		reverse_proxy app:8787 {
+			header_up -Authorization
+			header_up -Cookie
+			header_up -X-Request-Id
+			header_up -X-Checkdrop-Key
+			header_up X-Checkdrop-Operator-Key {env.CHECKDROP_OPERATOR_TOKEN}
+		}
+	}
+
+	@checkdrop_integration_config {
+		path /checkdrop/v1/integration/config
+		method GET
+	}
+	handle @checkdrop_integration_config {
+		import admin-auth-{$CHECKDROP_ADMIN_AUTH:password}
+		uri strip_prefix /checkdrop
+		reverse_proxy app:8787 {
+			header_up -Authorization
+			header_up -Cookie
+			header_up -X-Request-Id
+			header_up X-Checkdrop-Key {env.CHECKDROP_PILOT_API_KEY}
+		}
+	}
+	handle /checkdrop/* {
+		respond "Resource not found" 404
+	}
+
+	# Operator routes are reached only through the authenticated /checkdrop/ proxy above.
+	handle /v1/operator/* {
+		respond "Resource not found" 404
+	}
+	handle /v1/* {
+		request_body {
+			max_size 16KB
+		}
+		reverse_proxy app:8787 {
+			header_up -X-Checkdrop-Operator-Key
+		}
+	}
+
+	redir / /dashboard 302
+
+	@admin_pages path /dashboard /dashboard/* /monitor /monitor/* /integrations /integrations/* /playground /playground/*
+	handle @admin_pages {
+		import admin-auth-{$CHECKDROP_ADMIN_AUTH:password}
+		root * /srv
+		try_files {path} {path}/index.html =404
+		file_server
+	}
+
+	handle {
+		root * /srv
+		try_files {path} {path}/index.html =404
+		file_server
+	}
+
+	log {
+		output stdout
+		format filter {
+			request>headers>Authorization delete
+			request>headers>Proxy-Authorization delete
+			request>headers>Cookie delete
+			request>headers>X-Checkdrop-Client delete
+			request>headers>X-Checkdrop-Key delete
+			request>headers>X-Checkdrop-Mode delete
+			request>headers>X-Checkdrop-Observe delete
+			request>headers>X-Request-Id delete
+			request>headers>Idempotency-Key delete
+			request>headers>X-Checkdrop-Operator-Key delete
+			resp_headers>Set-Cookie delete
+			resp_headers>Content-Disposition delete
+		}
+	}
+}

@@ -1,0 +1,22 @@
+# Builds the images from this source tree instead of pulling released ones:
+#   docker compose -f compose.yaml -f compose.build.yaml build
+services:
+  migrate:
+    build:
+      context: .
+      dockerfile: infra/server.Dockerfile
+  app:
+    build:
+      context: .
+      dockerfile: infra/server.Dockerfile
+  jobs:
+    build:
+      context: .
+      dockerfile: infra/server.Dockerfile
+  web:
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+      args:
+        CHECKDROP_WEB_TARGET: app
+        CADDYFILE: infra/web/Caddyfile

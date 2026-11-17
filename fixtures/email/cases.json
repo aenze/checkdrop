@@ -1,0 +1,32 @@
+[
+  { "input": "Alice@EXAMPLE.com", "status": "valid", "normalized": "Alice@example.com" },
+  { "input": "jan.novak@gmial.com", "status": "correctable", "suggestion": "jan.novak@gmail.com" },
+  {
+    "input": "pavel.novak@gmeil.com",
+    "status": "correctable",
+    "suggestion": "pavel.novak@gmail.com"
+  },
+  {
+    "input": "pavel.novak@gmelj.com",
+    "status": "correctable",
+    "suggestion": "pavel.novak@gmail.com"
+  },
+  { "input": "jan.novak@gmil.com", "status": "correctable", "suggestion": "jan.novak@gmail.com" },
+  { "input": "jan.novak@sezman.cz", "status": "correctable", "suggestion": "jan.novak@seznam.cz" },
+  { "input": "jan.novak@emial.cz", "status": "correctable", "suggestion": "jan.novak@email.cz" },
+  { "input": "jan.novak@centum.cz", "status": "correctable", "suggestion": "jan.novak@centrum.cz" },
+  {
+    "input": "jan.novak@outlok.com",
+    "status": "correctable",
+    "suggestion": "jan.novak@outlook.com"
+  },
+  {
+    "input": "jan.novak@hotmial.com",
+    "status": "correctable",
+    "suggestion": "jan.novak@hotmail.com"
+  },
+  { "input": "jan.novak@yaho.com", "status": "correctable", "suggestion": "jan.novak@yahoo.com" },
+  { "input": "jan.novak@iclud.com", "status": "correctable", "suggestion": "jan.novak@icloud.com" },
+  { "input": "podpora@mailinator.com", "status": "risky" },
+  { "input": "not-an-email", "status": "invalid", "normalized": null }
+]

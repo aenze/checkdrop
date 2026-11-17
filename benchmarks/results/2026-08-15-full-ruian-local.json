@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-08-15T09:05:39Z",
+  "environment": {
+    "scope": "local-docker",
+    "postgresql": "18.6 aarch64 alpine",
+    "databaseSizeBeforeRedundantIndexCleanup": "1228 MB"
+  },
+  "source": {
+    "name": "ruian-st-uads",
+    "url": "https://services.cuzk.gov.cz/vfr/202606/20260603_ST_UADS.xml.zip",
+    "effectiveAt": "2026-06-03T20:06:19.000Z",
+    "xmlBytes": 2135972879,
+    "rowCount": 3017940,
+    "sha256Xml": "06e15253028451698904cb553b9338dd7d623a797b63bedb38d9b800b1d0497a"
+  },
+  "command": "CHECKDROP_DATABASE_URL=postgresql://checkdrop:checkdrop@127.0.0.1:5432/checkdrop pnpm benchmark:address",
+  "queryCorpus": {
+    "cases": 100,
+    "measuredQueries": 300,
+    "method": "deterministic RUIAN samples; half one-character perturbed; one quarter without postal code",
+    "accuracyRepresentative": false
+  },
+  "result": {
+    "top1Accuracy": 1,
+    "latencyMs": {
+      "p50": 2.544458999998824,
+      "p95": 141.33841699999994,
+      "p99": 241.08474999999999
+    }
+  },
+  "limitations": [
+    "Local warm-cache Docker measurement, not a staging or production SLO.",
+    "Queries are generated from known records and do not estimate pilot false-suggestion rates.",
+    "The 150 ms OpenSearch gate must be rechecked with representative pilot traffic and production-like resources."
+  ]
+}

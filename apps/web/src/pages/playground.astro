@@ -1,0 +1,26 @@
+---
+import "@fontsource-variable/inter";
+// biome-ignore lint/correctness/noUnusedImports: Astro renders this component in the template below.
+import ValidationPlayground from "../components/ValidationPlayground";
+import "../styles/global.css";
+import "../styles/validation-playground.css";
+import "../styles/admin-navigation.css";
+import "../styles/admin-light.css";
+---
+
+<!doctype html>
+<html lang="cs" class="admin-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Interní test českého adresního autocomplete a kontroly e-mailu Checkdrop."
+    />
+    <meta name="theme-color" content="#f5f6f8" />
+    <title>API playground | Checkdrop</title>
+  </head>
+  <body>
+    <ValidationPlayground client:only="react" />
+  </body>
+</html>

@@ -1,0 +1,7 @@
+[
+  { "input": "Arnoltice 1 40714", "expectedId": "19" },
+  { "input": "Děčínská 3 Česká Kamenice", "expectedId": "4065" },
+  { "input": "decinska 3 dolni kamenice 40721", "expectedId": "4065" },
+  { "input": "Tyršova 23/18a Jiříkov", "expectedId": "105058" },
+  { "input": "tyrsova 23 18a 407 53", "expectedId": "105058" }
+]

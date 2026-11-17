@@ -1,0 +1,2285 @@
+{
+  "description": "Řízené DNS; očekávání vycházejí z pravidel oprav v docs/qa/email-suggestions-2026-09-25. Neobsahuje skutečné adresy zákazníků.",
+  "counts": {
+    "catalogue-typo": 50,
+    "guess": 25,
+    "guess-limit": 25,
+    "protected-valid": 50,
+    "syntax": 20,
+    "dns-and-risk": 30
+  },
+  "cases": [
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@gmai.com",
+      "dns": {
+        "gmai.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@gamil.com",
+      "dns": {
+        "gamil.com": "resolved_mx",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@gmal.com",
+      "dns": {
+        "gmal.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@gmaill.com",
+      "dns": {
+        "gmaill.com": "resolved_mx",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@gmeil.com",
+      "dns": {
+        "gmeil.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@gmelj.com",
+      "dns": {
+        "gmelj.com": "resolved_mx",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@gmil.com",
+      "dns": {
+        "gmil.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@gmail.cz",
+      "dns": {
+        "gmail.cz": "resolved_mx",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@gmail.co",
+      "dns": {
+        "gmail.co": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@gmail.con",
+      "dns": {
+        "gmail.con": "resolved_mx",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@gmial.com",
+      "dns": {
+        "gmial.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@gnail.com",
+      "dns": {
+        "gnail.com": "resolved_mx",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@gmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@senam.cz",
+      "dns": {
+        "senam.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@sezam.cz",
+      "dns": {
+        "sezam.cz": "resolved_mx",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@sezman.cz",
+      "dns": {
+        "sezman.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@seznan.cz",
+      "dns": {
+        "seznan.cz": "resolved_mx",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@seznma.cz",
+      "dns": {
+        "seznma.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@seznsm.cz",
+      "dns": {
+        "seznsm.cz": "resolved_mx",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@seznam.con",
+      "dns": {
+        "seznam.con": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@seznam.com",
+      "dns": {
+        "seznam.com": "resolved_mx",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@seznam.c",
+      "dns": {
+        "seznam.c": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@seznam.cu",
+      "dns": {
+        "seznam.cu": "resolved_mx",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@seznam.czu",
+      "dns": {
+        "seznam.czu": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@sznam.cz",
+      "dns": {
+        "sznam.cz": "resolved_mx",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@seynam.cz",
+      "dns": {
+        "seynam.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@seznam.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@emai.cz",
+      "dns": {
+        "emai.cz": "resolved_mx",
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@email.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@email.c",
+      "dns": {
+        "email.c": "not_found",
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@email.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@email.cu",
+      "dns": {
+        "email.cu": "resolved_mx",
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@email.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@emial.cz",
+      "dns": {
+        "emial.cz": "not_found",
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@email.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@cenrum.cz",
+      "dns": {
+        "cenrum.cz": "resolved_mx",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@centrum.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@centrim.cz",
+      "dns": {
+        "centrim.cz": "not_found",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@centrum.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@centrum.c",
+      "dns": {
+        "centrum.c": "resolved_mx",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@centrum.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@centrum.cu",
+      "dns": {
+        "centrum.cu": "not_found",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@centrum.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@centum.cz",
+      "dns": {
+        "centum.cz": "resolved_mx",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@centrum.cz"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@outllok.com",
+      "dns": {
+        "outllok.com": "not_found",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@outlook.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@outlok.com",
+      "dns": {
+        "outlok.com": "resolved_mx",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@outlook.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@outlook.co",
+      "dns": {
+        "outlook.co": "not_found",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@outlook.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@outlook.con",
+      "dns": {
+        "outlook.con": "resolved_mx",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@outlook.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@hotmai.com",
+      "dns": {
+        "hotmai.com": "not_found",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@hotmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@hotmail.co",
+      "dns": {
+        "hotmail.co": "resolved_mx",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@hotmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@hotmail.con",
+      "dns": {
+        "hotmail.con": "not_found",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@hotmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@hotmal.com",
+      "dns": {
+        "hotmal.com": "resolved_mx",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@hotmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@hotmial.com",
+      "dns": {
+        "hotmial.com": "not_found",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@hotmail.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@yaho.com",
+      "dns": {
+        "yaho.com": "resolved_mx",
+        "yahoo.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@yahoo.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@yahoo.co",
+      "dns": {
+        "yahoo.co": "not_found",
+        "yahoo.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@yahoo.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "jana.novakova@yahoo.con",
+      "dns": {
+        "yahoo.con": "resolved_mx",
+        "yahoo.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@yahoo.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "Petr.Svoboda@iclou.com",
+      "dns": {
+        "iclou.com": "not_found",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@icloud.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "eva+eshop@icloud.co",
+      "dns": {
+        "icloud.co": "resolved_mx",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@icloud.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "k.horak@icloud.con",
+      "dns": {
+        "icloud.con": "not_found",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@icloud.com"
+      }
+    },
+    {
+      "category": "catalogue-typo",
+      "input": "lucie_prochazkova@iclud.com",
+      "dns": {
+        "iclud.com": "resolved_mx",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@icloud.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "jana.novakova@protonmial.com",
+      "dns": {
+        "protonmial.com": "not_found",
+        "protonmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@protonmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "Petr.Svoboda@protnmail.com",
+      "dns": {
+        "protnmail.com": "not_found",
+        "protonmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@protonmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "eva+eshop@protonmaill.com",
+      "dns": {
+        "protonmaill.com": "not_found",
+        "protonmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@protonmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "k.horak@prtonmail.com",
+      "dns": {
+        "prtonmail.com": "not_found",
+        "protonmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@protonmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "lucie_prochazkova@protonmali.com",
+      "dns": {
+        "protonmali.com": "not_found",
+        "protonmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@protonmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "jana.novakova@protonmial.ch",
+      "dns": {
+        "protonmial.ch": "not_found",
+        "protonmail.ch": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@protonmail.ch"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "Petr.Svoboda@protonmaill.ch",
+      "dns": {
+        "protonmaill.ch": "not_found",
+        "protonmail.ch": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@protonmail.ch"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "eva+eshop@outloook.com",
+      "dns": {
+        "outloook.com": "not_found",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@outlook.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "k.horak@outlokk.com",
+      "dns": {
+        "outlokk.com": "not_found",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@outlook.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "lucie_prochazkova@outlool.com",
+      "dns": {
+        "outlool.com": "not_found",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@outlook.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "jana.novakova@hotmaill.com",
+      "dns": {
+        "hotmaill.com": "not_found",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@hotmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "Petr.Svoboda@hotmali.com",
+      "dns": {
+        "hotmali.com": "not_found",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@hotmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "eva+eshop@hotmeil.com",
+      "dns": {
+        "hotmeil.com": "not_found",
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@hotmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "k.horak@icloudd.com",
+      "dns": {
+        "icloudd.com": "not_found",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@icloud.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "lucie_prochazkova@iclod.com",
+      "dns": {
+        "iclod.com": "not_found",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@icloud.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "jana.novakova@icluod.com",
+      "dns": {
+        "icluod.com": "not_found",
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@icloud.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "Petr.Svoboda@centrun.cz",
+      "dns": {
+        "centrun.cz": "not_found",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@centrum.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "eva+eshop@cemtrum.cz",
+      "dns": {
+        "cemtrum.cz": "not_found",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@centrum.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "k.horak@centrumm.cz",
+      "dns": {
+        "centrumm.cz": "not_found",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@centrum.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "lucie_prochazkova@ceentrum.cz",
+      "dns": {
+        "ceentrum.cz": "not_found",
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@centrum.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "jana.novakova@seznamm.cz",
+      "dns": {
+        "seznamm.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana.novakova@seznam.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "Petr.Svoboda@sezmam.cz",
+      "dns": {
+        "sezmam.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@seznam.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "eva+eshop@seznaam.cz",
+      "dns": {
+        "seznaam.cz": "not_found",
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "eva+eshop@seznam.cz"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "k.horak@gmaik.com",
+      "dns": {
+        "gmaik.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@gmail.com"
+      }
+    },
+    {
+      "category": "guess",
+      "input": "lucie_prochazkova@gmaul.com",
+      "dns": {
+        "gmaul.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@gmail.com"
+      }
+    },
+    {
+      "category": "guess-limit",
+      "input": "jana.novakova@protonmial.com",
+      "dns": {
+        "protonmial.com": "resolved_address"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      },
+      "note": "typo domain exists, a guess never overrides it"
+    },
+    {
+      "category": "guess-limit",
+      "input": "Petr.Svoboda@outloook.com",
+      "dns": {
+        "outloook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      },
+      "note": "typo domain exists with MX"
+    },
+    {
+      "category": "guess-limit",
+      "input": "eva+eshop@protonmial.com",
+      "dns": {
+        "protonmial.com": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      },
+      "note": "DNS unavailable, no guess"
+    },
+    {
+      "category": "guess-limit",
+      "input": "k.horak@protonmial.com",
+      "dns": {
+        "protonmial.com": "not_found",
+        "protonmail.com": "resolved_address"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "target without MX"
+    },
+    {
+      "category": "guess-limit",
+      "input": "lucie_prochazkova@protonmial.com",
+      "dns": {
+        "protonmial.com": "not_found",
+        "protonmail.com": "unavailable"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "target DNS unavailable"
+    },
+    {
+      "category": "guess-limit",
+      "input": "jana.novakova@protonmail.ch",
+      "dns": {
+        "protonmail.ch": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      },
+      "note": "known provider is never converted"
+    },
+    {
+      "category": "guess-limit",
+      "input": "Petr.Svoboda@pm.me",
+      "dns": {
+        "pm.me": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      },
+      "note": "known provider is never converted"
+    },
+    {
+      "category": "guess-limit",
+      "input": "eva+eshop@gmx.at",
+      "dns": {
+        "gmx.at": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      },
+      "note": "known provider is never converted"
+    },
+    {
+      "category": "guess-limit",
+      "input": "k.horak@gmxx.de",
+      "dns": {
+        "gmxx.de": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "name shorter than five characters"
+    },
+    {
+      "category": "guess-limit",
+      "input": "lucie_prochazkova@gmail.org",
+      "dns": {
+        "gmail.org": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "different suffix is never guessed"
+    },
+    {
+      "category": "guess-limit",
+      "input": "jana.novakova@outlook.cz",
+      "dns": {
+        "outlook.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "different suffix is never guessed"
+    },
+    {
+      "category": "guess-limit",
+      "input": "Petr.Svoboda@mail.protonmial.com",
+      "dns": {
+        "mail.protonmial.com": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "multi-label domain is never guessed"
+    },
+    {
+      "category": "guess-limit",
+      "input": "eva+eshop@xn--seznm-kta.cz",
+      "dns": {
+        "xn--seznm-kta.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "internationalised domain is never guessed"
+    },
+    {
+      "category": "guess-limit",
+      "input": "k.horak@firma-novak.cz",
+      "dns": {
+        "firma-novak.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "no candidate"
+    },
+    {
+      "category": "guess-limit",
+      "input": "lucie_prochazkova@seznamcz.cz",
+      "dns": {
+        "seznamcz.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "two edits away"
+    },
+    {
+      "category": "guess-limit",
+      "input": "jana.novakova@hotmial.cz",
+      "dns": {
+        "hotmial.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "different suffix is never guessed"
+    },
+    {
+      "category": "guess-limit",
+      "input": "Petr.Svoboda@icloouud.com",
+      "dns": {
+        "icloouud.com": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "two edits away"
+    },
+    {
+      "category": "guess-limit",
+      "input": "eva+eshop@centrum.sk",
+      "dns": {
+        "centrum.sk": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      },
+      "note": "real regional domain"
+    },
+    {
+      "category": "guess-limit",
+      "input": "k.horak@gmial.org",
+      "dns": {
+        "gmial.org": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "not in catalogue and different suffix"
+    },
+    {
+      "category": "guess-limit",
+      "input": "lucie_prochazkova@outlo0k.com",
+      "dns": {
+        "outlo0k.com": "not_found",
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@outlook.com"
+      },
+      "note": "digit substitution"
+    },
+    {
+      "category": "guess-limit",
+      "input": "jana.novakova@seznan.com",
+      "dns": {
+        "seznan.com": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      },
+      "note": "two edits from seznam.cz, different suffix"
+    },
+    {
+      "category": "guess-limit",
+      "input": "Petr.Svoboda@emaill.cz",
+      "dns": {
+        "emaill.cz": "not_found",
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "Petr.Svoboda@email.cz"
+      },
+      "note": "one insertion"
+    },
+    {
+      "category": "guess-limit",
+      "input": "eva+eshop@atlas.sk",
+      "dns": {
+        "atlas.sk": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      },
+      "note": "real regional domain"
+    },
+    {
+      "category": "guess-limit",
+      "input": "k.horak@volnyy.cz",
+      "dns": {
+        "volnyy.cz": "not_found",
+        "volny.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "k.horak@volny.cz"
+      },
+      "note": "one insertion"
+    },
+    {
+      "category": "guess-limit",
+      "input": "lucie_prochazkova@yahooo.com",
+      "dns": {
+        "yahooo.com": "not_found",
+        "yahoo.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "lucie_prochazkova@yahoo.com"
+      },
+      "note": "one insertion"
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@gmail.com",
+      "dns": {
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@seznam.cz",
+      "dns": {
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@email.cz",
+      "dns": {
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@centrum.cz",
+      "dns": {
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@outlook.com",
+      "dns": {
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@hotmail.com",
+      "dns": {
+        "hotmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@yahoo.com",
+      "dns": {
+        "yahoo.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@icloud.com",
+      "dns": {
+        "icloud.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@atlas.cz",
+      "dns": {
+        "atlas.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@volny.cz",
+      "dns": {
+        "volny.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@proton.me",
+      "dns": {
+        "proton.me": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@protonmail.com",
+      "dns": {
+        "protonmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@pm.me",
+      "dns": {
+        "pm.me": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@protonmail.ch",
+      "dns": {
+        "protonmail.ch": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@gmx.de",
+      "dns": {
+        "gmx.de": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@gmx.net",
+      "dns": {
+        "gmx.net": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@gmx.at",
+      "dns": {
+        "gmx.at": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@gmx.ch",
+      "dns": {
+        "gmx.ch": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@post.cz",
+      "dns": {
+        "post.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@tiscali.cz",
+      "dns": {
+        "tiscali.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@quick.cz",
+      "dns": {
+        "quick.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@obchod-priklad.cz",
+      "dns": {
+        "obchod-priklad.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@checkdrop.dev",
+      "dns": {
+        "checkdrop.dev": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@firma-novak.cz",
+      "dns": {
+        "firma-novak.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@kovovyroba-brno.cz",
+      "dns": {
+        "kovovyroba-brno.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@mail.firma.cz",
+      "dns": {
+        "mail.firma.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@abcde.cz",
+      "dns": {
+        "abcde.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@gmaix.cz",
+      "dns": {
+        "gmaix.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@outlook.sk",
+      "dns": {
+        "outlook.sk": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@centrum.sk",
+      "dns": {
+        "centrum.sk": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@azet.sk",
+      "dns": {
+        "azet.sk": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@zoznam.sk",
+      "dns": {
+        "zoznam.sk": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@gmail.de",
+      "dns": {
+        "gmail.de": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@web.de",
+      "dns": {
+        "web.de": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@t-online.de",
+      "dns": {
+        "t-online.de": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova@seznam-partner.cz",
+      "dns": {
+        "seznam-partner.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Petr.Svoboda@jana-novakova.cz",
+      "dns": {
+        "jana-novakova.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+eshop@novak.eu",
+      "dns": {
+        "novak.eu": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k.horak@praha.eu",
+      "dns": {
+        "praha.eu": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "lucie_prochazkova@muni.cz",
+      "dns": {
+        "muni.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "Jana.Novakova@GMAIL.COM",
+      "dns": {
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "eva+objednavka-2026@seznam.cz",
+      "dns": {
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "o'brien@firma.cz",
+      "dns": {
+        "firma.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana_novakova@email.cz",
+      "dns": {
+        "email.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "x@y.cz",
+      "dns": {
+        "y.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "a.b.c.d@centrum.cz",
+      "dns": {
+        "centrum.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "JANA@SEZNAM.CZ",
+      "dns": {
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "jana.novakova+1@outlook.com",
+      "dns": {
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "k@k.cz",
+      "dns": {
+        "k.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "protected-valid",
+      "input": "j.n@gmx.net",
+      "dns": {
+        "gmx.net": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana.novakova@",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana novakova@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana..novakova@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@gmail",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@.cz",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana.@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": ".jana@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@gmail..com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@-gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@gmail-.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@gm ail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "janagmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@gmail.com@seznam.cz",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@gmail.c_m",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana(novakova)@gmail.com",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "jana@[127.0.0.1]",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "syntax",
+      "input": "",
+      "dns": {},
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@firma.cz",
+      "dns": {
+        "firma.cz": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@seznam.cz",
+      "dns": {
+        "seznam.cz": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@outlook.com",
+      "dns": {
+        "outlook.com": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@firma-novak.cz",
+      "dns": {
+        "firma-novak.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@firma.cz",
+      "dns": {
+        "firma.cz": "resolved_address"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "petr@neexistuje-checkdrop.cz",
+      "dns": {
+        "neexistuje-checkdrop.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "eva@kovovyroba.cz",
+      "dns": {
+        "kovovyroba.cz": "resolved_address"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "lucie@stary-web.cz",
+      "dns": {
+        "stary-web.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "k.horak@firma.eu",
+      "dns": {
+        "firma.eu": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "info@firma.cz",
+      "dns": {
+        "firma.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "podpora@firma.cz",
+      "dns": {
+        "firma.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "obchod@seznam.cz",
+      "dns": {
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@mailinator.com",
+      "dns": {
+        "mailinator.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@yopmail.com",
+      "dns": {
+        "yopmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@10minutemail.com",
+      "dns": {
+        "10minutemail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@gmial.com",
+      "dns": {
+        "gmial.com": "not_found",
+        "gmail.com": "resolved_address"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@gmial.com",
+      "dns": {
+        "gmial.com": "resolved_address",
+        "gmail.com": "resolved_address"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@gmial.com",
+      "dns": {
+        "gmial.com": "unavailable",
+        "gmail.com": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@seznan.cz",
+      "dns": {
+        "seznan.cz": "not_found",
+        "seznam.cz": "unavailable"
+      },
+      "expected": {
+        "status": "unknown",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "info@gmial.com",
+      "dns": {
+        "gmial.com": "not_found",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "info@gmail.com"
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@gamil.com",
+      "dns": {
+        "gamil.com": "unavailable",
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "correctable",
+        "suggestion": "jana@gmail.com"
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "fakturace@firma.cz",
+      "dns": {
+        "firma.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "kancelar@firma.cz",
+      "dns": {
+        "firma.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "support@gmail.com",
+      "dns": {
+        "gmail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "admin@seznam.cz",
+      "dns": {
+        "seznam.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "sales@outlook.com",
+      "dns": {
+        "outlook.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@guerrillamail.com",
+      "dns": {
+        "guerrillamail.com": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@temp-mail.org",
+      "dns": {
+        "temp-mail.org": "resolved_mx"
+      },
+      "expected": {
+        "status": "risky",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@stara-firma.cz",
+      "dns": {
+        "stara-firma.cz": "not_found"
+      },
+      "expected": {
+        "status": "invalid",
+        "suggestion": null
+      }
+    },
+    {
+      "category": "dns-and-risk",
+      "input": "jana@kovarna.cz",
+      "dns": {
+        "kovarna.cz": "resolved_mx"
+      },
+      "expected": {
+        "status": "valid",
+        "suggestion": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+node_modules/
+.turbo/
+dist/
+coverage/
+.wrangler/
+.astro/
+.env
+.env.*
+!.env.example
+.dev.vars
+*.log
+*.tsbuildinfo
+.DS_Store
+state/
+backups/

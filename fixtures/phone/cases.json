@@ -1,0 +1,7 @@
+[
+  { "input": "777 123 456", "status": "correctable", "normalized": "+420777123456" },
+  { "input": "+420777123456", "status": "valid", "normalized": "+420777123456" },
+  { "input": "77712345", "status": "invalid", "normalized": null },
+  { "input": "7771234567", "status": "invalid", "normalized": null },
+  { "input": "123", "status": "invalid", "normalized": null }
+]

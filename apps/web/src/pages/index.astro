@@ -1,0 +1,252 @@
+---
+// Open-source repository. Change only here; the pricing card links to it.
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const GITHUB_URL = "https://github.com/aenze/checkdrop";
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#3d7bff" stroke-width="2.6"/><path d="M10 16.5l4 4 8-9" stroke="#3d7bff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconMail = `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 6l7 5 7-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconPhone = `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6.5 3.5h2.2l1.2 3.2-1.6 1.1a8.5 8.5 0 0 0 3.9 3.9l1.1-1.6 3.2 1.2v2.2c0 .8-.7 1.5-1.5 1.5A11.5 11.5 0 0 1 5 5c0-.8.7-1.5 1.5-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconPin = `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 17.5s5.5-4.7 5.5-9a5.5 5.5 0 1 0-11 0c0 4.3 5.5 9 5.5 9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="10" cy="8.5" r="2" stroke="currentColor" stroke-width="1.6"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconId = `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="10" r="1.8" stroke="currentColor" stroke-width="1.5"/><path d="M11 8.5h4M11 11.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconUser = `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 16.5c.8-2.8 3.1-4 6-4s5.2 1.2 6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconCheck = `<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8.3l2 2 4-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>`;
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="description" content="Checkdrop fixes e-mail typos, completes addresses from the official Czech registry and normalizes phone numbers right in your checkout.">
+<title>Checkdrop — catch the typo before it becomes a returned parcel</title>
+<link rel="alternate" hreflang="cs" href="https://checkdrop.dev/cs/">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261112-1">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><Fragment set:html={logo} />Checkdrop</a>
+    <nav aria-label="Main navigation">
+      <a href="#catches">Product</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/developers/">Developers</a>
+      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Log in</a>
+      <a class="btn btn-blue btn-sm" href="#contact"><span class="full">Try it on your checkout</span><span class="short">Try it</span></a>
+      <div class="lang-switch" aria-label="Language / Jazyk"><a href="/" class="on" aria-current="page" lang="en" hreflang="en">EN</a><a href="/cs/" lang="cs" hreflang="cs">CS</a></div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero wrap">
+  <div>
+    <h1>Catch the typo before it becomes a returned parcel.</h1>
+    <p class="lead">Checkdrop checks e-mails, phone numbers, addresses and company IDs right in your checkout, against official Czech registries. The customer confirms the fix with one click. If you choose, it also stops orders that could not be delivered.</p>
+    <div class="actions">
+      <a class="btn btn-blue" href="#contact">Try it on your checkout</a>
+      <a class="btn btn-ghost" href="#demo">See the demo</a>
+    </div>
+    <ul class="proof">
+      <li><Fragment set:html={iconCheck} />Addresses from the state registry RÚIAN</li>
+      <li><Fragment set:html={iconCheck} />Companies from ARES</li>
+      <li><Fragment set:html={iconCheck} />Blocks only if you choose</li>
+    </ul>
+  </div>
+
+  <div id="demo">
+    <div class="review" aria-label="Checkout check demo">
+      <div class="review-head">
+        <strong>Delivery details</strong>
+        <div class="steps" aria-hidden="true"><span>1</span><i></i><span class="on">2</span><i></i><span>3</span></div>
+        <span id="f-count">2 suggestions to confirm</span>
+      </div>
+      <div class="review-body">
+        <div class="frow is-suggest" id="row-email">
+          <span class="ficon"><Fragment set:html={iconMail} /></span>
+          <div class="fbody">
+            <div class="flabel"><label for="f-email">E-mail</label><span class="fstatus">Typo in the domain</span></div>
+            <input id="f-email" type="text" value="jan.novak@gmil.com" autocomplete="off" spellcheck="false">
+            <div class="suggest" id="s-email"><span class="arrow">→</span><span class="val" id="s-email-val">jan.novak@gmail.com</span><span class="src">Domain</span><button type="button" class="use" id="s-email-use">Apply</button><button type="button" class="keep" id="s-email-keep">Keep</button></div>
+          </div>
+        </div>
+        <div class="frow" id="row-phone">
+          <span class="ficon"><Fragment set:html={iconPhone} /></span>
+          <div class="fbody">
+            <div class="flabel"><label for="f-phone">Phone</label><span class="fstatus">Will be normalized automatically</span></div>
+            <input id="f-phone" type="text" value="777123456" autocomplete="off">
+          </div>
+        </div>
+        <div class="frow is-suggest" id="row-addr">
+          <span class="ficon"><Fragment set:html={iconPin} /></span>
+          <div class="fbody">
+            <div class="flabel"><label for="f-street">Address</label><span class="fstatus">Incomplete address</span></div>
+            <input id="f-street" type="text" value="Karlovo nám 19" autocomplete="off" spellcheck="false" aria-label="Street and number">
+            <div class="fgrid">
+              <input id="f-city" type="text" value="Praha" autocomplete="off" aria-label="City">
+              <input id="f-zip" type="text" value="" placeholder="ZIP" autocomplete="off" aria-label="ZIP">
+            </div>
+            <div class="suggest" id="s-addr" style="flex-direction:column;align-items:stretch;gap:6px;margin-top:2px">
+              <span style="font-size:12px;color:var(--dim)">Pick the address point · source RÚIAN</span>
+              <div class="addr-opts" id="s-addr-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="review-foot">
+        <div><strong>The customer confirms. You do nothing.</strong>We never apply a fix without their consent.</div>
+        <button type="button" class="btn btn-blue btn-sm" id="f-reset">Continue to payment</button>
+      </div>
+    </div>
+    <p class="demo-note">Type into the fields. The demo looks up real Czech addresses and sends nothing else.</p>
+  </div>
+</section>
+
+<section class="stats wrap" aria-label="Facts">
+  <div><strong>3</strong><span>official sources: RÚIAN, ARES, DNS/MX</span></div>
+  <div><strong>&lt;150 ms</strong><span>address lookup on a local registry copy</span></div>
+  <div><strong>0</strong><span>orders blocked, fail-open by design</span></div>
+  <div><strong>90 days</strong><span>maximum retention, encrypted at rest</span></div>
+</section>
+
+<section class="section video" id="video">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Seventeen seconds, start to finish.</h2>
+      <p>One typo caught, one address completed, one phone number normalized. Sound on.</p>
+    </div>
+    <div class="video-frame">
+      <video id="showreel" preload="metadata" playsinline poster="/frontpage/assets/showreel-poster-20260926.jpg" width="1920" height="1080" aria-label="Checkdrop showreel video">
+        <source src="/frontpage/assets/showreel-20260926.mp4" type="video/mp4">
+      </video>
+      <button type="button" class="video-play" id="showreel-play" aria-label="Play"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor"/></svg><span>Play</span></button>
+    </div>
+    <p class="video-note">The clip is in English. Everything you see runs in a real checkout today.</p>
+  </div>
+</section>
+
+<section class="section" id="catches">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>You don’t want data like this in your system.</h2>
+      <p>Hover over a card and watch Checkdrop turn the mistake into a clean order.</p>
+    </div>
+    <div class="fixes">
+      <article class="fix" tabindex="0">
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconMail} /></span>E-mail<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-val"><div class="was">jan.novak@gmil.com</div><div class="now">jan.novak@gmail.com</div></div>
+        <p class="why">Order confirmation and tracking arrive. The customer doesn’t call asking where the parcel is.</p>
+      </article>
+      <article class="fix" tabindex="0">
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconPin} /></span>Address<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-val"><div class="was">Karlovo nám 19, Praha</div><div class="now">Karlovo náměstí 19/13, 120 00 Praha 2</div></div>
+        <p class="why">The courier finds the house first time. No return, no phone call to track it down.</p>
+      </article>
+      <article class="fix" tabindex="0">
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconPhone} /></span>Phone<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-val"><div class="was">777123456</div><div class="now">+420 777 123 456</div></div>
+        <p class="why">The courier gets through. Your warehouse and SMS gateway get one consistent format.</p>
+      </article>
+      <article class="fix" tabindex="0">
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconId} /></span>Company ID<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-val"><div class="was">2708244</div><div class="now">27082440 · verified in ARES</div></div>
+        <p class="why">The invoice carries the right company details from the start. Nobody fixes documents afterwards.</p>
+      </article>
+      <article class="fix" tabindex="0">
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconUser} /></span>Name<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-val"><div class="was">MUDr.Michal POřický</div><div class="now">MUDr. Michal Pořický</div></div>
+        <p class="why">The greeting in your e-mail and on the label looks right, not like spam.</p>
+      </article>
+      <article class="fix" tabindex="0">
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconPin} /></span>ZIP code<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-val"><div class="was">Praha 2, 11000</div><div class="now">120 00 Praha 2</div></div>
+        <p class="why">The parcel goes straight to the right depot instead of a detour through the wrong sorting centre.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section product" id="product">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>You see every suggestion. Turn on only what works.</h2>
+      <p>Checkdrop measures first. In the admin you see what the customer typed, what we suggested and how they reacted.</p>
+    </div>
+    <div class="frame">
+      <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>app.checkdrop.dev/monitor</span></div>
+      <picture>
+        <source media="(max-width: 640px)" srcset="/frontpage/assets/monitor-mobile-20260908.png" width="390" height="844">
+        <img src="/frontpage/assets/monitor-light-20260908.png" width="1440" height="900" loading="lazy" alt="Checkdrop monitor: list of customers with checked fields, reactions and results">
+      </picture>
+    </div>
+    <ul class="product-points">
+      <li><strong>Silent start</strong>The first weeks change nothing. It only shows what it would fix.</li>
+      <li><strong>Field by field</strong>E-mail, phone, address or company ID, each switched on separately.</li>
+      <li><strong>Data under lock</strong>Values are encrypted and deleted after 90 days.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Two ways to get it into your shop.</h2>
+      <p>Same open-source Checkdrop either way. The difference is who sets it up and keeps it running.</p>
+    </div>
+    <div class="ways">
+      <article class="way is-main">
+        <span class="pill">We set it up</span>
+        <h3>We do it for you.</h3>
+        <p>We connect your checkout, deploy Checkdrop on your server or on EU hosting, and refresh the address and company registries every month. Your data stays with you.</p>
+        <span class="price">from CZK 9,900<small>depending on integration complexity</small></span>
+        <a class="btn btn-blue" href="#contact">Arrange a rollout</a>
+      </article>
+      <article class="way">
+        <span class="pill pill-muted">Open source</span>
+        <h3>Run it yourself.</h3>
+        <p>All of Checkdrop is open source. Run it on your own server, free. When you'd rather not, we take it over.</p>
+        <ul class="way-list">
+          <li><Fragment set:html={iconCheck} />Give your AI agent one link. It installs and checks everything.</li>
+          <li><Fragment set:html={iconCheck} />Updates itself. If anything fails, it rolls back.</li>
+          <li><Fragment set:html={iconCheck} />Admin in English and Czech.</li>
+        </ul>
+        <span class="price">Free<small>open source</small></span>
+        <div class="way-actions">
+          <a class="btn btn-ghost" href={GITHUB_URL}><Fragment set:html={iconGithub} />Get it on GitHub</a>
+          <a class="way-link" href="/developers/#self-hosting">For developers</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="wrap">
+    <h2>Send us a link to your checkout.</h2>
+    <p>Within two working days we'll tell you what Checkdrop would catch and what the rollout would look like. No strings attached.</p>
+    <form action="mailto:support@checkdrop.dev" method="get">
+      <input type="url" name="subject" placeholder="https://www.your-shop.cz/cart" aria-label="Checkout URL">
+      <button type="submit" class="btn btn-blue">Send the link</button>
+    </form>
+    <small>Don't send customer data or passwords. Or write to support@checkdrop.dev.</small>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 Aenze s.r.o., Kladno, Czech Republic · Company ID 28534395</span>
+    <nav aria-label="Footer"><a href="/kontakt/" hreflang="cs">Contact</a><a href="/podminky/" hreflang="cs">Terms</a><a href="/soukromi/" hreflang="cs">Privacy</a><a href="/zpracovani/" hreflang="cs">Data processing</a><a href="/cs/" hreflang="cs">Česky</a></nav>
+  </div>
+</footer>
+<script is:inline src="/frontpage/novy.js?v=20261112-1"></script>
+</body>
+</html>

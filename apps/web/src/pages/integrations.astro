@@ -1,0 +1,26 @@
+---
+import "@fontsource-variable/inter";
+// biome-ignore lint/correctness/noUnusedImports: Astro renders this component in the template below.
+import IntegrationOnboarding from "../components/IntegrationOnboarding";
+import "../styles/global.css";
+import "../styles/integration-onboarding.css";
+import "../styles/admin-navigation.css";
+import "../styles/admin-light.css";
+---
+
+<!doctype html>
+<html lang="cs" class="admin-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Samoobslužné napojení formuláře e-shopu na Checkdrop v bezpečném shadow režimu."
+    />
+    <meta name="theme-color" content="#f5f6f8" />
+    <title>Napojení e-shopu | Checkdrop</title>
+  </head>
+  <body>
+    <IntegrationOnboarding client:only="react" />
+  </body>
+</html>

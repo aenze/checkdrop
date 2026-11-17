@@ -1,0 +1,51 @@
+{
+  "benchmark": "m0.validation.regression",
+  "run_at": "2026-08-15",
+  "corpus_version": "2026-08-15.1",
+  "corpus_scope": "balanced_regression",
+  "case_count": 40,
+  "passed": 40,
+  "failed": 0,
+  "accuracy": 1,
+  "latency_scope": "single-process fixture execution; email DNS is injected; providers are excluded",
+  "p50_ms": 0.011957999999992808,
+  "p95_ms": 0.30829199999999446,
+  "p99_ms": 0.7418329999999855,
+  "by_capability": {
+    "email": {
+      "total": 10,
+      "passed": 10,
+      "accuracy": 1
+    },
+    "phone": {
+      "total": 8,
+      "passed": 8,
+      "accuracy": 1
+    },
+    "company_id": {
+      "total": 8,
+      "passed": 8,
+      "accuracy": 1
+    },
+    "vat_id": {
+      "total": 8,
+      "passed": 8,
+      "accuracy": 1
+    },
+    "address_normalization": {
+      "total": 6,
+      "passed": 6,
+      "accuracy": 1
+    }
+  },
+  "environment": {
+    "os": "macOS 26.5.2",
+    "architecture": "arm64",
+    "node": "v25.9.0",
+    "pnpm": "10.33.0"
+  },
+  "command": "pnpm benchmark:validation",
+  "representative_of": "documented Czech input and failure categories",
+  "not_representative_of": "pilot traffic frequency, customer outcomes, provider uptime, or live network latency",
+  "failures": []
+}

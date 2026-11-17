@@ -1,0 +1,39 @@
+{
+  "name": "@checkdrop/db",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist",
+    "migrations"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "benchmark:address": "pnpm build && node dist/benchmark-address.js",
+    "benchmark:address-variants": "pnpm build && node dist/benchmark-address-variants.js",
+    "build": "tsc -p tsconfig.build.json",
+    "import:ruian": "pnpm build && node dist/import-ruian-cli.js",
+    "migrate": "pnpm build && node dist/migrate.js",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "update:ruian": "pnpm build && node dist/update-ruian-cli.js"
+  },
+  "dependencies": {
+    "@checkdrop/pack-cz": "workspace:*",
+    "pg": "8.23.1",
+    "saxes": "6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "@types/pg": "8.23.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.10"
+  },
+  "license": "AGPL-3.0-only"
+}

@@ -1,0 +1,157 @@
+# One Checkdrop installation. Managed by ./checkdrop (install, status, update, backup).
+# Every installation runs the same images; only .env differs.
+name: checkdrop
+
+x-server: &server
+  # A minimal init forwards signals, so stopping or updating never waits for a kill.
+  init: true
+  image: ${CHECKDROP_IMAGE_PREFIX:-ghcr.io/aenze/checkdrop}-server:${CHECKDROP_VERSION:?CHECKDROP_VERSION is required}
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  logging: &logging
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+x-database-url: &database-url postgresql://checkdrop:${CHECKDROP_POSTGRES_PASSWORD:?CHECKDROP_POSTGRES_PASSWORD is required}@postgres:5432/checkdrop
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: checkdrop
+      POSTGRES_USER: checkdrop
+      POSTGRES_PASSWORD: ${CHECKDROP_POSTGRES_PASSWORD:?CHECKDROP_POSTGRES_PASSWORD is required}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U checkdrop -d checkdrop"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - postgres:/var/lib/postgresql
+    networks:
+      - database
+    logging: *logging
+
+  # Runs before every start of the server, so an update applies its migrations first.
+  migrate:
+    <<: *server
+    restart: "no"
+    command: ["node", "node_modules/@checkdrop/db/dist/migrate.js"]
+    environment:
+      CHECKDROP_DATABASE_URL: *database-url
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+
+  app:
+    <<: *server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "8787"
+      CHECKDROP_RELEASE: ${CHECKDROP_VERSION}
+      CHECKDROP_DATABASE_URL: *database-url
+      CHECKDROP_PUBLIC_API_URL: ${CHECKDROP_PUBLIC_URL:?CHECKDROP_PUBLIC_URL is required}
+      CHECKDROP_PUBLIC_ADMIN_URL: ${CHECKDROP_PUBLIC_URL}
+      CHECKDROP_ADMIN_AUTH: ${CHECKDROP_ADMIN_AUTH:-password}
+      CHECKDROP_ADMIN_SETUP_CODE: ${CHECKDROP_ADMIN_SETUP_CODE:-}
+      CHECKDROP_OPERATOR_TOKEN: ${CHECKDROP_OPERATOR_TOKEN:?CHECKDROP_OPERATOR_TOKEN is required}
+      CHECKDROP_OPERATOR_PROJECT_REF: ${CHECKDROP_OPERATOR_PROJECT_REF:-default}
+      CHECKDROP_PILOT_API_KEY: ${CHECKDROP_PILOT_API_KEY:?CHECKDROP_PILOT_API_KEY is required}
+      CHECKDROP_EMBED_SIGNING_SECRET: ${CHECKDROP_EMBED_SIGNING_SECRET:?CHECKDROP_EMBED_SIGNING_SECRET is required}
+      CHECKDROP_OBSERVATION_ENCRYPTION_KEY: ${CHECKDROP_OBSERVATION_ENCRYPTION_KEY:?CHECKDROP_OBSERVATION_ENCRYPTION_KEY is required}
+      CHECKDROP_UPDATE_STATE_FILE: /run/checkdrop/update.json
+    volumes:
+      - ./state:/run/checkdrop:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8787/v1/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    networks:
+      - database
+      - edge
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+
+  # Address import after installation, then daily: RÚIAN check, 90-day cleanup, expired sessions.
+  jobs:
+    <<: *server
+    restart: unless-stopped
+    command: ["node", "dist/jobs.js"]
+    environment:
+      CHECKDROP_DATABASE_URL: *database-url
+      CHECKDROP_JOBS_TIME: ${CHECKDROP_JOBS_TIME:-03:35}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - database
+      - edge
+    tmpfs:
+      - /tmp:size=400m,mode=1777
+
+  web:
+    image: ${CHECKDROP_IMAGE_PREFIX:-ghcr.io/aenze/checkdrop}-web:${CHECKDROP_VERSION}
+    restart: unless-stopped
+    environment:
+      CHECKDROP_SITE_ADDRESS: ${CHECKDROP_SITE_ADDRESS:?CHECKDROP_SITE_ADDRESS is required}
+      CHECKDROP_ADMIN_AUTH: ${CHECKDROP_ADMIN_AUTH:-password}
+      CHECKDROP_PILOT_API_KEY: ${CHECKDROP_PILOT_API_KEY}
+      CHECKDROP_OPERATOR_TOKEN: ${CHECKDROP_OPERATOR_TOKEN}
+    ports:
+      - "${CHECKDROP_HTTP_BIND:-80}:8080"
+      - "${CHECKDROP_HTTPS_BIND:-443}:8443"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    networks:
+      - edge
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging: *logging
+
+volumes:
+  postgres:
+  caddy-data:
+  caddy-config:
+
+networks:
+  database:
+    internal: true
+  edge: {}

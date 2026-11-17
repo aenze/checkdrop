@@ -1,0 +1,38 @@
+[
+  {
+    "input": "CZ00006947",
+    "status": "valid",
+    "normalized": "CZ00006947",
+    "vat_number": "00006947"
+  },
+  {
+    "input": "cz 000 069 47",
+    "status": "valid",
+    "normalized": "CZ00006947",
+    "vat_number": "00006947"
+  },
+  {
+    "input": "CZ-1234567890",
+    "status": "valid",
+    "normalized": "CZ1234567890",
+    "vat_number": "1234567890"
+  },
+  {
+    "input": "00006947",
+    "status": "invalid",
+    "normalized": null,
+    "issue": "company.vat_format_invalid"
+  },
+  {
+    "input": "CZ123",
+    "status": "invalid",
+    "normalized": null,
+    "issue": "company.vat_format_invalid"
+  },
+  {
+    "input": "SK1234567890",
+    "status": "invalid",
+    "normalized": null,
+    "issue": "company.vat_format_invalid"
+  }
+]

@@ -1,0 +1,14 @@
+---
+import "@fontsource-variable/inter";
+// biome-ignore lint/correctness/noUnusedImports: rendered in Astro template
+import AdminDashboard from "../components/AdminDashboard";
+import "../styles/global.css";
+import "../styles/admin-navigation.css";
+import "../styles/admin-light.css";
+import "../styles/admin-dashboard.css";
+---
+<!doctype html>
+<html lang="cs" class="admin-light">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><meta name="robots" content="noindex" /><title>Přehled | Checkdrop</title></head>
+  <body><AdminDashboard client:only="react" /></body>
+</html>

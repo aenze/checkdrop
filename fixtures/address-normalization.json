@@ -1,0 +1,5 @@
+[
+  { "input": "Václavské nám. 10, Praha 1", "normalized": "vaclavske namesti 10 praha 1" },
+  { "input": "Moskevská 1842, Kladno 272 04", "normalized": "moskevska 1842 kladno 272 04" },
+  { "input": "Nábř. Edvarda Beneše 4", "normalized": "nabrezi edvarda benese 4" }
+]

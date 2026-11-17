@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfa:VymennyFormatAdres xmlns:vfa="urn:cz:isvs:ruian:schemas:VymennyFormatAdresTypy:v1" xmlns:vf="urn:cz:isvs:ruian:schemas:SpecialniVymennyFormatTypy:v1" xmlns:com="urn:cz:isvs:ruian:schemas:CommonTypy:v1">
+  <vfa:Hlavicka>
+    <vf:VerzeVFR>3.1</vf:VerzeVFR>
+    <vf:TypZaznamu>Platne</vf:TypZaznamu>
+    <vf:TypDavky>Plna</vf:TypDavky>
+    <vf:TypSouboru>ST_UADS</vf:TypSouboru>
+    <vf:Datum>2026-06-01T00:02:44</vf:Datum>
+    <vf:PlatnostDatK><com:ISUI>2026-05-31T22:06:19</com:ISUI></vf:PlatnostDatK>
+  </vfa:Hlavicka>
+  <vfa:Data>
+    <vfa:Adresy>
+      <vfa:Adresa>
+        <vfa:ObecNazev>Arnoltice</vfa:ObecNazev>
+        <vfa:CastObceNazev>Arnoltice</vfa:CastObceNazev>
+        <vfa:PostaKod>40714</vfa:PostaKod>
+        <vfa:AdresniMistoKod>19</vfa:AdresniMistoKod>
+        <vfa:TypCislaDomovnihoKod>1</vfa:TypCislaDomovnihoKod>
+        <vfa:CisloDomovni>1</vfa:CisloDomovni>
+        <vfa:RadekAdresy1>č.p. 1</vfa:RadekAdresy1>
+        <vfa:RadekAdresy2>407 14 Arnoltice</vfa:RadekAdresy2>
+      </vfa:Adresa>
+      <vfa:Adresa>
+        <vfa:ObecNazev>Česká Kamenice</vfa:ObecNazev>
+        <vfa:CastObceNazev>Dolní Kamenice</vfa:CastObceNazev>
+        <vfa:UliceNazev>Děčínská</vfa:UliceNazev>
+        <vfa:PostaKod>40721</vfa:PostaKod>
+        <vfa:AdresniMistoKod>4065</vfa:AdresniMistoKod>
+        <vfa:TypCislaDomovnihoKod>1</vfa:TypCislaDomovnihoKod>
+        <vfa:CisloDomovni>3</vfa:CisloDomovni>
+        <vfa:RadekAdresy1>Děčínská 3</vfa:RadekAdresy1>
+        <vfa:RadekAdresy2>Dolní Kamenice</vfa:RadekAdresy2>
+        <vfa:RadekAdresy3>407 21 Česká Kamenice</vfa:RadekAdresy3>
+      </vfa:Adresa>
+      <vfa:Adresa>
+        <vfa:ObecNazev>Jiříkov</vfa:ObecNazev>
+        <vfa:CastObceNazev>Loučné</vfa:CastObceNazev>
+        <vfa:UliceNazev>Tyršova</vfa:UliceNazev>
+        <vfa:PostaKod>40753</vfa:PostaKod>
+        <vfa:AdresniMistoKod>105058</vfa:AdresniMistoKod>
+        <vfa:TypCislaDomovnihoKod>1</vfa:TypCislaDomovnihoKod>
+        <vfa:CisloDomovni>23</vfa:CisloDomovni>
+        <vfa:CisloOrientacni>18</vfa:CisloOrientacni>
+        <vfa:CisloOrientacniPismeno>a</vfa:CisloOrientacniPismeno>
+        <vfa:RadekAdresy1>Tyršova 23/18a</vfa:RadekAdresy1>
+        <vfa:RadekAdresy2>Loučné</vfa:RadekAdresy2>
+        <vfa:RadekAdresy3>407 53 Jiříkov</vfa:RadekAdresy3>
+      </vfa:Adresa>
+    </vfa:Adresy>
+  </vfa:Data>
+</vfa:VymennyFormatAdres>

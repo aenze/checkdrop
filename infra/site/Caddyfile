@@ -1,0 +1,60 @@
+# The checkdrop.dev marketing website. Not part of a Checkdrop installation; the hosted service
+# runs it next to the same application image every installation uses.
+:8080 {
+	encode zstd gzip
+
+	header {
+		-Server
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+	}
+
+	# Astro bundles carry a content hash and frontpage media a date in the file name, so a
+	# changed file always gets a new URL.
+	@immutable_assets {
+		path /_astro/* /frontpage/assets/*
+		file {
+			root /srv
+		}
+	}
+	header @immutable_assets Cache-Control "public, max-age=31536000, immutable"
+
+	@public_demo path /public-demo/v1/emails/validate /public-demo/v1/phones/validate /public-demo/v1/addresses/autocomplete
+	handle @public_demo {
+		request_body {
+			max_size 2KB
+		}
+		uri strip_prefix /public-demo
+		header Cache-Control "no-store"
+		reverse_proxy app:8787 {
+			header_up -Authorization
+			header_up -Cookie
+			header_up -X-Request-Id
+			header_up -X-Checkdrop-Observe
+			header_up -X-Checkdrop-Operator-Key
+			header_up X-Checkdrop-Key {env.CHECKDROP_PUBLIC_DEMO_API_KEY}
+			header_up X-Checkdrop-Client "checkdrop-public-demo/1"
+			header_up X-Checkdrop-Mode "shadow"
+		}
+	}
+
+	handle /checkdrop/* {
+		respond "Resource not found" 404
+	}
+
+	handle {
+		root * /srv
+		try_files {path} {path}/index.html =404
+		file_server
+	}
+
+	log {
+		output stdout
+		format filter {
+			request>headers>Cookie delete
+			request>headers>X-Checkdrop-Key delete
+		}
+	}
+}

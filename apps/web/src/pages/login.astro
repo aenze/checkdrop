@@ -1,0 +1,17 @@
+---
+import "@fontsource-variable/inter";
+// biome-ignore lint/correctness/noUnusedImports: Astro renders the component below.
+import CustomerLogin from "../components/CustomerLogin";
+import "../styles/customer-login.css";
+---
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Přihlášení | Checkdrop</title>
+  </head>
+  <body><CustomerLogin client:load /></body>
+</html>

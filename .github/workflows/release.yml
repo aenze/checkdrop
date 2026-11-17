@@ -1,0 +1,94 @@
+# A tag vX.Y.Z publishes one release: multi-architecture images on GitHub Container Registry and a
+# GitHub release with compose.yaml, the checkdrop manager, install.sh, release.json and the
+# WordPress plugin. Every installation, including the hosted service, updates from these.
+name: release
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Version
+        id: version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          [ "$(node -p "require('./package.json').version")" = "$version" ] \
+            || { echo "package.json version differs from tag $GITHUB_REF_NAME"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run ci
+      - run: pnpm audit --prod --audit-level high
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Server image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/server.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ steps.version.outputs.prefix }}-server:${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.prefix }}-server:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+      - name: Web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/web.Dockerfile
+          build-args: |
+            CHECKDROP_WEB_TARGET=app
+            CADDYFILE=infra/web/Caddyfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ steps.version.outputs.prefix }}-web:${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.prefix }}-web:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+      - name: Release files
+        run: |
+          mkdir -p release
+          cp checkdrop compose.yaml install.sh release/
+          node scripts/release/manifest.mjs "${{ steps.version.outputs.version }}" "${{ steps.version.outputs.prefix }}" release
+          (cd integrations/wordpress && zip -qr "../../release/checkdrop-wordpress-${{ steps.version.outputs.version }}.zip" checkdrop)
+          node scripts/release/notes.mjs "${{ steps.version.outputs.version }}" > release/notes.md
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --title "Checkdrop ${{ steps.version.outputs.version }}" \
+            --notes-file release/notes.md release/checkdrop release/compose.yaml release/install.sh \
+            release/release.json release/checkdrop-wordpress-*.zip

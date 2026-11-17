@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "corpus_version": "2026-08-15.1",
+  "scope": "balanced_regression",
+  "representative_of": "documented Czech input and failure categories",
+  "not_representative_of": "pilot traffic frequency, customer outcomes, or provider uptime",
+  "cases": [
+    {
+      "id": "email-valid-domain-case",
+      "capability": "email",
+      "input": "Alice@EXAMPLE.com",
+      "expected_status": "valid",
+      "expected_normalized": "Alice@example.com",
+      "dns": "resolved_mx"
+    },
+    {
+      "id": "email-domain-typo",
+      "capability": "email",
+      "input": "jan.novak@gmial.com",
+      "expected_status": "correctable",
+      "expected_normalized": "jan.novak@gmial.com",
+      "expected_issue": "email.domain_typo",
+      "dns": "typo_target_mx"
+    },
+    {
+      "id": "email-disposable",
+      "capability": "email",
+      "input": "person@mailinator.com",
+      "expected_status": "risky",
+      "expected_normalized": "person@mailinator.com",
+      "expected_issue": "email.domain_disposable",
+      "dns": "resolved_mx"
+    },
+    {
+      "id": "email-role",
+      "capability": "email",
+      "input": "info@seznam.cz",
+      "expected_status": "risky",
+      "expected_normalized": "info@seznam.cz",
+      "expected_issue": "email.local_role",
+      "dns": "resolved_mx"
+    },
+    {
+      "id": "email-dns-unavailable",
+      "capability": "email",
+      "input": "person@example.cz",
+      "expected_status": "unknown",
+      "expected_normalized": "person@example.cz",
+      "dns": "unavailable"
+    },
+    {
+      "id": "email-domain-not-found",
+      "capability": "email",
+      "input": "person@missing.example",
+      "expected_status": "invalid",
+      "expected_normalized": "person@missing.example",
+      "expected_issue": "email.domain_no_dns",
+      "dns": "not_found"
+    },
+    {
+      "id": "email-address-record-fallback",
+      "capability": "email",
+      "input": "person@fallback.example",
+      "expected_status": "risky",
+      "expected_normalized": "person@fallback.example",
+      "expected_issue": "email.domain_no_mx",
+      "dns": "resolved_address"
+    },
+    {
+      "id": "email-missing-at",
+      "capability": "email",
+      "input": "not-an-email",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "email.syntax_invalid",
+      "dns": "not_applicable"
+    },
+    {
+      "id": "email-double-dot-local",
+      "capability": "email",
+      "input": "john..doe@example.com",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "email.syntax_invalid",
+      "dns": "not_applicable"
+    },
+    {
+      "id": "email-invalid-domain-label",
+      "capability": "email",
+      "input": "person@-example.cz",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "email.syntax_invalid",
+      "dns": "not_applicable"
+    },
+    {
+      "id": "phone-local-mobile",
+      "capability": "phone",
+      "input": "777 123 456",
+      "expected_status": "correctable",
+      "expected_normalized": "+420777123456",
+      "expected_issue": "phone.normalized"
+    },
+    {
+      "id": "phone-e164-mobile",
+      "capability": "phone",
+      "input": "+420777123456",
+      "expected_status": "valid",
+      "expected_normalized": "+420777123456"
+    },
+    {
+      "id": "phone-formatted-e164",
+      "capability": "phone",
+      "input": "+420 777 123 456",
+      "expected_status": "valid",
+      "expected_normalized": "+420777123456"
+    },
+    {
+      "id": "phone-local-landline",
+      "capability": "phone",
+      "input": "222 123 456",
+      "expected_status": "correctable",
+      "expected_normalized": "+420222123456",
+      "expected_issue": "phone.normalized"
+    },
+    {
+      "id": "phone-foreign",
+      "capability": "phone",
+      "input": "+421910123456",
+      "expected_status": "risky",
+      "expected_normalized": "+421910123456",
+      "expected_issue": "phone.country_not_cz"
+    },
+    {
+      "id": "phone-toll-free-local",
+      "capability": "phone",
+      "input": "800 123 456",
+      "expected_status": "correctable",
+      "expected_normalized": "+420800123456",
+      "expected_issue": "phone.normalized"
+    },
+    {
+      "id": "phone-too-short",
+      "capability": "phone",
+      "input": "123",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "phone.number_impossible"
+    },
+    {
+      "id": "phone-text",
+      "capability": "phone",
+      "input": "telefon",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "phone.number_impossible"
+    },
+    {
+      "id": "ico-valid-plain",
+      "capability": "company_id",
+      "input": "27082440",
+      "expected_status": "valid",
+      "expected_normalized": "27082440"
+    },
+    {
+      "id": "ico-valid-spaces",
+      "capability": "company_id",
+      "input": "270 82 440",
+      "expected_status": "valid",
+      "expected_normalized": "27082440"
+    },
+    {
+      "id": "ico-valid-leading-zero",
+      "capability": "company_id",
+      "input": "00006947",
+      "expected_status": "valid",
+      "expected_normalized": "00006947"
+    },
+    {
+      "id": "ico-valid-leading-zero-spaces",
+      "capability": "company_id",
+      "input": "000 06 947",
+      "expected_status": "valid",
+      "expected_normalized": "00006947"
+    },
+    {
+      "id": "ico-invalid-checksum",
+      "capability": "company_id",
+      "input": "27082441",
+      "expected_status": "invalid",
+      "expected_normalized": "27082441",
+      "expected_issue": "company.ico_checksum_invalid"
+    },
+    {
+      "id": "ico-too-short",
+      "capability": "company_id",
+      "input": "123",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.ico_format_invalid"
+    },
+    {
+      "id": "ico-punctuation",
+      "capability": "company_id",
+      "input": "270-82-440",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.ico_format_invalid"
+    },
+    {
+      "id": "ico-empty",
+      "capability": "company_id",
+      "input": "",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.ico_format_invalid"
+    },
+    {
+      "id": "vat-valid-eight-digits",
+      "capability": "vat_id",
+      "input": "CZ00006947",
+      "expected_status": "valid",
+      "expected_normalized": "CZ00006947"
+    },
+    {
+      "id": "vat-valid-spaces-lowercase",
+      "capability": "vat_id",
+      "input": "cz 000 069 47",
+      "expected_status": "valid",
+      "expected_normalized": "CZ00006947"
+    },
+    {
+      "id": "vat-valid-nine-digits",
+      "capability": "vat_id",
+      "input": "CZ123456789",
+      "expected_status": "valid",
+      "expected_normalized": "CZ123456789"
+    },
+    {
+      "id": "vat-valid-ten-digits",
+      "capability": "vat_id",
+      "input": "CZ-1234567890",
+      "expected_status": "valid",
+      "expected_normalized": "CZ1234567890"
+    },
+    {
+      "id": "vat-missing-country",
+      "capability": "vat_id",
+      "input": "00006947",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.vat_format_invalid"
+    },
+    {
+      "id": "vat-too-short",
+      "capability": "vat_id",
+      "input": "CZ123",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.vat_format_invalid"
+    },
+    {
+      "id": "vat-other-country",
+      "capability": "vat_id",
+      "input": "SK1234567890",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.vat_format_invalid"
+    },
+    {
+      "id": "vat-alpha",
+      "capability": "vat_id",
+      "input": "CZABCDEF12",
+      "expected_status": "invalid",
+      "expected_normalized": null,
+      "expected_issue": "company.vat_format_invalid"
+    },
+    {
+      "id": "address-square-abbreviation",
+      "capability": "address_normalization",
+      "input": "Václavské nám. 10, Praha 1",
+      "expected_normalized": "vaclavske namesti 10 praha 1"
+    },
+    {
+      "id": "address-diacritics-postcode",
+      "capability": "address_normalization",
+      "input": "Moskevská 1842, Kladno 272 04",
+      "expected_normalized": "moskevska 1842 kladno 272 04"
+    },
+    {
+      "id": "address-riverside-abbreviation",
+      "capability": "address_normalization",
+      "input": "Nábř. Edvarda Beneše 4",
+      "expected_normalized": "nabrezi edvarda benese 4"
+    },
+    {
+      "id": "address-street-prefix",
+      "capability": "address_normalization",
+      "input": "ul. Děčínská 3, Česká Kamenice",
+      "expected_normalized": "decinska 3 ceska kamenice"
+    },
+    {
+      "id": "address-class-abbreviation",
+      "capability": "address_normalization",
+      "input": "Tř. T. G. Masaryka 12",
+      "expected_normalized": "trida t g masaryka 12"
+    },
+    {
+      "id": "address-extra-spacing",
+      "capability": "address_normalization",
+      "input": "  Karlovo   náměstí  19/13  ",
+      "expected_normalized": "karlovo namesti 19 13"
+    }
+  ]
+}

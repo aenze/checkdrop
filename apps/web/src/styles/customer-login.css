@@ -1,0 +1,97 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f5f6f8;
+  color: #202b3b;
+  font-family: "Inter Variable", sans-serif;
+  line-height: 1.5;
+}
+.customer-login {
+  width: min(100% - 40px, 420px);
+  margin: clamp(40px, 12vh, 120px) auto 40px;
+}
+.customer-login-brand {
+  color: #202b3b;
+  font-size: 21px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.customer-login h1 {
+  font-size: 28px;
+  margin: 32px 0 8px;
+  letter-spacing: -0.025em;
+}
+.customer-login p {
+  font-size: 14px;
+  color: #526074;
+}
+.customer-login form {
+  margin-top: 26px;
+}
+.customer-login label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.customer-login input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #a5afbd;
+  border-radius: 6px;
+  background: white;
+  color: #202b3b;
+  font: inherit;
+}
+.customer-login .customer-login-help {
+  font-size: 12px;
+  margin: 8px 0 20px;
+}
+.customer-login button {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid #245bd6;
+  border-radius: 6px;
+  color: white;
+  background: #245bd6;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.customer-login :disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.customer-login :focus-visible {
+  outline: 3px solid #7d9ee8;
+  outline-offset: 3px;
+}
+.customer-login-status {
+  min-height: 42px;
+  margin: 16px 0;
+}
+.customer-login-support {
+  color: #245bd6;
+  font-size: 13px;
+  text-underline-offset: 3px;
+}
+.sign-in-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.customer-login .sign-in-language {
+  width: auto;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid #c3cad5;
+  background: transparent;
+  color: #3b4a5e;
+  font-size: 13px;
+  font-weight: 600;
+}

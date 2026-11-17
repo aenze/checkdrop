@@ -1,0 +1,17 @@
+{
+  "ico": "00006947",
+  "obchodniJmeno": "Ministerstvo financí",
+  "sidlo": {
+    "kodStatu": "CZ",
+    "nazevUlice": "Letenská",
+    "cisloDomovni": 525,
+    "cisloOrientacni": 15,
+    "nazevObce": "Praha",
+    "psc": 11800,
+    "textovaAdresa": "Letenská 525/15, Malá Strana, 11800 Praha 1",
+    "standardizaceAdresy": true
+  },
+  "dic": "CZ00006947",
+  "datumAktualizace": "2026-03-23",
+  "primarniZdroj": "res"
+}

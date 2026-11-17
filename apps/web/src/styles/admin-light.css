@@ -1,0 +1,961 @@
+/* Shared visual contract for every protected Checkdrop agenda. */
+html.admin-light .pilot-chip {
+  color: var(--blue);
+  background: var(--blue-soft);
+  border-color: #b8cbea;
+  border-radius: 5px;
+}
+html.admin-light .mapping-card-main {
+  align-items: start;
+}
+html.admin-light .mapping-source {
+  align-self: center;
+}
+html.admin-light .playground-card-icon:is(.address, .email) {
+  border: 0;
+  background: transparent;
+}
+html.admin-light .playground-input-wrap {
+  background: var(--panel);
+}
+html.admin-light {
+  color-scheme: light;
+  --canvas: #e9edf3;
+  --section-tint: #edf1f6;
+  --summary-tint: #dfe8fa;
+  --header-height: 48px;
+  --nav-width: 160px;
+  --canvas-raised: #fff;
+  --panel: #fff;
+  --panel-strong: #eef1f5;
+  --panel-soft: #f8fafc;
+  --border: #cbd2dc;
+  --border-soft: #dce1e8;
+  --text: #182230;
+  --text-muted: #4b596b;
+  --text-dim: #596779;
+  --blue: #285cf0;
+  --blue-bright: #285cf0;
+  --blue-soft: #eaf1fd;
+  --green: #22633c;
+  --green-soft: #edf7ef;
+  --amber: #80570c;
+  --amber-soft: #fff7e7;
+  --shadow: none;
+}
+html.admin-light :is(.topbar, .integration-topbar, .playground-topbar, .integration-rail) {
+  background: var(--panel);
+  color: var(--text);
+  border-color: var(--border-soft);
+}
+html.admin-light :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+html.admin-light :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  color: var(--text);
+  background: var(--panel);
+  border-color: var(--border);
+  border-radius: 5px;
+}
+html.admin-light input::placeholder,
+html.admin-light textarea::placeholder {
+  color: var(--text-dim);
+}
+html.admin-light :is(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--blue);
+}
+html.admin-light :is(.primary-button, .secondary-button, .quiet-button) {
+  border-radius: 5px;
+}
+html.admin-light .primary-button,
+html.admin-light .email-proposal-value button {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+html.admin-light .primary-button:hover:not(:disabled),
+html.admin-light .email-proposal-value button:hover {
+  background: #1c478c;
+  color: #fff;
+}
+html.admin-light .secondary-button {
+  background: var(--panel);
+  color: var(--text);
+}
+html.admin-light .integration-rail :is(a, .rail-sign-out) {
+  color: var(--text-muted);
+}
+html.admin-light .integration-rail a:is(.active, :hover),
+html.admin-light .integration-rail .rail-sign-out:hover,
+html.admin-light .form-switcher-list > button.selected {
+  background: var(--blue-soft);
+  border-color: #b8cbea;
+  color: var(--blue);
+}
+html.admin-light :is(.integration-heading h1, .playground-heading h1) {
+  font-size: 28px;
+}
+html.admin-light .validation-playground-shell {
+  background: var(--canvas);
+  color: var(--text);
+}
+html.admin-light .playground-topbar {
+  height: 70px;
+}
+html.admin-light .playground-main {
+  width: min(1160px, calc(100% - 130px));
+  margin-left: 106px;
+}
+html.admin-light
+  :is(
+    .playground-heading h1,
+    .playground-card h2,
+    .email-result-title strong,
+    .selected-address strong,
+    .email-proposal strong
+  ) {
+  color: var(--text);
+}
+html.admin-light .onboarding-steps li.current > :where(span) {
+  background: var(--blue);
+  color: #fff;
+}
+html.admin-light .onboarding-steps li.done {
+  color: var(--green);
+}
+html.admin-light .onboarding-steps li.done > span {
+  background: var(--green-soft);
+  color: var(--green);
+}
+@media (max-width: 820px) {
+  html.admin-light .playground-main {
+    width: calc(100% - 24px);
+    margin: 0 12px;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+}
+html.admin-light :is(.integration-detail, .integration-list, .empty-detail, .playground-card) {
+  background: var(--panel);
+  border-color: var(--border-soft);
+  border-radius: 8px;
+  box-shadow: none;
+}
+html.admin-light .playground-input-wrap {
+  height: 38px;
+  border-radius: 5px;
+}
+html.admin-light .playground-input-wrap input {
+  background: transparent;
+}
+html.admin-light :is(.playground-brand-mark, .playground-card-icon) {
+  color: var(--text-muted);
+  border: 0;
+  background: transparent;
+}
+html.admin-light
+  :is(
+    .integration-message.success,
+    .state-pill.verified,
+    .activation-section.active,
+    .selected-address,
+    .email-result.valid
+  ) {
+  color: var(--green);
+  background: var(--green-soft);
+  border-color: #c0d9c8;
+}
+html.admin-light
+  :is(.state-pill.waiting, .email-result.correctable, .email-result.risky, .email-result.unknown) {
+  color: var(--amber);
+  background: var(--amber-soft);
+  border-color: #e4d1a9;
+}
+html.admin-light :is(.integration-message.error, .playground-error, .email-result.invalid) {
+  color: #a52a32;
+  background: #fff2f3;
+  border-color: #e4bfc3;
+}
+html.admin-light .danger-text {
+  color: #a52a32;
+}
+html.admin-light .email-result-title {
+  color: var(--green);
+}
+html.admin-light .email-result:not(.valid) .email-result-title {
+  color: var(--amber);
+}
+html.admin-light .email-result.invalid .email-result-title {
+  color: #a52a32;
+}
+html.admin-light :is(.state-pill, .site-form-count, .playground-mode) {
+  border-radius: 5px;
+}
+html.admin-light :where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* Shared compact workspace geometry. */
+html.admin-light :is(.topbar, .integration-topbar, .playground-topbar) {
+  height: var(--header-height);
+  padding: 0 20px;
+}
+html.admin-light :is(.brand, .playground-brand) {
+  color: var(--blue);
+  font-size: 20px;
+}
+html.admin-light .integration-rail {
+  top: var(--header-height);
+  width: var(--nav-width);
+  align-items: stretch;
+  gap: 4px;
+  padding: 10px 8px;
+}
+html.admin-light .integration-rail a {
+  width: auto;
+  min-height: 34px;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 6px 10px;
+  gap: 8px;
+  font-size: 13px;
+  border-color: transparent;
+  border-radius: 6px;
+}
+html.admin-light .integration-rail a:is(.active, :hover) {
+  border-color: transparent;
+}
+html.admin-light .integration-rail a.active {
+  font-weight: 600;
+}
+html.admin-light .integration-rail svg {
+  width: 19px;
+  height: 19px;
+}
+html.admin-light :is(.primary-button, .secondary-button, .quiet-button) {
+  min-height: 34px;
+  padding: 7px 12px;
+  font-size: 13px;
+  line-height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+html.admin-light .monitor-workspace {
+  margin-top: var(--header-height);
+  margin-left: var(--nav-width);
+  padding: 12px 14px;
+  gap: 8px;
+  height: auto;
+  min-height: calc(100vh - var(--header-height));
+}
+html.admin-light .integration-main {
+  width: calc(100% - var(--nav-width));
+  margin-left: var(--nav-width);
+  padding: calc(var(--header-height) + 12px) 14px 76px;
+}
+html.admin-light .playground-main {
+  width: calc(100% - var(--nav-width));
+  margin: 0 0 0 var(--nav-width);
+  padding: 12px 14px;
+}
+html.admin-light :is(.integration-heading h1, .playground-heading h1, .monitor-heading h1) {
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  margin: 2px 0 4px;
+}
+html.admin-light :is(.monitor-heading p, .playground-heading p) {
+  font-size: 13px;
+  line-height: 1.5;
+}
+html.admin-light :is(.integration-eyebrow, .playground-eyebrow) {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+}
+html.admin-light .monitor-guardrail {
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--panel);
+}
+html.admin-light .monitor-guardrail strong {
+  font-size: 11px;
+}
+html.admin-light .monitor-guardrail small {
+  font-size: 10px;
+}
+
+/* Monitor: tinted summary and filters, white rows. */
+html.admin-light .monitor-metrics {
+  min-height: 62px;
+  flex: 0 0 auto;
+  background: var(--summary-tint);
+  border: 1px solid #d7e1f5;
+  border-radius: 8px;
+}
+html.admin-light .monitor-metric {
+  background: transparent;
+  padding: 10px 12px;
+  min-height: 0;
+}
+html.admin-light .monitor-metric strong {
+  font-size: 26px;
+  margin: 0;
+  line-height: 1.15;
+}
+html.admin-light .monitor-metric small {
+  font-size: 12px;
+}
+html.admin-light .monitor-metric em {
+  font-size: 11px;
+  line-height: 1.4;
+}
+html.admin-light .monitor-table-shell {
+  border-radius: 8px;
+  background: var(--panel);
+  overflow: visible;
+}
+html.admin-light .monitor-toolbar {
+  padding: 8px 10px;
+  gap: 6px;
+  background: #e7ecf3;
+  border-radius: 8px 8px 0 0;
+}
+html.admin-light .monitor-search {
+  min-height: 34px;
+  background: var(--panel);
+}
+html.admin-light .monitor-filter-selects {
+  gap: 8px;
+}
+html.admin-light .monitor-select {
+  gap: 4px;
+}
+html.admin-light .monitor-select select {
+  height: 32px;
+}
+html.admin-light .monitor-table-state {
+  font-size: 10px;
+}
+html.admin-light .monitor-case-list {
+  padding: 0;
+  gap: 0;
+}
+html.admin-light .monitor-case-card {
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  margin: 0;
+  border-radius: 0;
+  background: var(--panel);
+}
+html.admin-light .monitor-case-card:nth-child(even) {
+  background: #fafbfc;
+}
+html.admin-light .monitor-case-card.expanded {
+  background: var(--blue-soft);
+}
+html.admin-light .monitor-case-summary {
+  padding: 6px 12px;
+  min-height: 46px;
+  grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.4fr) 110px 100px 18px;
+}
+html.admin-light .case-identity {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+}
+html.admin-light .case-identity > strong {
+  grid-column: 2;
+  font-size: 13px;
+}
+html.admin-light .case-identity > small {
+  grid-column: 2;
+  font-size: 10px;
+  margin-top: 2px;
+}
+html.admin-light .case-identity > .checkout-outcome-icon {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+}
+html.admin-light .case-field-pill {
+  padding: 3px 6px;
+  min-height: 24px;
+  min-width: 44px;
+  flex-direction: row;
+  gap: 5px;
+  border-radius: 4px;
+}
+html.admin-light .case-field-pill small {
+  font-size: 9px;
+}
+html.admin-light .monitor-footer {
+  background: var(--section-tint);
+  padding: 9px 12px;
+}
+
+/* A single detail surface; labels and values wrap naturally at every width. */
+html.admin-light .monitor-case-details {
+  position: fixed;
+  z-index: 60;
+  top: var(--header-height);
+  bottom: 0;
+  right: 0;
+  width: min(560px, calc(100vw - 204px));
+  overflow-y: auto;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  box-shadow: -6px 0 20px rgb(24 34 48 / 8%);
+}
+.case-drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--section-tint);
+  border-bottom: 1px solid var(--border-soft);
+}
+html.admin-light .case-detail-meta {
+  background: var(--section-tint);
+  padding: 10px 16px;
+}
+html.admin-light .case-checkout {
+  padding: 12px 16px;
+}
+html.admin-light
+  .monitor-case-details
+  :is(.case-detail-table, .case-detail-table tbody, .case-detail-table tr) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+html.admin-light .monitor-case-details .case-detail-table thead {
+  display: none;
+}
+html.admin-light .monitor-case-details .case-detail-table tr {
+  margin: 0;
+  padding: 8px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
+}
+html.admin-light .monitor-case-details .case-detail-table tr:nth-child(even) {
+  background: #f8fafc;
+}
+html.admin-light .monitor-case-details .case-detail-table td {
+  position: relative;
+  display: block;
+  height: auto;
+  min-height: 30px;
+  padding: 5px 0 5px 114px;
+  border: 0;
+  overflow: visible;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+html.admin-light .monitor-case-details .case-detail-table td::before {
+  content: attr(data-label);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 102px;
+  color: var(--text-muted);
+  font:
+    11px / 1.5 "Inter Variable",
+    sans-serif;
+}
+html.admin-light .monitor-case-details :is(.monitor-status, .assist-outcome, .field-pill) {
+  width: fit-content;
+  border-radius: 4px;
+}
+html.admin-light .monitor-case-details .monitor-reason :is(span, small) {
+  white-space: normal;
+  overflow: visible;
+  font-size: 12px;
+}
+
+/* Integrations: website selection, form context and editable rows remain distinct. */
+html.admin-light .integration-heading {
+  margin-bottom: 14px;
+}
+html.admin-light .integration-layout {
+  grid-template-columns: 196px minmax(0, 1fr);
+  gap: 10px;
+}
+html.admin-light .integration-list {
+  align-self: start;
+}
+html.admin-light .integration-list-head {
+  background: var(--section-tint);
+  padding: 11px 12px;
+}
+html.admin-light .integration-list-item {
+  min-height: 48px;
+  padding: 8px 10px;
+}
+html.admin-light .integration-detail {
+  padding: 12px;
+}
+html.admin-light .form-switcher {
+  background: var(--summary-tint);
+  border-color: #d7e1f5;
+  padding: 6px 8px;
+  margin: 8px 0 6px;
+}
+html.admin-light .selected-form-panel {
+  background: var(--section-tint);
+}
+html.admin-light .mapping-card {
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: var(--panel);
+}
+html.admin-light .mapping-card:nth-child(even) {
+  background: #f8fafc;
+}
+html.admin-light .mapping-row-editor > summary {
+  min-height: 32px;
+  padding: 6px 10px;
+}
+html.admin-light .mapping-row-editor[open] > summary {
+  display: flex;
+  background: var(--blue-soft);
+}
+html.admin-light .mapping-row-editor[open] .mapping-source {
+  display: none;
+}
+html.admin-light .mapping-card-main {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 12px;
+  gap: 10px;
+}
+html.admin-light .mapping-card-main select {
+  min-height: 34px;
+}
+html.admin-light .mapping-footer {
+  left: calc(var(--nav-width) + 14px);
+  right: 14px;
+  bottom: 12px;
+  padding: 8px 12px;
+  background: #edf1f7;
+  border-radius: 6px;
+}
+
+/* Validation: compact field groups with clear section headers. */
+html.admin-light .playground-back {
+  font-size: 12px;
+}
+html.admin-light .playground-heading {
+  margin: 8px 0 10px;
+  gap: 12px;
+}
+html.admin-light .playground-source {
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--panel);
+}
+html.admin-light .playground-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 10px;
+}
+html.admin-light .playground-card {
+  padding: 12px;
+  min-height: 0;
+  border-radius: 8px;
+}
+html.admin-light .playground-card-heading {
+  min-height: 44px;
+  margin: -12px -12px 10px;
+  padding: 8px 12px;
+  background: var(--section-tint);
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 8px 8px 0 0;
+  gap: 10px;
+}
+html.admin-light .playground-card-heading h2 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+html.admin-light .playground-card-kicker {
+  font-size: 9px;
+}
+html.admin-light .playground-card-icon {
+  width: 24px;
+  height: 24px;
+}
+html.admin-light .playground-footer {
+  padding: 10px 12px;
+  margin-top: 14px;
+  background: #e9edf4;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  html.admin-light .playground-grid {
+    grid-template-columns: 1fr;
+  }
+  html.admin-light .playground-card {
+    max-width: 780px;
+  }
+  html.admin-light .integration-layout {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  html.admin-light .mapping-card-main {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 820px) {
+  html.admin-light .integration-rail {
+    top: auto;
+    width: 100%;
+    padding: 4px 6px max(4px, env(safe-area-inset-bottom));
+  }
+  html.admin-light .integration-rail a {
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    font-size: 10px;
+    padding: 5px 2px;
+    min-height: 48px;
+  }
+  html.admin-light .monitor-workspace {
+    margin-left: 0;
+    padding: 14px 12px 80px;
+  }
+  html.admin-light .integration-main {
+    margin-left: 0;
+    width: 100%;
+    padding: calc(var(--header-height) + 10px) 10px 160px;
+  }
+  html.admin-light .integration-layout {
+    grid-template-columns: 1fr;
+  }
+  html.admin-light .integration-detail {
+    padding: 12px;
+  }
+  html.admin-light .mapping-footer {
+    left: 12px;
+    right: 12px;
+    bottom: calc(66px + env(safe-area-inset-bottom));
+  }
+  html.admin-light .playground-main {
+    margin: 0;
+    width: 100%;
+    padding: 14px 12px 84px;
+  }
+  html.admin-light .playground-heading {
+    margin-top: 10px;
+  }
+  html.admin-light .playground-source {
+    display: none;
+  }
+  html.admin-light .monitor-case-details {
+    width: 100%;
+    bottom: calc(62px + env(safe-area-inset-bottom));
+  }
+  html.admin-light .monitor-case-details .case-detail-table td {
+    padding-left: 88px;
+  }
+  html.admin-light .monitor-case-details .case-detail-table td::before {
+    width: 78px;
+  }
+  html.admin-light .monitor-metric {
+    padding: 10px 12px;
+  }
+  html.admin-light .monitor-guardrail {
+    display: none;
+  }
+  html.admin-light .mapping-card-main select {
+    min-height: 40px;
+  }
+}
+html.admin-light .monitor-filter-options {
+  grid-column: 1 / -1;
+}
+html.admin-light .monitor-filter-options > summary {
+  display: none;
+  cursor: pointer;
+}
+@media (max-width: 820px) {
+  html.admin-light .monitor-filter-options > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    background: #e9eef7;
+    border: 1px solid var(--border-soft);
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  html.admin-light .filter-summary-copy {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 400;
+  }
+  html.admin-light .monitor-filter-options[open] .monitor-filter-selects {
+    padding-top: 10px;
+  }
+  html.admin-light .monitor-reset {
+    min-height: 34px;
+    padding: 6px 10px;
+  }
+  html.admin-light .add-field-button {
+    width: 36px;
+    min-width: 36px;
+    padding: 8px;
+  }
+  html.admin-light .add-field-label {
+    display: none;
+  }
+}
+@media (max-width: 820px) {
+  html.admin-light .monitor-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  html.admin-light .monitor-search {
+    grid-column: 1 / -1;
+  }
+  html.admin-light .monitor-filter-options {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  html.admin-light .monitor-filter-options[open] {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  html.admin-light .monitor-reset {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+  }
+  html.admin-light .monitor-case-summary {
+    gap: 6px 10px;
+    padding: 10px 12px;
+  }
+  html.admin-light .case-totals {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  html.admin-light .case-totals small {
+    margin: 0;
+  }
+}
+
+html.admin-light .monitor-topbar .brand span:last-child {
+  font-size: 20px;
+}
+html.admin-light .playground-empty {
+  min-height: 32px;
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.5;
+  gap: 7px;
+}
+html.admin-light .playground-empty svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+html.admin-light .playground-error {
+  min-height: 40px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+/* Inline summaries use width before consuming another line. */
+html.admin-light .monitor-heading {
+  min-height: 32px;
+  flex-basis: auto;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+html.admin-light .monitor-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+html.admin-light .monitor-title h1 {
+  margin: 0;
+  font-size: 22px;
+}
+html.admin-light .monitor-title p {
+  margin: 0;
+  font-size: 12px;
+}
+html.admin-light .monitor-guardrail {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+html.admin-light .monitor-metric > .monitor-metric-value {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+html.admin-light .monitor-metric-value strong {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+html.admin-light .monitor-metric-value small {
+  grid-column: 2;
+  line-height: 1.3;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+html.admin-light .monitor-metric-value em {
+  grid-column: 2;
+  margin-top: 3px;
+  font-size: 10px;
+}
+html.admin-light .monitor-table-state {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0;
+}
+html.admin-light .monitor-toolbar {
+  grid-template-columns: minmax(200px, 1fr) auto auto;
+}
+html.admin-light .monitor-reset {
+  grid-column: 3;
+  grid-row: 1;
+  min-height: 32px;
+  padding: 5px 10px;
+}
+html.admin-light .monitor-filter-options {
+  grid-row: 2;
+}
+html.admin-light .monitor-list-heading {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.4fr) 110px 100px 18px;
+  gap: 12px;
+  padding: 7px 12px;
+  background: #f3f5f8;
+  border-block: 1px solid var(--border-soft);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+html.admin-light .monitor-list-heading span:nth-child(n + 3) {
+  text-align: right;
+}
+html.admin-light .integration-detail-head {
+  margin: -12px -12px 0;
+  padding: 10px 12px;
+  background: #e2e9f3;
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+}
+html.admin-light .integration-title-line h2 {
+  font-size: 17px;
+}
+html.admin-light .mapping-heading {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  background: #e7ecf3;
+  border: 1px solid var(--border-soft);
+}
+html.admin-light .mapping-heading .section-number {
+  display: none;
+}
+html.admin-light .mapping-list {
+  gap: 0;
+  border: 1px solid var(--border-soft);
+  border-top: 0;
+}
+html.admin-light .playground-card-kicker {
+  display: none;
+}
+@media (max-width: 1100px) and (min-width: 821px) {
+  html.admin-light .monitor-title p {
+    display: none;
+  }
+  html.admin-light .monitor-case-summary,
+  html.admin-light .monitor-list-heading {
+    grid-template-columns: minmax(170px, 1fr) minmax(200px, 1.2fr) 86px 82px 18px;
+    gap: 8px;
+  }
+}
+@media (max-width: 820px) {
+  html.admin-light .monitor-heading {
+    align-items: flex-start;
+  }
+  html.admin-light .monitor-title {
+    display: block;
+  }
+  html.admin-light .monitor-title p {
+    display: none;
+  }
+  html.admin-light .monitor-workspace {
+    padding: 10px 10px 80px;
+  }
+  html.admin-light .monitor-metric {
+    padding: 9px;
+  }
+  html.admin-light .monitor-metric > .monitor-metric-value {
+    column-gap: 8px;
+  }
+  html.admin-light .monitor-metric-value small {
+    font-size: 11px;
+  }
+  html.admin-light .monitor-metric-value strong {
+    font-size: 24px;
+  }
+  html.admin-light .monitor-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  html.admin-light .monitor-table-state {
+    display: none;
+  }
+  html.admin-light .monitor-reset {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  html.admin-light .monitor-filter-options {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  html.admin-light .monitor-filter-options[open] {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  html.admin-light .monitor-list-heading {
+    display: none;
+  }
+  html.admin-light .monitor-case-summary {
+    grid-template-columns: minmax(0, 1fr) auto 18px;
+    gap: 5px 8px;
+    padding: 8px 10px;
+  }
+  html.admin-light .case-field-pill {
+    min-height: 24px;
+    padding: 3px 5px;
+  }
+  html.admin-light .mapping-row-editor > summary {
+    min-height: 40px;
+  }
+}
