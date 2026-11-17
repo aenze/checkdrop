@@ -48,7 +48,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Server image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: infra/server.Dockerfile
@@ -62,7 +62,7 @@ jobs:
             org.opencontainers.image.licenses=AGPL-3.0-only
             org.opencontainers.image.version=${{ steps.version.outputs.version }}
       - name: Web image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: infra/web.Dockerfile
