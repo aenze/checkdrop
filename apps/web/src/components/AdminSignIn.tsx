@@ -16,8 +16,8 @@ const errors: Record<string, string> = {
     "Too many attempts. Try again in a minute.",
   ),
   invalid_setup_code: t(
-    "Instalační kód nesedí. Najdete ho ve výstupu instalace.",
-    "The setup code is wrong. It is in the installation output.",
+    "Instalační kód nesedí. Na serveru ho vypíše ./checkdrop setup-code.",
+    "The setup code is wrong. On the server, ./checkdrop setup-code prints it.",
   ),
   invalid_email: t("Zadejte platný e-mail.", "Enter a valid e-mail."),
   password_too_short: t(
@@ -123,15 +123,17 @@ export default function AdminSignIn() {
           : t("Přihlášení", "Sign in")}
       </h1>
       <p>
-        {setup
-          ? t(
-              "První spuštění. Zadejte instalační kód z výstupu instalace a založte účet správce.",
-              "First start. Enter the setup code from the installation output and create the administrator account.",
-            )
-          : t(
-              "Přihlaste se do administrace Checkdropu.",
-              "Sign in to the Checkdrop administration.",
+        {setup ? (
+          <>
+            {t(
+              "První spuštění. Instalační kód vypsala instalace na svém konci a platí jen pro založení prvního účtu. Pokud ho nemáte, vypíše ho na serveru příkaz ",
+              "First start. The installation printed the setup code at its end; it only works for creating the first account. If you do not have it, this command on the server prints it: ",
             )}
+            <code>./checkdrop setup-code</code>.
+          </>
+        ) : (
+          t("Přihlaste se do administrace Checkdropu.", "Sign in to the Checkdrop administration.")
+        )}
       </p>
       {status && (
         <form onSubmit={submit} aria-busy={busy}>

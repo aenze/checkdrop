@@ -3,7 +3,15 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
-## 0.1.0 — unreleased
+## 0.1.1 — 2026-11-17
+
+- **Separate API address.** `CHECKDROP_PUBLIC_API_URL` and `CHECKDROP_PUBLIC_ADMIN_URL` in `.env`
+  give the API that shops embed and the administration different public addresses, for an
+  installation behind its own proxy. Without them nothing changes: both use `CHECKDROP_PUBLIC_URL`.
+- **First sign-in** says where the one-time setup code comes from (`./checkdrop setup-code`).
+- Migrations: none.
+
+## 0.1.0 — 2026-11-17
 
 First open source release.
 

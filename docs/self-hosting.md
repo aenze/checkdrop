@@ -23,6 +23,7 @@ The installer writes them. After editing `.env` by hand, run `./checkdrop apply`
 | Setting | Meaning |
 | --- | --- |
 | `CHECKDROP_PUBLIC_URL` | Public address, e.g. `https://checks.example.com`; used in the script tag shops embed |
+| `CHECKDROP_PUBLIC_API_URL`, `CHECKDROP_PUBLIC_ADMIN_URL` | Optional. Only when the API that shops embed and the administration use different public addresses; both default to `CHECKDROP_PUBLIC_URL` |
 | `CHECKDROP_SITE_ADDRESS` | What Caddy serves: the domain (automatic HTTPS), `http://localhost`, or `:8080` behind another proxy |
 | `CHECKDROP_HTTP_BIND`, `CHECKDROP_HTTPS_BIND` | Host ports, `80` and `443` by default |
 | `CHECKDROP_AUTO_UPDATE` | `true` (default) or `false` |

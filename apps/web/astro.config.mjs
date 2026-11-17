@@ -23,6 +23,8 @@ const outputs = {
     "zpracovani",
     "login",
     "frontpage",
+    "robots.txt",
+    "sitemap.xml",
   ]),
 };
 if (!["app", "site", "all"].includes(target)) {

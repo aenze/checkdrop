@@ -1,4 +1,6 @@
 ---
+// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
+import SiteAnalytics from "../../components/SiteAnalytics.astro";
 // Open-source repository. Change only here; every link on this page derives from it.
 const GITHUB_URL = "https://github.com/aenze/checkdrop";
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
@@ -13,7 +15,6 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex, nofollow, noarchive">
 <title>Pro vývojáře — Checkdrop</title>
 <link rel="alternate" hreflang="en" href="https://checkdrop.dev/developers/">
 <link rel="stylesheet" href="/frontpage/novy.css?v=20261112-1">
@@ -45,6 +46,7 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
   .blk p.aside a:hover { text-decoration-color: var(--text); }
   @media (max-width: 640px) { .ep, .spec { grid-template-columns: 1fr; gap: 4px 0; } .ep span, .spec dd { margin-bottom: 10px; } .install-row { flex-direction: column; align-items: stretch; } .dev-actions .btn { width: 100%; } }
 </style>
+<SiteAnalytics />
 </head>
 <body>
 <header class="nav">

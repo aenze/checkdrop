@@ -166,7 +166,8 @@ describe("domestic-only delivery hosted JavaScript", () => {
         context: "billing",
       }),
     ]);
-    expect(JSON.stringify(f.records())).not.toMatch(/Bratislava|841|Jonáša/);
+    // Whole tokens only: a random event_id may contain "841" by chance.
+    expect(JSON.stringify(f.records())).not.toMatch(/Bratislava|\b841 ?08\b|Jonáša/);
     f.finish();
     expect(f.ajax).toHaveBeenCalledOnce();
     expect(f.warningAfter("#zip")).toBe(warningText);

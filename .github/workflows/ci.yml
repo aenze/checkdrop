@@ -30,7 +30,15 @@ jobs:
           bash -n checkdrop install.sh
           printf 'CHECKDROP_VERSION=0.0.0\nCHECKDROP_POSTGRES_PASSWORD=x\nCHECKDROP_PUBLIC_URL=http://localhost:8080\nCHECKDROP_OPERATOR_TOKEN=x\nCHECKDROP_PILOT_API_KEY=x\nCHECKDROP_EMBED_SIGNING_SECRET=x\nCHECKDROP_OBSERVATION_ENCRYPTION_KEY=x\nCHECKDROP_SITE_ADDRESS=http://localhost\n' > /tmp/ci.env
           docker compose --env-file /tmp/ci.env -f compose.yaml -f compose.build.yaml config --quiet
+          # The API and administration addresses follow CHECKDROP_PUBLIC_URL unless set on their own.
+          docker compose --env-file /tmp/ci.env -f compose.yaml config --format json \
+            | jq -e '.services.app.environment | .CHECKDROP_PUBLIC_API_URL == "http://localhost:8080" and .CHECKDROP_PUBLIC_ADMIN_URL == "http://localhost:8080"'
+          printf 'CHECKDROP_PUBLIC_API_URL=https://api.example.com\n' >> /tmp/ci.env
+          docker compose --env-file /tmp/ci.env -f compose.yaml config --format json \
+            | jq -e '.services.app.environment | .CHECKDROP_PUBLIC_API_URL == "https://api.example.com" and .CHECKDROP_PUBLIC_ADMIN_URL == "http://localhost:8080"'
           for mode in password external; do
             docker run --rm -v "$PWD/infra/web/Caddyfile:/etc/caddy/Caddyfile:ro" -e CHECKDROP_ADMIN_AUTH=$mode \
               caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile
           done
+          docker run --rm -v "$PWD/infra/site/Caddyfile:/etc/caddy/Caddyfile:ro" \
+            caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile
