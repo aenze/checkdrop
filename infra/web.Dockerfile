@@ -3,7 +3,7 @@
 ARG CHECKDROP_WEB_TARGET=app
 ARG CADDYFILE=infra/web/Caddyfile
 
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 ARG CHECKDROP_WEB_TARGET
 # Only the hosted checkdrop.dev website sets it: the site key of its own inquiry form.
 ARG PUBLIC_CHECKDROP_INQUIRY_SITE=
