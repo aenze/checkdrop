@@ -30,8 +30,8 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.8",
-    "playwright": "1.65.0",
+    "@biomejs/biome": "2.6.7",
+    "playwright": "1.65.1",
     "tsx": "4.23.15",
     "turbo": "2.11.11",
     "typescript": "6.0.3",

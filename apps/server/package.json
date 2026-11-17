@@ -16,7 +16,7 @@
     "@checkdrop/core": "workspace:*",
     "@checkdrop/db": "workspace:*",
     "@checkdrop/pack-cz": "workspace:*",
-    "@hono/node-server": "2.1.7",
+    "@hono/node-server": "2.1.8",
     "hono": "4.13.18",
     "jose": "^6.2.17",
     "parse5": "7.3.0"
