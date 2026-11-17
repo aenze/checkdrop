@@ -1,71 +1,168 @@
 ---
 // biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
-import SiteAnalytics from "../components/SiteAnalytics.astro";
-// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
 import MarketingFooter from "../components/MarketingFooter.astro";
+// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#3d7bff" stroke-width="2.6"/><path d="M10 16.5l4 4 8-9" stroke="#3d7bff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 ---
 <!doctype html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="description" content="Podmínky používání Checkdropu, veřejné ukázky a sjednání služby pro firmy.">
-  <title>Podmínky užití — Checkdrop</title>
-  <link rel="stylesheet" href="/frontpage/option2.css?v=20260908-3">
-  <link rel="stylesheet" href="/frontpage/legal.css?v=20260908-1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Podmínky užití — Checkdrop</title>
+<meta name="description" content="Podmínky užití Checkdropu: open source zdarma pod AGPL-3.0 a MIT, placené nasazení od 9 900 Kč bez DPH a provoz na naší instanci. Provozuje ECOZZ s.r.o.">
+<link rel="canonical" href="https://checkdrop.dev/podminky/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Checkdrop">
+<meta property="og:locale" content="cs_CZ">
+<meta property="og:url" content="https://checkdrop.dev/podminky/">
+<meta property="og:title" content="Podmínky užití — Checkdrop">
+<meta property="og:description" content="Podmínky užití Checkdropu: open source zdarma pod AGPL-3.0 a MIT, placené nasazení od 9 900 Kč bez DPH a provoz na naší instanci. Provozuje ECOZZ s.r.o.">
+<meta property="og:image" content="https://checkdrop.dev/frontpage/assets/og-cs-20261117.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Checkdrop opraví překlep v e-mailu přímo ve formuláři: jan.novak@gmial.com na jan.novak@gmail.com.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261117-1">
+<link rel="stylesheet" href="/frontpage/pravni.css?v=20261117-1">
 <SiteAnalytics />
 </head>
 <body>
 <a class="skip" href="#main">Přejít na obsah</a>
-<header class="header"><a class="brand" href="/">Checkdrop</a><nav aria-label="Hlavní navigace"><a href="/">Zpět na web</a></nav></header>
-<main class="legal wrap" id="main">
-  <div class="legal-heading"><h1>Podmínky užití</h1><p>Pravidla pro ukázku, napojení formulářů a používání služby Checkdrop.</p></div>
-  <p class="legal-notice">Verze z 8. září 2026. Pro sjednanou službu platí znění přijaté spolu s nabídkou. Individuální smlouva má přednost.</p>
-  <nav class="legal-contents" aria-label="Obsah podmínek"><a href="#poskytovatel">Poskytovatel</a><a href="#ukazka">Veřejná ukázka</a><a href="#sjednani">Sjednání a cena</a><a href="#provoz">Používání služby</a><a href="#udaje">Osobní údaje</a><a href="#ukonceni">Ukončení</a></nav>
-  <section id="poskytovatel"><h2>1. Kdo službu poskytuje</h2>
-    <p>Poskytovatelem Checkdropu je Aenze s.r.o., se sídlem Moskevská 1842, 272 04 Kladno, IČO 28534395, DIČ CZ28534395, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl C, vložka 148584.</p>
-    <p>Kontakt pro poptávky, podporu a oznámení: <a href="mailto:support@checkdrop.dev">support@checkdrop.dev</a>. Služba je nabízena podnikatelům a organizacím pro jejich činnost. Tyto podmínky neupravují spotřebitelské předplatné.</p>
-  </section>
-  <section><h2>2. Co Checkdrop poskytuje</h2>
-    <p>Checkdrop pomáhá kontrolovat kontaktní údaje ve formulářích. Podle nastavení nabízí opravy překlepů v e-mailu, formátuje telefonní čísla, vyhledává adresy a kontroluje další sjednaná pole. Administrace umožňuje nastavit napojení a sledovat výsledky kontrol a reakce návštěvníků.</p>
-    <p>Opravu e-mailu a výběr adresy potvrzuje návštěvník. Platné telefonní číslo se může naformátovat automaticky. Kontrola domény nepotvrzuje existenci e-mailové schránky; kontrola telefonu nepotvrzuje jeho vlastníka. RÚIAN a ARES pokrývají české adresy a firmy. Podporované země a funkce určuje dokumentace a sjednaný rozsah.</p>
-    <p>Výsledky závisejí na zadaných údajích, zdrojích dat a jejich dostupnosti. Jde o pomoc při vyplnění, nikoli ověření totožnosti, platby nebo záruku doručení. Záznam o dokončení nákupu z prohlížeče sám o sobě nepotvrzuje zaplacení objednávky.</p>
-  </section>
-  <section id="ukazka"><h2>3. Veřejná ukázka</h2>
-    <p>Modelová animace a náhledy administrace používají ukázková data. Animace běží v prohlížeči. Po volbě „Vyzkoušet“ se vlastní zadání odešle ke kontrole; odpověď se zobrazí přímo pod polem nebo v poli podle typu kontroly.</p>
-    <p>Ukázku lze použít zdarma v dostupných limitech. Zadávejte zkušební údaje, ke kterým máte oprávnění. Neposílejte hesla, údaje platebních karet ani zvláštní kategorie osobních údajů. Zadání veřejné ukázky se neukládá do zákaznického monitoru. Podrobnosti uvádí <a href="/soukromi/">informace o ochraně údajů</a>.</p>
-    <p>Vyzkoušení ukázky ani odeslání poptávky neobjednává placenou službu.</p>
-  </section>
-  <section id="sjednani"><h2>4. Sjednání služby a cena</h2>
-    <p>Spolupráce vzniká písemným přijetím konkrétní nabídky, například e-mailem. Nabídka určí zákazníka, formuláře, funkce, limity, datum spuštění, délku služby nebo pilotu, cenu, informaci o DPH a splatnost. Součástí přijaté nabídky musí být odkaz na příslušnou verzi podmínek nebo jejich příloha.</p>
-    <p>Bez výslovně sjednané ceny nevzniká nárok na úhradu služby. Cena a režim fakturace se nemění pouhou úpravou webu. Pilot se po skončení automaticky nemění na placené předplatné; další provoz vyžaduje dohodu.</p>
-  </section>
-  <section id="provoz"><h2>5. Napojení a používání</h2>
-    <p>Zákazník smí napojit pouze formuláře, které je oprávněn spravovat. Odpovídá za výběr polí, nastavení režimů, informování návštěvníků a právní základ zpracování. Před spuštěním ověří společně s poskytovatelem chování formuláře, zejména nápovědu, potvrzení změn a možnost integraci vypnout.</p>
-    <p>Zákazník chrání své přístupy a neveřejné API klíče a přiděluje je pouze oprávněným osobám. Podezření na jejich zneužití oznámí bez zbytečného odkladu. Nesmí obcházet sjednané limity, pokoušet se získat cizí data ani úmyslně narušovat dostupnost služby.</p>
-    <p>Po dobu sjednané spolupráce může zákazník používat Checkdrop a dodaný integrační skript v dohodnutém rozsahu. Práva k aplikaci zůstávají poskytovateli nebo příslušným nositelům práv; práva k údajům zákazníka se tím nepřevádějí.</p>
-  </section>
-  <section><h2>6. Dostupnost a změny služby</h2>
-    <p>Rozsah podpory, případná garantovaná dostupnost a reakční doba musí být sjednány zvlášť. Službu mohou ovlivnit údržba, síťové výpadky a dostupnost externích zdrojů. Nedostupnou kontrolu nelze vykládat jako potvrzení správnosti údaje.</p>
-    <p>Poskytovatel může aplikaci opravovat a aktualizovat při zachování sjednaného plnění. Změnu, která vyžaduje úpravu integrace zákazníka, mu oznámí s přiměřeným předstihem, pokud nejde o nutné řešení bezpečnostního incidentu.</p>
-    <p>Při zneužití nebo bezpečnostním riziku může dočasně omezit dotčený přístup. Omezení musí odpovídat důvodu; zákazník bude informován bez zbytečného odkladu a strany si sdělí postup nápravy.</p>
-  </section>
-  <section id="udaje"><h2>7. Osobní údaje a důvěrnost</h2>
-    <p>U kontaktní a obchodní komunikace je Aenze správcem osobních údajů. U kontrol ve formulářích zákazníka obvykle jedná jako zpracovatel podle jeho doložených pokynů. Role, rozsah, dodavatelé, retence a výmaz se pro konkrétní nasazení sjednávají ve <a href="/zpracovani/">zpracovatelském ujednání</a> a jeho příloze před předáním reálných údajů.</p>
-    <p>Obě strany chrání neveřejné informace a zpřístupňují je pouze osobám, které je potřebují pro sjednané plnění a jsou vázány mlčenlivostí. Povinnost trvá i po skončení spolupráce; nevztahuje se na oprávněné zveřejnění vyžadované zákonem.</p>
-  </section>
-  <section><h2>8. Podpora, vady a odpovědnost</h2>
-    <p>Chybu oznamte na <a href="mailto:support@checkdrop.dev?subject=Podpora%20Checkdrop">support@checkdrop.dev</a>. Uveďte adresu formuláře, čas a popis problému, případně identifikátor kontroly. Neposílejte přístupová hesla ani zbytečné osobní údaje. Poskytovatel oznámení prověří a sdělí další postup.</p>
-    <p>Práva z vad a náhrada škody se řídí smlouvou a českým právem. Tyto podmínky nezavádějí paušální vyloučení zákonné odpovědnosti. Checkdrop nenahrazuje kontroly zákazníka u rozhodnutí s právními nebo obdobně významnými důsledky.</p>
-  </section>
-  <section id="ukonceni"><h2>9. Ukončení spolupráce</h2>
-    <p>Služba nebo pilot končí sjednaným dnem, dohodou nebo způsobem stanoveným smlouvou či právním předpisem. Výpovědní podmínky a finanční vypořádání určí nabídka. Zákonná práva na ukončení tím nejsou omezena.</p>
-    <p>Zákazník může vypnout integraci nebo odstranit skript ze svého webu. Samotné odstranění skriptu není výpovědí sjednané smlouvy. Postup a lhůty exportu, vrácení a výmazu dat včetně záloh určuje zpracovatelské ujednání.</p>
-  </section>
-  <section><h2>10. Změny podmínek a rozhodné právo</h2>
-    <p>Aktuální znění je dostupné na této stránce s datem verze. Nové znění se samo nevztahuje na již uzavřenou smlouvu; její změny vyžadují dohodu stran. Přijatou nabídku a verzi podmínek si mohou obě strany uložit.</p>
-    <p>Právní vztahy se řídí právem České republiky. Spory řeší věcně a místně příslušné soudy podle právních předpisů. Dotazy k podmínkám zasílejte na kontaktní e-mail poskytovatele.</p>
-  </section>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/cs/"><Fragment set:html={logo} />Checkdrop</a>
+    <nav aria-label="Hlavní navigace"><a class="btn btn-ghost btn-sm" href="/cs/">Zpět na web</a></nav>
+  </div>
+</header>
+
+<main class="wrap doc" id="main">
+  <header class="doc-head">
+    <h1>Podmínky užití</h1>
+    <p class="lead">Jak smíte Checkdrop používat: jako otevřený kód zdarma, s placeným nasazením, nebo s provozem u nás.</p>
+    <p class="doc-meta">Verze ze 17. listopadu 2026</p>
+  </header>
+
+  <div class="doc-body">
+    <nav class="toc" aria-label="Obsah stránky">
+      <h2>Obsah</h2>
+      <ol>
+        <li><a href="#kdo-jsme">Kdo jsme</a></li>
+        <li><a href="#licence">Open source a licence</a></li>
+        <li><a href="#sluzba">Placená služba</a></li>
+        <li><a href="#dostupnost">Dostupnost a změny</a></li>
+        <li><a href="#odpovednost">Odpovědnost</a></li>
+        <li><a href="#ukazka">Veřejná ukázka</a></li>
+        <li><a href="#ukonceni">Ukončení</a></li>
+        <li><a href="#pravo">Změny podmínek a právo</a></li>
+      </ol>
+    </nav>
+
+    <div class="doc-text">
+      <section id="kdo-jsme">
+        <h2><span class="n">1.</span>Kdo jsme</h2>
+        <p>Checkdrop je projekt Aenze. Službu poskytuje a smlouvy uzavírá společnost ECOZZ s.r.o. (dále „my“).</p>
+        <dl class="facts">
+          <dt>Sídlo</dt><dd>Moskevská 1842, 272 04 Kladno</dd>
+          <dt>IČO</dt><dd>28371003</dd>
+          <dt>DIČ</dt><dd>CZ28371003</dd>
+          <dt>Zápis</dt><dd>obchodní rejstřík vedený Městským soudem v Praze, oddíl C, vložka 136799</dd>
+          <dt>Kontakt</dt><dd><a href="mailto:support@checkdrop.dev">support@checkdrop.dev</a></dd>
+        </dl>
+        <p>Checkdrop kontroluje kontaktní údaje ve formulářích na webu: v košíku, poptávce, přihlášce nebo registraci. Opraví překlep v e-mailu, sjednotí telefon, doplní adresu z registru RÚIAN a firmu z ARES. Placenou službu nabízíme podnikatelům a firmám, ne spotřebitelům.</p>
+        <p>Checkdrop lze používat třemi způsoby. Podmínky pro každý z nich jsou níže oddělené.</p>
+        <div class="table">
+          <table>
+            <thead><tr><th scope="col">Způsob</th><th scope="col">Kde běží</th><th scope="col">Cena</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Vlastní instalace</th><td>Na vašem serveru, provozujete ji sami.</td><td>Zdarma</td></tr>
+              <tr><th scope="row">Nasazení</th><td>Na vašem serveru nebo hostingu v&nbsp;EU, nasadíme a napojíme ji my.</td><td>Jednorázově od 9&nbsp;900&nbsp;Kč bez DPH</td></tr>
+              <tr><th scope="row">Nasazení s provozem u nás</th><td>Na naší instanci, provozujeme ji my.</td><td>Nasazení a poplatek za provoz podle nabídky</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="licence">
+        <h2><span class="n">2.</span>Open source a licence</h2>
+        <p>Zdrojový kód Checkdropu je veřejný na <a href="https://github.com/aenze/checkdrop">github.com/aenze/checkdrop</a>. Kdokoli ho může zdarma stáhnout, nainstalovat a upravit podle těchto licencí:</p>
+        <ul>
+          <li><strong>AGPL-3.0:</strong> server, administrace, databázová vrstva a instalační nástroje.</li>
+          <li><strong>MIT:</strong> validační jádro, balíčky zemí, skript do pokladny, popis API a plugin pro WordPress.</li>
+        </ul>
+        <p>Software se poskytuje tak, jak je. Licence samy žádnou záruku neposkytují. Kdo upravený Checkdrop nabízí dalším přes síť, musí podle AGPL zveřejnit své úpravy. Název Checkdrop a logo patří Aenze s.r.o.; licence se týkají kódu, ne názvu.</p>
+        <p>Vlastní instalace nezakládá smlouvu s námi ani nárok na podporu. Kdo instalaci provozuje, odpovídá za ni a je správcem všech údajů, které v ní zpracovává. Nedostáváme z ní žádné údaje z formulářů a nejsme jejich správcem ani zpracovatelem.</p>
+        <p>Instalace stahuje aktualizace z GitHubu (github.com/aenze/checkdrop a ghcr.io), adresy od ČÚZK a údaje o firmách z ARES. S námi se nespojuje.</p>
+      </section>
+
+      <section id="sluzba">
+        <h2><span class="n">3.</span>Placená služba</h2>
+        <h3>Nasazení</h3>
+        <p>Nasadíme Checkdrop na váš server nebo hosting v&nbsp;EU a napojíme ho na vaše formuláře. Instalace je pak vaše a údaje zůstávají u vás.</p>
+        <h3>Nasazení s provozem u nás</h3>
+        <p>Checkdrop poběží na naší instanci. Administrace je na app.checkdrop.dev, skript v pokladně volá api.checkdrop.dev. Instanci provozujeme, aktualizujeme a zálohujeme.</p>
+        <h3>Nabídka a cena</h3>
+        <p>Smlouva vzniká přijetím naší písemné nabídky; stačí e-mail. Nabídka určí rozsah, cenu a termín, u provozu u nás také poplatek za provoz a podmínky podpory. Nasazení stojí jednorázově od 9&nbsp;900&nbsp;Kč bez DPH podle složitosti napojení. DPH připočteme podle zákona. Liší-li se nabídka od těchto podmínek, platí nabídka.</p>
+        <h3>Za co odpovídáte vy</h3>
+        <ul>
+          <li>Napojíte jen formuláře, které smíte spravovat.</li>
+          <li>Informujete návštěvníky formulářů o zpracování jejich údajů.</li>
+          <li>Máte pro zpracování těchto údajů právní základ.</li>
+          <li>Rozhodujete, co Checkdrop ve formuláři mění a zda něco brání odeslání objednávky.</li>
+        </ul>
+        <h3>Přístupové klíče</h3>
+        <p>Veřejný klíč webu patří do stránky. Tajné klíče k API patří jen na server a do prohlížeče nikdy. Chraňte je a dávejte je jen oprávněným lidem. Při podezření na zneužití nám hned napište; u provozu u nás klíč zneplatníme a vydáme nový.</p>
+        <p>Neobcházejte limity, nezkoušejte získat cizí data a nenarušujte provoz služby.</p>
+        <h3>Osobní údaje</h3>
+        <p>U nasazení jsme zpracovatelem jen po dobu, kdy máme k vaší instalaci přístup, tedy při nasazení a sjednané údržbě. U provozu u nás jsme zpracovatelem po celou dobu provozu. V obou případech uzavíráme zpracovatelskou smlouvu. Shrnutí je na stránce <a href="/zpracovani/">Zpracování dat pro klienty</a>.</p>
+      </section>
+
+      <section id="dostupnost">
+        <h2><span class="n">4.</span>Dostupnost a změny</h2>
+        <p>Vlastní instalace a nasazení na váš server jsou dostupné tak, jak je dostupný váš server.</p>
+        <p>U provozu u nás garantovanou dostupnost a reakční dobu podpory sjednává nabídka. Bez ní je neslibujeme. Provoz může přerušit údržba, výpadek sítě nebo nedostupnost zdroje, například ARES. Když kontrola neproběhne, formulář se odešle bez ní. Neznamená to, že je údaj správný.</p>
+        <p>Checkdrop průběžně vylepšujeme. Změnu, která vyžaduje úpravu vašeho napojení, oznámíme předem. Výjimkou je nutná bezpečnostní oprava.</p>
+        <p>Při zneužití nebo bezpečnostním riziku můžeme dotčený přístup dočasně omezit. Hned vám to oznámíme a domluvíme další postup.</p>
+      </section>
+
+      <section id="odpovednost">
+        <h2><span class="n">5.</span>Odpovědnost</h2>
+        <p>Kontroly Checkdropu pomáhají s vyplněním formuláře. Nejsou ověřením totožnosti.</p>
+        <ul>
+          <li>Kontrola domény e-mailu nepotvrzuje, že schránka existuje.</li>
+          <li>Kontrola telefonu nepotvrzuje, komu číslo patří.</li>
+          <li>RÚIAN a ARES pokrývají české adresy a firmy.</li>
+          <li>Zda něco brání odeslání formuláře, rozhoduje klient.</li>
+        </ul>
+        <p>Za vady placené služby a za škodu odpovídáme podle smlouvy a českého práva. Tyto podmínky zákonnou odpovědnost paušálně nevylučují.</p>
+        <p>Chybu hlaste na <a href="mailto:support@checkdrop.dev">support@checkdrop.dev</a>. Uveďte adresu formuláře, čas a popis. Neposílejte hesla ani zbytečné osobní údaje.</p>
+      </section>
+
+      <section id="ukazka">
+        <h2><span class="n">6.</span>Veřejná ukázka</h2>
+        <p>Ukázka na úvodní stránce kontroluje e-mail, telefon a adresu už během psaní. Běží přes naši instanci. Je zdarma a bez nároku na dostupnost.</p>
+        <p>Pište zkušební údaje. Nezadávejte hesla, platební údaje ani citlivé osobní údaje. Ukázku nepoužívejte k hromadným ani automatickým dotazům; můžeme ji omezit.</p>
+        <p>Hodnoty z ukázky se neukládají do monitoru žádného klienta. Provozní statistika obsahuje jen výsledek a čas kontroly, bez hodnot polí. Více na stránce <a href="/soukromi/">Ochrana osobních údajů</a>.</p>
+        <p>Vyzkoušení ukázky ani odeslání poptávky nic neobjednává.</p>
+      </section>
+
+      <section id="ukonceni">
+        <h2><span class="n">7.</span>Ukončení</h2>
+        <p>Placená služba končí podle nabídky, dohodou nebo z důvodů daných zákonem. Výpovědní lhůtu provozu u nás určí nabídka.</p>
+        <p>Instalace na vašem serveru zůstává vaše i po skončení spolupráce. Po skončení provozu u nás vám předáme export dat a pak je smažeme. Ze záloh zmizí nejpozději do 35&nbsp;dní.</p>
+        <p>Odstranění skriptu z webu samo smlouvu neukončuje.</p>
+      </section>
+
+      <section id="pravo">
+        <h2><span class="n">8.</span>Změny podmínek a právo</h2>
+        <p>Platné znění je na této stránce s datem verze. Změnu uzavřené smlouvy musíme dohodnout; stačí e-mail.</p>
+        <p>Vztahy mezi námi se řídí českým právem. Spory rozhodují české soudy.</p>
+      </section>
+    </div>
+  </div>
 </main>
 <MarketingFooter />
 </body>

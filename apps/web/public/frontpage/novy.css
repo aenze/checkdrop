@@ -934,6 +934,95 @@ h2 {
   font-size: 13px;
 }
 
+/* Inquiry form: runs Checkdrop on its own fields */
+.cta form.inquiry {
+  display: block;
+  max-width: 720px;
+  text-align: left;
+}
+.inquiry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 12px;
+}
+.inquiry .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  grid-column: span 2;
+  min-width: 0;
+}
+.inquiry .field.wide {
+  grid-column: span 4;
+}
+.inquiry .field.narrow {
+  grid-column: span 1;
+}
+.inquiry .field > label {
+  font-size: 13px;
+  color: var(--muted);
+}
+.inquiry input,
+.inquiry textarea {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+.inquiry textarea {
+  height: auto;
+  min-height: 88px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+.inquiry input:focus,
+.inquiry textarea:focus {
+  border-color: var(--blue);
+}
+.inquiry-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+.cta .inquiry-status {
+  margin: 0;
+  max-width: none;
+  font-size: 14px;
+}
+.inquiry-status[data-state="ok"] {
+  color: var(--green);
+}
+.inquiry-status[data-state="error"] {
+  color: var(--amber);
+}
+.cta .inquiry-note {
+  margin: 14px 0 0;
+  max-width: none;
+  font-size: 13px;
+  color: var(--dim);
+}
+.inquiry-note a,
+.cta small a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.inquiry-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* Footer */
 .foot {
   border-top: 1px solid var(--line);
@@ -983,6 +1072,17 @@ h2 {
   }
 }
 @media (max-width: 640px) {
+  .inquiry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .inquiry .field,
+  .inquiry .field.wide {
+    grid-column: span 2;
+  }
+  .inquiry-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
   .wrap {
     width: min(1200px, 100% - 32px);
   }

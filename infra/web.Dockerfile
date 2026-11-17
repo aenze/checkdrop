@@ -5,11 +5,13 @@ ARG CADDYFILE=infra/web/Caddyfile
 
 FROM node:24-alpine AS build
 ARG CHECKDROP_WEB_TARGET
+# Only the hosted checkdrop.dev website sets it: the site key of its own inquiry form.
+ARG PUBLIC_CHECKDROP_INQUIRY_SITE=
 RUN corepack enable
 WORKDIR /workspace
 COPY . .
 RUN pnpm install --frozen-lockfile
-RUN CHECKDROP_WEB_TARGET=${CHECKDROP_WEB_TARGET} pnpm --filter @checkdrop/web... build
+RUN CHECKDROP_WEB_TARGET=${CHECKDROP_WEB_TARGET} PUBLIC_CHECKDROP_INQUIRY_SITE=${PUBLIC_CHECKDROP_INQUIRY_SITE} pnpm --filter @checkdrop/web... build
 
 FROM caddy:2.10.2-alpine AS runtime
 ARG CADDYFILE

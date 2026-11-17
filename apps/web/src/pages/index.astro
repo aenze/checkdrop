@@ -1,6 +1,8 @@
 ---
 // biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
 import SiteAnalytics from "../components/SiteAnalytics.astro";
+// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
+import InquiryForm from "../components/InquiryForm.astro";
 // Open-source repository. Change only here; the pricing card links to it.
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
 const GITHUB_URL = "https://github.com/aenze/checkdrop";
@@ -26,10 +28,25 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Checkdrop fixes e-mail typos, completes addresses from the official Czech registry and normalizes phone numbers right in your checkout.">
+<meta name="description" content="Checkdrop fixes e-mail typos, completes addresses from the official Czech registry and normalizes phone numbers right in your forms: checkout, inquiry, application or sign-up.">
 <title>Checkdrop — catch the typo before it becomes a returned parcel</title>
+<link rel="canonical" href="https://checkdrop.dev/">
+<link rel="alternate" hreflang="en" href="https://checkdrop.dev/">
 <link rel="alternate" hreflang="cs" href="https://checkdrop.dev/cs/">
-<link rel="stylesheet" href="/frontpage/novy.css?v=20261112-1">
+<link rel="alternate" hreflang="x-default" href="https://checkdrop.dev/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://checkdrop.dev/">
+<meta property="og:title" content="Checkdrop — catch the typo before it becomes a returned parcel">
+<meta property="og:description" content="E-mail, phone, address and company ID checks right in your forms, against official Czech registries. Open source.">
+<meta property="og:site_name" content="Checkdrop">
+<meta property="og:image" content="https://checkdrop.dev/frontpage/assets/og-en-20261117.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Checkdrop fixes an e-mail typo right in the form: jan.novak@gmial.com to jan.novak@gmail.com.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='13' stroke='%233d7bff' stroke-width='2.6'/%3E%3Cpath d='M10 16.5l4 4 8-9' stroke='%233d7bff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261117-3">
 <SiteAnalytics />
 </head>
 <body>
@@ -41,8 +58,8 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
       <a href="#catches">Product</a>
       <a href="#pricing">Pricing</a>
       <a href="/developers/">Developers</a>
-      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Log in</a>
-      <a class="btn btn-blue btn-sm" href="#contact"><span class="full">Try it on your checkout</span><span class="short">Try it</span></a>
+      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Client login</a>
+      <a class="btn btn-blue btn-sm" href="#contact"><span class="full">Get Checkdrop</span><span class="short">Inquiry</span></a>
       <div class="lang-switch" aria-label="Language / Jazyk"><a href="/" class="on" aria-current="page" lang="en" hreflang="en">EN</a><a href="/cs/" lang="cs" hreflang="cs">CS</a></div>
     </nav>
   </div>
@@ -52,9 +69,9 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <section class="hero wrap">
   <div>
     <h1>Catch the typo before it becomes a returned parcel.</h1>
-    <p class="lead">Checkdrop checks e-mails, phone numbers, addresses and company IDs right in your checkout, against official Czech registries. The customer confirms the fix with one click. If you choose, it also stops orders that could not be delivered.</p>
+    <p class="lead">Checkdrop checks e-mails, phone numbers, addresses and company IDs right in your forms, whether it is a checkout, an inquiry, an application or a sign-up, against official Czech registries. The customer confirms the fix with one click. If you choose, it also stops orders that could not be delivered.</p>
     <div class="actions">
-      <a class="btn btn-blue" href="#contact">Try it on your checkout</a>
+      <a class="btn btn-blue" href="#contact">Get Checkdrop</a>
       <a class="btn btn-ghost" href="#demo">See the demo</a>
     </div>
     <ul class="proof">
@@ -104,19 +121,19 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         </div>
       </div>
       <div class="review-foot">
-        <div><strong>The customer confirms. You do nothing.</strong>We never apply a fix without their consent.</div>
+        <div><strong>The customer confirms. You do nothing.</strong>We apply a fix only with their consent. Only the phone format is unified automatically.</div>
         <button type="button" class="btn btn-blue btn-sm" id="f-reset">Continue to payment</button>
       </div>
     </div>
-    <p class="demo-note">Type into the fields. The demo looks up real Czech addresses and sends nothing else.</p>
+    <p class="demo-note">Type into the fields. The demo sends the e-mail, phone and address you type for checking and stores none of them.</p>
   </div>
 </section>
 
 <section class="stats wrap" aria-label="Facts">
-  <div><strong>3</strong><span>official sources: RÚIAN, ARES, DNS/MX</span></div>
-  <div><strong>&lt;150 ms</strong><span>address lookup on a local registry copy</span></div>
-  <div><strong>0</strong><span>orders blocked, fail-open by design</span></div>
-  <div><strong>90 days</strong><span>maximum retention, encrypted at rest</span></div>
+  <div><strong>3</strong><span>sources: the RÚIAN and ARES registries, e-mail domain check</span></div>
+  <div><strong>3 M</strong><span>address points in a local RÚIAN copy, refreshed monthly</span></div>
+  <div><strong>0</strong><span>checkouts stopped when Checkdrop does not answer</span></div>
+  <div><strong>90 days</strong><span>retention of values in the monitor, encrypted</span></div>
 </section>
 
 <section class="section video" id="video">
@@ -126,7 +143,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
       <p>One typo caught, one address completed, one phone number normalized. Sound on.</p>
     </div>
     <div class="video-frame">
-      <video id="showreel" preload="metadata" playsinline poster="/frontpage/assets/showreel-poster-20260926.jpg" width="1920" height="1080" aria-label="Checkdrop showreel video">
+      <video id="showreel" preload="metadata" playsinline poster="/frontpage/assets/showreel-poster-20260926.webp" width="1920" height="1080" aria-label="Checkdrop showreel video">
         <source src="/frontpage/assets/showreel-20260926.mp4" type="video/mp4">
       </video>
       <button type="button" class="video-play" id="showreel-play" aria-label="Play"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor"/></svg><span>Play</span></button>
@@ -185,8 +202,8 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
     <div class="frame">
       <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>app.checkdrop.dev/monitor</span></div>
       <picture>
-        <source media="(max-width: 640px)" srcset="/frontpage/assets/monitor-mobile-20260908.png" width="390" height="844">
-        <img src="/frontpage/assets/monitor-light-20260908.png" width="1440" height="900" loading="lazy" alt="Checkdrop monitor: list of customers with checked fields, reactions and results">
+        <source media="(max-width: 640px)" srcset="/frontpage/assets/monitor-mobile-20260908.webp" width="390" height="844">
+        <img src="/frontpage/assets/monitor-light-20260908.webp" width="1440" height="900" loading="lazy" alt="Checkdrop monitor: list of customers with checked fields, reactions and results">
       </picture>
     </div>
     <ul class="product-points">
@@ -200,15 +217,15 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <section class="section" id="pricing">
   <div class="wrap">
     <div class="section-head">
-      <h2>Two ways to get it into your shop.</h2>
+      <h2>Two ways to run Checkdrop.</h2>
       <p>Same open-source Checkdrop either way. The difference is who sets it up and keeps it running.</p>
     </div>
     <div class="ways">
       <article class="way is-main">
         <span class="pill">We set it up</span>
         <h3>We do it for you.</h3>
-        <p>We connect your checkout, deploy Checkdrop on your server or on EU hosting, and refresh the address and company registries every month. Your data stays with you.</p>
-        <span class="price">from CZK 9,900<small>depending on integration complexity</small></span>
+        <p>We connect your form or checkout, set up the fields and deploy Checkdrop on your server, or run it for you in the EU. The first weeks it only measures; fixes go live once you have seen the results.</p>
+        <span class="price">from CZK 9,900<small>one-off, excl. VAT, depending on integration complexity</small></span>
         <a class="btn btn-blue" href="#contact">Arrange a rollout</a>
       </article>
       <article class="way">
@@ -216,7 +233,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         <h3>Run it yourself.</h3>
         <p>All of Checkdrop is open source. Run it on your own server, free. When you'd rather not, we take it over.</p>
         <ul class="way-list">
-          <li><Fragment set:html={iconCheck} />Give your AI agent one link. It installs and checks everything.</li>
+          <li><Fragment set:html={iconCheck} />Give your AI agent one link. It installs and checks everything on your server.</li>
           <li><Fragment set:html={iconCheck} />Updates itself. If anything fails, it rolls back.</li>
           <li><Fragment set:html={iconCheck} />Admin in English and Czech.</li>
         </ul>
@@ -232,20 +249,17 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 
 <section class="cta" id="contact">
   <div class="wrap">
-    <h2>Send us a link to your checkout.</h2>
+    <h2>Send us a link to your form.</h2>
     <p>Within two working days we'll tell you what Checkdrop would catch and what the rollout would look like. No strings attached.</p>
-    <form action="mailto:support@checkdrop.dev" method="get">
-      <input type="url" name="subject" placeholder="https://www.your-shop.cz/cart" aria-label="Checkout URL">
-      <button type="submit" class="btn btn-blue">Send the link</button>
-    </form>
-    <small>Don't send customer data or passwords. Or write to support@checkdrop.dev.</small>
+    <InquiryForm lang="en" />
+    <small>Don't send customer data or passwords. Or write to <a href="mailto:support@checkdrop.dev">support@checkdrop.dev</a>.</small>
   </div>
 </section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
-    <span>© 2026 Aenze s.r.o., Kladno, Czech Republic · Company ID 28534395</span>
+    <span>© 2026 ECOZZ s.r.o., Kladno, Czech Republic · Company ID 28371003 · an Aenze project</span>
     <nav aria-label="Footer"><a href="/kontakt/" hreflang="cs">Contact</a><a href="/podminky/" hreflang="cs">Terms</a><a href="/soukromi/" hreflang="cs">Privacy</a><a href="/zpracovani/" hreflang="cs">Data processing</a><a href="/cs/" hreflang="cs">Česky</a></nav>
   </div>
 </footer>

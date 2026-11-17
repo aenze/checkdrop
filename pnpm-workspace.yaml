@@ -4,3 +4,10 @@ packages:
 
 onlyBuiltDependencies:
   - esbuild
+
+# GHSA-fc5q-39xc-vjpf (picomatch <=4.0.7, no fixed version published yet) reaches only the Astro
+# build of apps/web; the web images ship the built files with Caddy, without Node or node_modules.
+# Remove once picomatch publishes a fix.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf

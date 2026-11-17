@@ -1,6 +1,8 @@
 ---
 // biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
+// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
+import InquiryForm from "../../components/InquiryForm.astro";
 // Open-source repository. Change only here; the pricing card links to it.
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
 const GITHUB_URL = "https://github.com/aenze/checkdrop";
@@ -26,10 +28,25 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Checkdrop opraví překlep v e-mailu, doplní adresu z registru a sjednotí telefon ještě v košíku.">
+<meta name="description" content="Checkdrop opraví překlep v e-mailu, doplní adresu z registru a sjednotí telefon přímo ve formuláři: v košíku, poptávce, přihlášce i registraci.">
 <title>Checkdrop — zachyťte překlep dřív, než se z něj stane vrácený balík</title>
+<link rel="canonical" href="https://checkdrop.dev/cs/">
+<link rel="alternate" hreflang="cs" href="https://checkdrop.dev/cs/">
 <link rel="alternate" hreflang="en" href="https://checkdrop.dev/">
-<link rel="stylesheet" href="/frontpage/novy.css?v=20261112-1">
+<link rel="alternate" hreflang="x-default" href="https://checkdrop.dev/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="cs_CZ">
+<meta property="og:url" content="https://checkdrop.dev/cs/">
+<meta property="og:title" content="Checkdrop — zachyťte překlep dřív, než se z něj stane vrácený balík">
+<meta property="og:description" content="Kontrola e-mailu, telefonu, adresy a IČO přímo ve formuláři proti českým registrům. Open source.">
+<meta property="og:site_name" content="Checkdrop">
+<meta property="og:image" content="https://checkdrop.dev/frontpage/assets/og-cs-20261117.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Checkdrop opraví překlep v e-mailu přímo ve formuláři: jan.novak@gmial.com na jan.novak@gmail.com.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='13' stroke='%233d7bff' stroke-width='2.6'/%3E%3Cpath d='M10 16.5l4 4 8-9' stroke='%233d7bff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261117-3">
 <SiteAnalytics />
 </head>
 <body>
@@ -41,8 +58,8 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
       <a href="#zachyti">Produkt</a>
       <a href="#cesty">Ceny</a>
       <a href="/cs/vyvojari/">Pro vývojáře</a>
-      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Přihlásit se</a>
-      <a class="btn btn-blue btn-sm" href="#poptavka"><span class="full">Chci to do e-shopu</span><span class="short">Vyzkoušet</span></a>
+      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Přihlášení klientů</a>
+      <a class="btn btn-blue btn-sm" href="#poptavka"><span class="full">Chci Checkdrop</span><span class="short">Poptávka</span></a>
       <div class="lang-switch" aria-label="Language / Jazyk"><a href="/" lang="en" hreflang="en">EN</a><a href="/cs/" class="on" aria-current="page" lang="cs" hreflang="cs">CS</a></div>
     </nav>
   </div>
@@ -52,9 +69,9 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <section class="hero wrap">
   <div>
     <h1>Zachyťte překlep dřív, než se z něj stane vrácený balík.</h1>
-    <p class="lead">Checkdrop kontroluje e-maily, telefony, adresy a IČO přímo v košíku proti oficiálním českým registrům. Zákazník opravu potvrdí jedním kliknutím. Pokud chcete, zastaví i objednávku, kterou by nešlo doručit.</p>
+    <p class="lead">Checkdrop kontroluje e-maily, telefony, adresy a IČO přímo ve formuláři, ať je to košík, poptávka, přihláška nebo registrace. Ověřuje je proti oficiálním českým registrům. Zákazník opravu potvrdí jedním kliknutím. Pokud chcete, zastaví i objednávku, kterou by nešlo doručit.</p>
     <div class="actions">
-      <a class="btn btn-blue" href="#poptavka">Chci to do e-shopu</a>
+      <a class="btn btn-blue" href="#poptavka">Chci Checkdrop</a>
       <a class="btn btn-ghost" href="#ukazka">Vyzkoušet ukázku</a>
     </div>
     <ul class="proof">
@@ -104,19 +121,19 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         </div>
       </div>
       <div class="review-foot">
-        <div><strong>Zákazník potvrzuje, vy nic neřešíte.</strong>Opravu nikdy neprovedeme bez jeho souhlasu.</div>
+        <div><strong>Zákazník potvrzuje, vy nic neřešíte.</strong>Opravu provedeme jen s jeho souhlasem. Sami sjednotíme jen formát telefonu.</div>
         <button type="button" class="btn btn-blue btn-sm" id="f-reset">Pokračovat k platbě</button>
       </div>
     </div>
-    <p class="demo-note">Pište do polí. Ukázka hledá skutečné české adresy a nic dalšího neodesílá.</p>
+    <p class="demo-note">Pište do polí. Ukázka posílá zadaný e-mail, telefon a adresu ke kontrole a nic z nich neukládá.</p>
   </div>
 </section>
 
 <section class="stats wrap" aria-label="Fakta">
-  <div><strong>3</strong><span>oficiální zdroje: RÚIAN, ARES, DNS/MX</span></div>
-  <div><strong>&lt;150 ms</strong><span>vyhledání adresy v lokální kopii registru</span></div>
-  <div><strong>0</strong><span>zablokovaných objednávek, fail-open</span></div>
-  <div><strong>90 dní</strong><span>maximální uchování, šifrované</span></div>
+  <div><strong>3</strong><span>zdroje: registry RÚIAN a ARES, kontrola domény e-mailu</span></div>
+  <div><strong>3 mil.</strong><span>adresních míst v lokální kopii RÚIAN, obnova každý měsíc</span></div>
+  <div><strong>0</strong><span>zastavených košíků, když Checkdrop neodpoví</span></div>
+  <div><strong>90 dní</strong><span>uchování hodnot v monitoru, šifrovaně</span></div>
 </section>
 
 <section class="section video" id="video">
@@ -126,7 +143,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
       <p>Zachycený překlep, doplněná adresa, sjednocený telefon. Pusťte si zvuk.</p>
     </div>
     <div class="video-frame">
-      <video id="showreel" preload="metadata" playsinline poster="/frontpage/assets/showreel-poster-20260926.jpg" width="1920" height="1080" aria-label="Video ukázka Checkdropu">
+      <video id="showreel" preload="metadata" playsinline poster="/frontpage/assets/showreel-poster-20260926.webp" width="1920" height="1080" aria-label="Video ukázka Checkdropu">
         <source src="/frontpage/assets/showreel-20260926.mp4" type="video/mp4">
       </video>
       <button type="button" class="video-play" id="showreel-play" aria-label="Přehrát"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor"/></svg><span>Přehrát</span></button>
@@ -185,8 +202,8 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
     <div class="frame">
       <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>app.checkdrop.dev/monitor</span></div>
       <picture>
-        <source media="(max-width: 640px)" srcset="/frontpage/assets/monitor-mobile-20260908.png" width="390" height="844">
-        <img src="/frontpage/assets/monitor-light-20260908.png" width="1440" height="900" loading="lazy" alt="Monitor Checkdropu: seznam zákazníků s kontrolovanými poli, reakcemi a výsledky">
+        <source media="(max-width: 640px)" srcset="/frontpage/assets/monitor-mobile-20260908.webp" width="390" height="844">
+        <img src="/frontpage/assets/monitor-light-20260908.webp" width="1440" height="900" loading="lazy" alt="Monitor Checkdropu: seznam zákazníků s kontrolovanými poli, reakcemi a výsledky">
       </picture>
     </div>
     <ul class="product-points">
@@ -200,15 +217,15 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <section class="section" id="cesty">
   <div class="wrap">
     <div class="section-head">
-      <h2>Dva způsoby, jak to dostat do e-shopu.</h2>
+      <h2>Dva způsoby, jak Checkdrop nasadit.</h2>
       <p>Vždy stejný Checkdrop s otevřeným kódem. Liší se jen tím, kdo ho nasadí a udržuje.</p>
     </div>
     <div class="ways">
       <article class="way is-main">
         <span class="pill">Nasadíme vám to</span>
         <h3>Uděláme to za vás.</h3>
-        <p>Napojíme košík, nasadíme Checkdrop na váš server nebo hosting v EU a každý měsíc obnovíme registr adres a firem. Data zůstávají u vás.</p>
-        <span class="price">od 9 900 Kč<small>podle složitosti napojení</small></span>
+        <p>Napojíme váš formulář nebo košík, nastavíme pole a Checkdrop nasadíme na váš server, nebo ho provozujeme u nás v EU. První týdny jen měří, opravy zapneme, až uvidíte výsledky.</p>
+        <span class="price">od 9 900 Kč<small>jednorázově, bez DPH, podle složitosti napojení</small></span>
         <a class="btn btn-blue" href="#poptavka">Domluvit nasazení</a>
       </article>
       <article class="way">
@@ -216,7 +233,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         <h3>Provozujete si to sami.</h3>
         <p>Celý Checkdrop je open source. Spustíte ho na vlastním serveru, zdarma. Až nebudete chtít, převezmeme to my.</p>
         <ul class="way-list">
-          <li><Fragment set:html={iconCheck} />Dáte svému AI agentovi jeden odkaz. Nainstaluje a ověří vše sám.</li>
+          <li><Fragment set:html={iconCheck} />Dáte svému AI agentovi jeden odkaz. Na vašem serveru vše nainstaluje a ověří sám.</li>
           <li><Fragment set:html={iconCheck} />Sám se aktualizuje. Když něco selže, vrátí předchozí verzi.</li>
           <li><Fragment set:html={iconCheck} />Administrace česky i anglicky.</li>
         </ul>
@@ -232,20 +249,17 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 
 <section class="cta" id="poptavka">
   <div class="wrap">
-    <h2>Pošlete odkaz na svůj košík.</h2>
+    <h2>Pošlete odkaz na svůj formulář.</h2>
     <p>Do dvou pracovních dnů napíšeme, co by Checkdrop zachytil a jak by nasazení vypadalo. Nezávazně.</p>
-    <form action="mailto:support@checkdrop.dev" method="get">
-      <input type="url" name="subject" placeholder="https://www.vas-eshop.cz/kosik" aria-label="Adresa košíku">
-      <button type="submit" class="btn btn-blue">Poslat odkaz</button>
-    </form>
-    <small>Neposílejte zákaznická data ani hesla. Nebo napište na support@checkdrop.dev.</small>
+    <InquiryForm lang="cs" />
+    <small>Neposílejte zákaznická data ani hesla. Nebo napište na <a href="mailto:support@checkdrop.dev">support@checkdrop.dev</a>.</small>
   </div>
 </section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
-    <span>© 2026 Aenze s.r.o., Kladno · IČO 28534395</span>
+    <span>© 2026 ECOZZ s.r.o., Kladno · IČO 28371003 · projekt Aenze</span>
     <nav aria-label="Patička"><a href="/kontakt/">Kontakt</a><a href="/podminky/">Podmínky</a><a href="/soukromi/">Ochrana údajů</a><a href="/zpracovani/">Zpracování dat</a><a href="/" hreflang="en">English</a></nav>
   </div>
 </footer>

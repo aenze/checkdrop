@@ -1,0 +1,169 @@
+---
+// The inquiry form of checkdrop.dev. It runs Checkdrop itself on the hosted instance (e-mail typos,
+// phone format, company data from ARES after the IČO), so visitors try the product while writing.
+// The site key comes from the build of the hosted website and is never part of the public source.
+interface Props {
+  lang: "cs" | "en";
+}
+const { lang } = Astro.props;
+const siteKey = import.meta.env.PUBLIC_CHECKDROP_INQUIRY_SITE ?? "";
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const checkdropSite = /^cdp_site_[A-Za-z0-9-]{8,80}$/.test(siteKey) ? siteKey : "";
+const copy = {
+  cs: {
+    name: "Jméno a příjmení",
+    email: "E-mail",
+    phone: "Telefon",
+    ico: "IČO",
+    company: "Firma",
+    street: "Ulice a číslo",
+    city: "Město",
+    zip: "PSČ",
+    shop: "Adresa formuláře",
+    shopHint: "www.vas-web.cz/poptavka nebo /kosik",
+    message: "Co chcete ve formuláři kontrolovat",
+    submit: "Odeslat poptávku",
+    sending: "Odesílám…",
+    ok: "Děkujeme, poptávka dorazila. Ozveme se do dvou pracovních dnů.",
+    email_error: "Zkontrolujte prosím e-mail, abychom vám mohli odpovědět.",
+    empty: "Doplňte adresu formuláře nebo pár slov o tom, co chcete kontrolovat.",
+    error: "Poptávku se nepodařilo odeslat. Napište nám prosím na support@checkdrop.dev.",
+    limit: "Poslali jste několik poptávek za sebou. Zkuste to prosím za minutu.",
+    note: "Formulář běží s Checkdropem: zkuste překlep v e-mailu, telefon bez předvolby nebo IČO firmy.",
+    privacy: "Jak s údaji nakládáme",
+    privacyHref: "/soukromi/",
+  },
+  en: {
+    name: "Full name",
+    email: "E-mail",
+    phone: "Phone",
+    ico: "Company ID (IČO)",
+    company: "Company",
+    street: "Street and number",
+    city: "City",
+    zip: "Postal code",
+    shop: "Form address",
+    shopHint: "www.your-site.com/contact or /checkout",
+    message: "What should Checkdrop check in your form",
+    submit: "Send inquiry",
+    sending: "Sending…",
+    ok: "Thank you, we received your inquiry and will reply within two working days.",
+    email_error: "Please check the e-mail address so we can reply.",
+    empty: "Add your form address or a few words about what you want to check.",
+    error: "The inquiry could not be sent. Please write to support@checkdrop.dev.",
+    limit: "You sent several inquiries in a row. Please try again in a minute.",
+    note: "This form runs Checkdrop: try a typo in the e-mail, a phone without the prefix or a Czech company ID.",
+    privacy: "How we handle the data",
+    privacyHref: "/soukromi/",
+  },
+}[lang];
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const messages = JSON.stringify({
+  sending: copy.sending,
+  ok: copy.ok,
+  email: copy.email_error,
+  empty: copy.empty,
+  invalid: copy.error,
+  error: copy.error,
+  limit: copy.limit,
+  submit: copy.submit,
+});
+---
+<form class="inquiry" id="inquiry" action="/poptavka" method="post" novalidate data-messages={messages} data-checkdrop-key={checkdropSite || undefined}>
+  <input type="hidden" name="lang" value={lang}>
+  <input type="hidden" name="started" value="">
+  <!-- The registered office is always Czech; Checkdrop's address check needs the country. -->
+  <input type="hidden" id="inquiry-country" name="country" value="CZ">
+  <div class="inquiry-trap" aria-hidden="true"><label>Web<input name="website" tabindex="-1" autocomplete="off"></label></div>
+  <div class="inquiry-grid">
+    <div class="field"><label for="inquiry-name">{copy.name}</label><input id="inquiry-name" name="name" autocomplete="name" maxlength="120"></div>
+    <div class="field"><label for="inquiry-email">{copy.email}</label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+    <div class="field"><label for="inquiry-phone">{copy.phone}</label><input id="inquiry-phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+    <div class="field"><label for="inquiry-ico">{copy.ico}</label><input id="inquiry-ico" name="company_id" inputmode="numeric" autocomplete="off" maxlength="16"></div>
+    <div class="field wide"><label for="inquiry-company">{copy.company}</label><input id="inquiry-company" name="company_name" autocomplete="organization" maxlength="200"></div>
+    <div class="field"><label for="inquiry-street">{copy.street}</label><input id="inquiry-street" name="street" autocomplete="address-line1" maxlength="200"></div>
+    <div class="field narrow"><label for="inquiry-city">{copy.city}</label><input id="inquiry-city" name="city" autocomplete="address-level2" maxlength="100"></div>
+    <div class="field narrow"><label for="inquiry-zip">{copy.zip}</label><input id="inquiry-zip" name="postal_code" autocomplete="postal-code" maxlength="12"></div>
+    <div class="field wide"><label for="inquiry-shop">{copy.shop}</label><input id="inquiry-shop" name="shop_url" inputmode="url" placeholder={copy.shopHint} maxlength="300"></div>
+    <div class="field wide"><label for="inquiry-message">{copy.message}</label><textarea id="inquiry-message" name="message" rows="3" maxlength="4000"></textarea></div>
+  </div>
+  <div class="inquiry-foot">
+    <button class="btn btn-blue" type="submit">{copy.submit}</button>
+    <p class="inquiry-status" role="status" aria-live="polite"></p>
+  </div>
+  <p class="inquiry-note">{copy.note} <a href={copy.privacyHref}>{copy.privacy}</a>.</p>
+</form>
+<script is:inline>
+(() => {
+  const form = document.getElementById("inquiry");
+  if (!form) return;
+  // Checkdrop for this form loads after the page itself: when a visitor gets near the form or
+  // touches it, and in any case a few seconds after the page has loaded.
+  const key = form.dataset.checkdropKey;
+  if (key) {
+    let loaded = false;
+    let observer = null;
+    const load = () => {
+      if (loaded) return;
+      loaded = true;
+      if (observer) observer.disconnect();
+      const script = document.createElement("script");
+      script.src = "https://api.checkdrop.dev/v1/embed.js";
+      script.async = true;
+      script.dataset.checkdropSite = key;
+      document.head.append(script);
+    };
+    if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver((entries) => entries.some((e) => e.isIntersecting) && load(), {
+        rootMargin: "600px 0px",
+      });
+      observer.observe(form);
+    }
+    for (const type of ["focusin", "pointerdown", "keydown"]) {
+      form.addEventListener(type, load, { once: true, capture: true });
+    }
+    const later = () => setTimeout(load, 3000);
+    if (document.readyState === "complete") later();
+    else window.addEventListener("load", later, { once: true });
+  }
+  const text = JSON.parse(form.dataset.messages);
+  const status = form.querySelector(".inquiry-status");
+  const button = form.querySelector("button[type=submit]");
+  form.elements.started.value = String(Date.now());
+  const show = (key, done) => {
+    status.textContent = text[key] || text.error;
+    status.dataset.state = done ? "ok" : "error";
+  };
+  const result = new URLSearchParams(location.search).get("poptavka");
+  if (result) show(result, result === "ok");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    if (!form.elements.email.checkValidity() || !data.email) return show("email");
+    if (!data.shop_url && !data.message) return show("empty");
+    button.disabled = true;
+    button.textContent = text.sending;
+    status.textContent = "";
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (response.ok && body.result === "ok") {
+        form.reset();
+        form.elements.started.value = String(Date.now());
+        show("ok", true);
+      } else {
+        show(body.result || "error");
+      }
+    } catch {
+      show("error");
+    } finally {
+      button.disabled = false;
+      button.textContent = text.submit;
+    }
+  });
+})();
+</script>

@@ -1,10 +1,35 @@
 ---
 // biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
 import SiteAnalytics from "../../components/SiteAnalytics.astro";
+
 // Open-source repository. Change only here; every link on this page derives from it.
 const GITHUB_URL = "https://github.com/aenze/checkdrop";
+// The AI-agent guide stays English: it is the primary version for agents.
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
-const INSTALL_URL = `${GITHUB_URL}/blob/main/INSTALL.md`;
+const AGENT_INSTALL_URL = `${GITHUB_URL}/blob/main/INSTALL.md`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const INSTALL_URL = `${GITHUB_URL}/blob/main/INSTALL.cs.md`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const SELF_HOSTING_URL = `${GITHUB_URL}/blob/main/docs/self-hosting.md`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const OPENAPI_URL = `${GITHUB_URL}/blob/main/packages/contracts/openapi.yaml`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const WORDPRESS_URL = `${GITHUB_URL}/tree/main/integrations/wordpress`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const INSTALL_COMMAND =
+  "curl -fsSL https://raw.githubusercontent.com/aenze/checkdrop/main/install.sh | sudo bash -s -- --domain kontrola.example.cz";
+const SITE = "https://checkdrop.dev";
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const PAGE_URL = `${SITE}/cs/vyvojari/`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const EN_URL = `${SITE}/developers/`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const OG_IMAGE = `${SITE}/frontpage/assets/og-cs-20261117.png`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const TITLE = "Pro vývojáře: skript, API a vlastní instalace — Checkdrop";
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const DESCRIPTION =
+  "Jeden řádek do formuláře, API pro e-mail, telefon, adresy z RÚIAN a IČO z ARES. Open source, na vlastní server jedním příkazem.";
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
 const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>`;
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
@@ -15,9 +40,25 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pro vývojáře — Checkdrop</title>
-<link rel="alternate" hreflang="en" href="https://checkdrop.dev/developers/">
-<link rel="stylesheet" href="/frontpage/novy.css?v=20261112-1">
+<title>{TITLE}</title>
+<meta name="description" content={DESCRIPTION}>
+<link rel="canonical" href={PAGE_URL}>
+<link rel="alternate" hreflang="cs" href={PAGE_URL}>
+<link rel="alternate" hreflang="en" href={EN_URL}>
+<link rel="alternate" hreflang="x-default" href={EN_URL}>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Checkdrop">
+<meta property="og:title" content={TITLE}>
+<meta property="og:description" content={DESCRIPTION}>
+<meta property="og:url" content={PAGE_URL}>
+<meta property="og:locale" content="cs_CZ">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content={OG_IMAGE}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Checkdrop opraví překlep v e-mailu přímo ve formuláři: jan.novak@gmial.com na jan.novak@gmail.com.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261117-1">
 <style>
   .dev { padding: 80px 0 40px; max-width: 760px; }
   .dev h1 { font-size: clamp(36px, 4vw, 56px); line-height: 1.04; }
@@ -25,26 +66,43 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
   .code { margin: 28px 0 0; font: 14px / 1.7 ui-monospace, "SF Mono", Menlo, monospace; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; white-space: pre; overflow-x: auto; color: var(--text); }
   .code .c { color: var(--dim); }
   .code .s { color: #8fb3ff; }
+  .note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+  .note strong { color: var(--text); font-weight: 600; }
+  .note code, .blk p code, .setup-steps code, .spec code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); white-space: nowrap; }
   .blk { padding: 56px 0; border-top: 1px solid var(--line); max-width: 760px; }
   .blk h2 { font-size: 30px; line-height: 1.1; }
+  .blk h3 { margin-top: 40px; font-size: 18px; line-height: 1.3; }
   .blk p { margin-top: 14px; color: var(--muted); }
+  .blk p strong { color: var(--text); font-weight: 600; }
+  .blk a:not(.btn) { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+  .blk a:not(.btn):hover { text-decoration-color: var(--text); }
   .ep { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 12px 20px; margin-top: 24px; font-size: 14px; }
   .ep code { font: 13px ui-monospace, Menlo, monospace; color: var(--text); }
   .ep span { color: var(--muted); }
-  .install { margin-top: 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .install { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
   .install-label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); }
   .install-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
   .install-row code { flex-grow: 1; min-width: 0; font: 14px / 1.5 ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); overflow-wrap: anywhere; }
   .install-row .btn { flex-shrink: 0; min-width: 96px; }
   .blk .install p { margin-top: 12px; font-size: 14px; }
-  .spec { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px 20px; margin: 28px 0 0; font-size: 15px; }
+  .spec { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px 20px; margin: 16px 0 0; font-size: 15px; }
   .spec dt { font-weight: 600; }
   .spec dd { margin: 0; color: var(--muted); }
+  .setup-steps { margin: 16px 0 0; padding: 0; list-style: none; counter-reset: step; border-top: 1px solid var(--line); }
+  .setup-steps li { counter-increment: step; display: grid; grid-template-columns: 24px 150px minmax(0, 1fr); gap: 0 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  .setup-steps li::before { content: counter(step); font-variant-numeric: tabular-nums; color: var(--dim); }
+  .setup-steps li > strong { color: var(--text); font-weight: 600; }
+  .setup-steps li > span strong { color: var(--text); font-weight: 600; }
   .dev-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
   .blk p.aside { margin-top: 20px; font-size: 14px; color: var(--dim); }
-  .blk p.aside a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
-  .blk p.aside a:hover { text-decoration-color: var(--text); }
-  @media (max-width: 640px) { .ep, .spec { grid-template-columns: 1fr; gap: 4px 0; } .ep span, .spec dd { margin-bottom: 10px; } .install-row { flex-direction: column; align-items: stretch; } .dev-actions .btn { width: 100%; } }
+  @media (max-width: 640px) {
+    .ep, .spec { grid-template-columns: 1fr; gap: 4px 0; }
+    .ep span, .spec dd { margin-bottom: 10px; }
+    .setup-steps li { grid-template-columns: 24px minmax(0, 1fr); }
+    .setup-steps li > span { grid-column: 2; margin-top: 2px; }
+    .install-row { flex-direction: column; align-items: stretch; }
+    .dev-actions .btn { width: 100%; }
+  }
 </style>
 <SiteAnalytics />
 </head>
@@ -56,8 +114,8 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
       <a href="/cs/#zachyti">Produkt</a>
       <a href="/cs/#cesty">Ceny</a>
       <a href="/cs/vyvojari/" style="color:var(--text)">Pro vývojáře</a>
-      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Přihlásit se</a>
-      <a class="btn btn-blue btn-sm" href="/cs/#poptavka"><span class="full">Chci to do e-shopu</span><span class="short">Vyzkoušet</span></a>
+      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Přihlášení klientů</a>
+      <a class="btn btn-blue btn-sm" href="/cs/#poptavka"><span class="full">Chci Checkdrop</span><span class="short">Poptávka</span></a>
       <div class="lang-switch" aria-label="Language / Jazyk"><a href="/developers/" lang="en" hreflang="en">EN</a><a href="/cs/vyvojari/" class="on" aria-current="page" lang="cs" hreflang="cs">CS</a></div>
     </nav>
   </div>
@@ -65,57 +123,98 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
 
 <main class="wrap">
   <section class="dev">
-    <h1>Jeden řádek do košíku.</h1>
+    <h1>Jeden řádek do formuláře.</h1>
     <p class="lead">Skript si najde pole ve formuláři a začne v tichém režimu. Nic nemění, dokud pole v administraci nezapnete.</p>
-    <pre class="code">&lt;script src=<span class="s">"https://api.checkdrop.dev/v1/embed.js"</span> data-site=<span class="s">"pub_…"</span> defer&gt;&lt;/script&gt;</pre>
+    <pre class="code">&lt;script async src=<span class="s">"https://api.checkdrop.dev/v1/embed.js"</span>
+        data-checkdrop-site=<span class="s">"cdp_site_…"</span>&gt;&lt;/script&gt;</pre>
+    <p class="note">Celý řádek i s klíčem webu <code>cdp_site_…</code> zkopírujete v administraci: <strong>Napojení → Přidat web</strong>, po namapování polí krok <strong>Vložte jeden řádek do e-shopu</strong>. Patří do společné patičky před <code>&lt;/body&gt;</code>. Klíč webu je veřejný a funguje jen z domény, kterou jste u webu zadali. Na vlastní instalaci je místo <code>api.checkdrop.dev</code> vaše doména. Používá-li e-shop CSP, povolte tuto doménu pro <code>script-src</code> i <code>connect-src</code>.</p>
   </section>
 
-  <section class="blk">
+  <section class="blk" id="api">
     <h2>Nebo API.</h2>
-    <p>Každá odpověď má stav, návrh a zdroj. Když si nejsme jistí, vrátíme <code>unknown</code> a formulář projde. Klíč patří na server, nikdy do prohlížeče.</p>
-    <pre class="code">POST /v1/addresses/validate
-&#123; "country": "CZ", "line": "Karlovo nám 19 Praha" &#125;
+    <p>Pro kontroly z vašeho serveru, třeba při importu objednávek. Klíč API posílejte v hlavičce <code>X-Checkdrop-Key</code>, nikdy ho nedávejte do prohlížeče.</p>
+    <pre class="code">POST https://kontrola.example.cz/v1/emails/validate
+X-Checkdrop-Key: cdp_…
+Content-Type: application/json
 
-<span class="c">→ 200</span>
-&#123; "state": <span class="s">"suggest"</span>,
-  "proposal": <span class="s">"Karlovo náměstí 19/13, 120 00 Praha 2"</span>,
-  "source": <span class="s">"ruian"</span> &#125;</pre>
+&#123; "email": <span class="s">"jan.novak@gmial.com"</span> &#125;
+
+<span class="c">→ 200, zkráceno</span>
+&#123; "status": <span class="s">"correctable"</span>,
+  "action": <span class="s">"suggest"</span>,
+  "suggestion": <span class="s">"jan.novak@gmail.com"</span>,
+  "issues": [&#123; "code": <span class="s">"email.domain_typo"</span>, "severity": <span class="s">"warning"</span>, … &#125;],
+  "evidence": [&#123; "source": <span class="s">"dns"</span>, "state": <span class="s">"absent"</span>, … &#125;, …] &#125;</pre>
+    <p><code>status</code> je <code>valid</code>, <code>correctable</code>, <code>risky</code>, <code>invalid</code> nebo <code>unknown</code>. <code>action</code> doporučuje, co s hodnotou udělat, a <code>evidence</code> ukazuje, z čeho výsledek vychází. Když ověření neproběhne, vrátí se <code>unknown</code> s akcí <code>fail_open</code> a objednávka má projít.</p>
+    <p><strong>Klíč API:</strong> na vlastní instalaci ho vygeneruje instalátor do <code>/opt/checkdrop/.env</code> jako <code>CHECKDROP_PILOT_API_KEY</code>. Další klíče administrace zatím nezakládá. Klíč k hostované službě vydáváme na vyžádání.</p>
     <div class="ep">
-      <code>POST /v1/emails/validate</code><span>Formát, překlep v doméně, DNS a MX s pevným limitem</span>
-      <code>POST /v1/phones/validate</code><span>České číslo a sjednocený formát</span>
-      <code>POST /v1/addresses/validate</code><span>Úplnost adresy a shoda s registrem RÚIAN</span>
-      <code>POST /v1/addresses/autocomplete</code><span>Našeptávač z lokální kopie registru</span>
-      <code>POST /v1/company-ids/validate</code><span>IČO, kontrolní součet, ověření v ARES</span>
-      <code>POST /v1/names/validate</code><span>Jméno, příjmení, tituly</span>
+      <code>POST /v1/emails/validate</code><span>Formát, překlep v doméně, DNS a MX s časovým limitem</span>
+      <code>POST /v1/phones/validate</code><span>České číslo a jednotný formát</span>
+      <code>POST /v1/names/validate</code><span>Jméno a příjmení v jednom poli, tituly, velká písmena</span>
+      <code>POST /v1/addresses/validate</code><span>Jméno, příjmení a adresa, shoda s registrem RÚIAN</span>
+      <code>POST /v1/addresses/autocomplete</code><span>Našeptávač adres z lokální kopie registru</span>
+      <code>POST /v1/company-ids/validate</code><span>IČO, kontrolní součet a ověření v ARES</span>
+      <code>POST /v1/companies/autocomplete</code><span>Našeptávač firem z ARES podle názvu nebo IČO</span>
+      <code>GET /v1/health</code><span>Stav serveru, bez klíče</span>
     </div>
+    <p class="aside">Přesné tvary požadavků a odpovědí jsou v <a href={OPENAPI_URL}>kontraktu OpenAPI</a>.</p>
   </section>
 
   <section class="blk" id="vlastni-server">
-    <h2>Nebo celé u vás.</h2>
-    <p>Checkdrop je open source. Provozujete ho sami, se stejným skriptem a API jako výše, zdarma.</p>
-    <div class="install">
-      <span class="install-label">Dejte svému AI agentovi tento odkaz</span>
-      <div class="install-row"><code id="install-url">{INSTALL_URL}</code><button type="button" class="btn btn-ghost btn-sm" data-copy="install-url" data-done="Zkopírováno">Kopírovat</button></div>
-      <p>Claude, ChatGPT nebo jiný agent, který může pracovat na vašem serveru, Checkdrop nainstaluje a ověří, že vše běží. Vy jen založíte účet administrátora jednorázovým kódem.</p>
-    </div>
+    <h2>Jak Checkdrop nasadit</h2>
+    <p>Checkdrop je open source. Na vlastním serveru ho provozujete zdarma, se stejným skriptem a API jako výše.</p>
+
+    <h3>Co potřebujete</h3>
     <dl class="spec">
-      <dt>Server</dt><dd>Jeden linuxový server s Dockerem. Stačí malé VPS: zhruba 2&nbsp;CPU, 4&nbsp;GB RAM, 20&nbsp;GB disku.</dd>
-      <dt>Aktualizace</dt><dd>Automatické. Každá instalace si zkontroluje novou verzi, zazálohuje se, aktualizuje a při chybě se vrátí zpět. Administrace ukazuje běžící verzi a co je nového.</dd>
-      <dt>Rozhraní</dt><dd>Česky a anglicky.</dd>
-      <dt>Licence</dt><dd>Server a administrace pod AGPL-3.0. Validační jádro, balíčky zemí, skript v pokladně a pluginy pod MIT.</dd>
+      <dt>Server</dt><dd>Linux (Debian, Ubuntu a podobné, 64bit) s Docker Engine a Compose v2. Přístup přes SSH jako root nebo se sudo.</dd>
+      <dt>Výkon</dt><dd>2&nbsp;CPU, 4&nbsp;GB RAM, 20&nbsp;GB disku. Databáze s adresami zabere asi 4&nbsp;GB.</dd>
+      <dt>Doména</dt><dd>Záznam DNS A (při IPv6 i AAAA) míří na server, například <code>kontrola.example.cz</code>.</dd>
+      <dt>Porty</dt><dd>80 a 443 volné a otevřené ve firewallu. Certifikát HTTPS se vydává přes port 80.</dd>
+    </dl>
+
+    <h3>Instalace</h3>
+    <div class="install">
+      <span class="install-label">Spusťte na serveru se svou doménou</span>
+      <div class="install-row"><code id="install-command">{INSTALL_COMMAND}</code><button type="button" class="btn btn-ghost btn-sm" data-copy="install-command" data-done="Zkopírováno">Kopírovat</button></div>
+      <p>Instalátor vygeneruje hesla a klíče, spustí databázi, server, administraci a plánované úlohy, získá certifikát HTTPS a vypíše jednorázový instalační kód. Server naběhne asi za minutu. České adresy z RÚIAN se pak stahují na pozadí 5–15 minut podle výkonu serveru a kontrola adres se zapne sama.</p>
+    </div>
+    <div class="install">
+      <span class="install-label">Nebo dejte svému AI agentovi tento odkaz</span>
+      <div class="install-row"><code id="agent-url">{AGENT_INSTALL_URL}</code><button type="button" class="btn btn-ghost btn-sm" data-copy="agent-url" data-done="Zkopírováno">Kopírovat</button></div>
+      <p>Návod je psaný pro agenty, jako je Claude Code nebo Codex. Agent s přístupem na váš server tam Checkdrop nainstaluje, ověří, že běží, a předá vám adresu administrace a instalační kód. Instalace běží jen u vás, k nám se nic neposílá.</p>
+    </div>
+
+    <h3>Po instalaci</h3>
+    <ol class="setup-steps">
+      <li><strong>Účet správce</strong><span>Otevřete <code>https://vaše-doména/sign-in</code> a založte účet s instalačním kódem. Dokud první účet neexistuje, kód znovu vypíše <code>sudo /opt/checkdrop/checkdrop setup-code</code>.</span></li>
+      <li><strong>Web a formulář</strong><span><strong>Napojení → Přidat web</strong>: adresa stránky s formulářem a mapování jeho polí.</span></li>
+      <li><strong>Skript</strong><span>Zkopírujte řádek <code>&lt;script&gt;</code> a vložte ho na stránku s formulářem. Ve WordPressu můžete místo toho použít plugin.</span></li>
+      <li><strong>Tichý režim</strong><span>Spusťte kontrolu formuláře. Pole zatím jen sledují a Monitor ukazuje, co by Checkdrop zachytil. Zákazník nic nevidí.</span></li>
+      <li><strong>Zapnutí polí</strong><span>Až výsledkům věříte, zapínejte návrhy oprav pole po poli.</span></li>
+    </ol>
+
+    <h3>Provoz</h3>
+    <dl class="spec">
+      <dt>Aktualizace</dt><dd>Automaticky jednou denně: záloha databáze a nastavení, aktualizace, kontrola stavu a při chybě návrat na předchozí verzi. Administrace ukazuje běžící verzi.</dd>
+      <dt>Stav</dt><dd><code>sudo /opt/checkdrop/checkdrop status</code> ukáže na jedné obrazovce, co je špatně. Ruční záloha: <code>sudo /opt/checkdrop/checkdrop backup</code>.</dd>
+      <dt>WordPress</dt><dd><a href={WORDPRESS_URL}>Plugin</a> vloží skript bez úprav šablony. Pro vlastní instalaci v něm zadáte adresu svého serveru. Zatím jde o pilotní vydání.</dd>
+      <dt>Zkouška</dt><dd>Bez serveru v kopii repozitáře: <code>./checkdrop install --local</code>, pak <code>http://localhost:8080</code>.</dd>
+      <dt>Rozhraní</dt><dd>Administrace česky a anglicky. Skript ve formuláři se řídí jazykem stránky.</dd>
+      <dt>Licence</dt><dd>Server, administrace, databázová vrstva a instalátor pod AGPL-3.0. Validační jádro, balíčky zemí, skript pro formuláře, kontrakt API a plugin pro WordPress pod MIT.</dd>
       <dt>Data adres</dt><dd>Každá instalace si registr RÚIAN stáhne přímo z&nbsp;ČÚZK, my ho nešíříme. RÚIAN ©&nbsp;ČÚZK, CC&nbsp;BY&nbsp;4.0.</dd>
     </dl>
     <div class="dev-actions">
       <a class="btn btn-blue" href={GITHUB_URL}><Fragment set:html={iconGithub} />Kód na GitHubu</a>
       <a class="btn btn-ghost" href={INSTALL_URL}>Návod k instalaci</a>
+      <a class="btn btn-ghost" href={SELF_HOSTING_URL}>Provoz instalace</a>
     </div>
-    <p class="aside">Nechcete to provozovat sami? Nasadíme vám ho a budeme udržovat data aktuální, <a href="/cs/#cesty">od 9&nbsp;900&nbsp;Kč</a>.</p>
+    <p class="aside">Nechcete to provozovat sami? Nasadíme Checkdrop na váš server nebo hosting v EU a napojíme vaše formuláře. Jednorázově od 9&nbsp;900&nbsp;Kč bez DPH. <a href="/cs/#poptavka">Poptat nasazení</a></p>
   </section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
-    <span>© 2026 Aenze s.r.o., Kladno · IČO 28534395</span>
+    <span>© 2026 ECOZZ s.r.o., Kladno · IČO 28371003 · projekt Aenze</span>
     <nav aria-label="Patička"><a href="/kontakt/">Kontakt</a><a href="/podminky/">Podmínky</a><a href="/soukromi/">Ochrana údajů</a><a href="/zpracovani/">Zpracování dat</a><a href="/developers/" hreflang="en">English</a></nav>
   </div>
 </footer>

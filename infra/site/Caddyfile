@@ -21,6 +21,15 @@
 	}
 	header @immutable_assets Cache-Control "public, max-age=31536000, immutable"
 
+	# Fonts keep their file name for good; stylesheets and scripts are always linked with ?v=<date>.
+	@long_lived_assets {
+		file {
+			root /srv
+		}
+		expression `path('/frontpage/fonts/*') || (path('/frontpage/*.css', '/frontpage/*.js') && {query.v} != '')`
+	}
+	header @long_lived_assets Cache-Control "public, max-age=31536000, immutable"
+
 	@public_demo path /public-demo/v1/emails/validate /public-demo/v1/phones/validate /public-demo/v1/addresses/autocomplete
 	handle @public_demo {
 		request_body {

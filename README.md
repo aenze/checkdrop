@@ -1,8 +1,10 @@
 # Checkdrop
 
-Catch customer-data mistakes in your checkout before they become a returned parcel.
+Catch a wrong e-mail, phone, address or company ID right in the form, before it becomes a returned
+parcel, an undelivered invoice or a lost lead.
 
-Checkdrop checks the order form while the customer types: e-mail domain typos (`gmil.com` →
+Checkdrop checks a form while people fill it in, whether it is a checkout, an inquiry, an
+application or a sign-up: e-mail domain typos (`gmil.com` →
 `gmail.com`), Czech phone numbers (`+420 777 123 456`), real Czech addresses from the official
 RÚIAN register, company details from ARES by IČO, and addresses that do not belong in a shop that
 delivers only within Czechia. The customer confirms each fix with one click. You choose field by field
@@ -22,35 +24,37 @@ curl -fsSL https://raw.githubusercontent.com/aenze/checkdrop/main/install.sh \
 
 The installer generates every secret, starts the database, the server, the administration and the
 scheduled jobs, gets an HTTPS certificate and prints a one-time setup code. Open
-`https://checks.example.com/sign-in`, create the administrator account with the code, connect your
-shop and paste one script tag into its checkout.
+`https://checks.example.com/sign-in`, create the administrator account with the code, add your
+website and paste one script tag into the page with the form.
 
 **Give it to your AI agent.** [INSTALL.md](INSTALL.md) is written for AI agents such as Claude Code
-or Codex: give the agent that link and access to the server; it installs, checks the result and
-hands you the setup code.
+or Codex: give the agent that link and access to your server; it installs Checkdrop there, checks the
+result and hands you the setup code. Nothing is sent to us.
 
 | | |
 | --- | --- |
 | Server | 2 CPU, 4 GB RAM, 20 GB disk, Linux with Docker Engine and Compose v2 |
 | First start | about 1 minute, then Czech addresses download in the background (5–15 minutes) |
 | Updates | automatic and daily: backup, update, health check, rollback if anything fails |
-| Languages | Czech and English administration; the checkout follows the shop page's language |
+| Languages | Czech and English administration; the form script follows the page's language |
 
 Try it on your own computer first: `./checkdrop install --local` in a clone of this repository, then
 open <http://localhost:8080> (details in [INSTALL.md](INSTALL.md#trying-it-on-your-own-computer-instead)).
 
 ## Or let us do it
 
-We install Checkdrop on your server or a European host you choose, connect it to your shop and keep
-the address and company data current. From CZK 9,900. [checkdrop.dev](https://checkdrop.dev)
+We deploy Checkdrop on your server or a European host you choose, connect your forms and set up the
+fields; on request we also run it for you. One-off, from CZK 9,900 excl. VAT depending on the
+integration. [checkdrop.dev](https://checkdrop.dev/#contact)
 
 ## How it works
 
-- **One script tag** in the shop loads the field mapping you set in the administration. No npm
-  package, no secret key in the browser, no changes to the shop's code.
+- **One script tag** on the page loads the field mapping you set in the administration. No npm
+  package, no secret key in the browser, no changes to the website's code.
 - **Start with monitoring.** New fields only observe; the monitor shows what Checkdrop would have
   caught. Turn on suggestions field by field when you trust them.
-- **Your data stays with you.** Each installation has its own database. Full values in the monitor
+- **Your data stays with you.** Each installation runs on your server with its own database and
+  sends form data nowhere. Full values in the monitor
   are encrypted and deleted after 90 days.
 - **Same application everywhere.** The hosted service at checkdrop.dev runs the same release images
   as every self-hosted installation; only data and connections differ.
@@ -91,4 +95,4 @@ Address data © ČÚZK, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/
 downloads it directly from ČÚZK; it is not part of this repository. Company data comes live from
 ARES. See [DATA_SOURCES.md](DATA_SOURCES.md).
 
-The name “Checkdrop” and its logo belong to Aenze s.r.o.; the licences cover the code, not the name.
+Checkdrop is an Aenze project. The name “Checkdrop” and its logo belong to Aenze s.r.o.; the licences cover the code, not the name.

@@ -1,7 +1,140 @@
 ---
 // biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
-import SiteAnalytics from "../components/SiteAnalytics.astro";
-// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
 import MarketingFooter from "../components/MarketingFooter.astro";
+// biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
+import SiteAnalytics from "../components/SiteAnalytics.astro";
+
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="#3d7bff" stroke-width="2.6"/><path d="M10 16.5l4 4 8-9" stroke="#3d7bff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 ---
-<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow, noarchive"><title>Zpracování dat v pilotu — Checkdrop</title><link rel="stylesheet" href="/frontpage/option2.css?v=20260908-3"><link rel="stylesheet" href="/frontpage/legal.css?v=20260908-1"><SiteAnalytics /></head><body><a class="skip" href="#main">Přejít na obsah</a><header class="header"><a class="brand" href="/">Checkdrop</a><nav aria-label="Hlavní navigace"><a href="/">Zpět na web</a></nav></header><main class="legal wrap" id="main"><div class="legal-heading"><h1>Zpracování dat v pilotu</h1><p>Návrh smluvního ujednání mezi provozovatelem formuláře a Aenze.</p></div><p class="legal-notice">Návrh pro sjednání pilotu · 7. září 2026. Závaznost vzniká až přijetím v konkrétní smlouvě.</p><section><h2>Předmět a strany</h2><p>Zpracovatelem je Aenze s.r.o., Moskevská 1842, 272 04 Kladno, IČO 28534395, DIČ CZ28534395. Zapsána v obchodním rejstříku vedeném Městským soudem v Praze, oddíl C, vložka 148584.</p><p>Správcem je zákazník identifikovaný v přijaté nabídce. Toto ujednání je součástí smlouvy až po výslovném přijetí oběma stranami a dokončení níže uvedené přílohy. Předmětem je automatizovaná kontrola sjednaných polí, tvorba návrhů, evidence reakcí a zpřístupnění výsledků správci po dobu pilotu a sjednaného ukončení zpracování.</p></section><section><h2>Rozsah a pokyny</h2><p>Subjekty údajů jsou návštěvníci formulářů správce, jeho zákazníci a kontaktní osoby. Typy údajů mohou zahrnovat jméno, telefon, e-mail, adresu, firemní identifikační údaje a identifikátory relace, čas a výsledek kontroly. Konkrétní pole, účel, objem a režim záznamů vymezí příloha. Zvláštní kategorie osobních údajů nejsou předmětem zpracování.</p><p>Aenze zpracovává údaje pouze podle doložených pokynů správce, včetně pokynů k předávání do třetích zemí. Vyžaduje-li zpracování právní předpis, informuje správce předem, pokud to právo nezakazuje. Na pokyn porušující předpisy o ochraně údajů správce neprodleně upozorní.</p></section><section><h2>Zabezpečení a mlčenlivost</h2><p>Aenze zajistí mlčenlivost oprávněných osob a opatření odpovídající riziku podle článku 32 GDPR. Příloha popíše šifrování přenosu a uložených hodnot, omezení přístupu, oddělení projektů, evidenci přístupů, správu klíčů, obnovu a pravidelné ověřování opatření. Dokumentace implementace uvádí AES-256-GCM pro hodnoty monitoru; účinnost ostatních opatření a konkrétní nasazení musí být před spuštěním ověřeny.</p></section><section><h2>Další zpracovatelé</h2><p>Další zpracovatel smí být zapojen pouze na základě předchozího konkrétního písemného povolení správce a musí být vázán odpovídajícími povinnostmi ochrany údajů. Aenze odpovídá správci za plnění těchto povinností dalšího zpracovatele. Seznam v příloze uvede právní subjekt, službu, země zpracování a případný mechanismus předávání mimo EHP.</p></section><section><h2>Součinnost a incidenty</h2><p>Aenze s přihlédnutím k povaze zpracování pomáhá správci s žádostmi subjektů údajů a s povinnostmi podle článků 32 až 36 GDPR, včetně posouzení vlivu a předchozí konzultace. Porušení zabezpečení osobních údajů oznámí správci bez zbytečného odkladu po zjištění; poskytne dostupný popis, rozsah, možné dopady, přijatá opatření a kontakt. Chybějící informace doplňuje postupně.</p></section><section><h2>Kontrola a ukončení</h2><p>Aenze poskytne informace nezbytné k doložení plnění povinností a umožní audity včetně inspekcí správce nebo jím pověřeného auditora. Praktický postup strany koordinují tak, aby chránil údaje ostatních zákazníků a neomezoval právo kontroly.</p><p>Po skončení služby podle volby správce údaje vrátí nebo vymaže a odstraní jejich kopie, nevyžaduje-li uchování právní předpis. Termín exportu, výmazu aktivních dat a doběhu záloh bude uveden v příloze. Do výmazu platí ochranné povinnosti tohoto ujednání.</p></section><section><h2>Příloha ke konkrétnímu pilotu</h2><p>Před předáním reálných údajů musí obě strany potvrdit následující údaje:</p><ul><li>Identita a kontakty správce, schválené domény a formuláře.</li><li>Účel, pole, kategorie osob, režim kontrol a záznamů.</li><li>Začátek a konec zpracování, retence, export a výmaz včetně záloh.</li><li>Technická a organizační opatření ověřená pro nasazení.</li><li>Povolení dodavatelé, místa zpracování a případné předávání mimo EHP.</li><li>Kontakty pro incidenty, žádosti a doložené pokyny.</li></ul><p>Bez této přílohy není návrh připraven k uzavření pro konkrétního zákazníka.</p></section></main><MarketingFooter /></body></html>
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zpracování dat pro klienty — Checkdrop</title>
+<meta name="description" content="Shrnutí zpracovatelské smlouvy Checkdropu: jaké údaje ECOZZ s.r.o. pro klienty zpracovává, kteří dodavatelé se podílejí, zabezpečení, zálohy a výmaz po ukončení.">
+<link rel="canonical" href="https://checkdrop.dev/zpracovani/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Checkdrop">
+<meta property="og:locale" content="cs_CZ">
+<meta property="og:url" content="https://checkdrop.dev/zpracovani/">
+<meta property="og:title" content="Zpracování dat pro klienty — Checkdrop">
+<meta property="og:description" content="Shrnutí zpracovatelské smlouvy Checkdropu: jaké údaje ECOZZ s.r.o. pro klienty zpracovává, kteří dodavatelé se podílejí, zabezpečení, zálohy a výmaz po ukončení.">
+<meta property="og:image" content="https://checkdrop.dev/frontpage/assets/og-cs-20261117.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Checkdrop opraví překlep v e-mailu přímo ve formuláři: jan.novak@gmial.com na jan.novak@gmail.com.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261117-1">
+<link rel="stylesheet" href="/frontpage/pravni.css?v=20261117-1">
+<SiteAnalytics />
+</head>
+<body>
+<a class="skip" href="#main">Přejít na obsah</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/cs/"><Fragment set:html={logo} />Checkdrop</a>
+    <nav aria-label="Hlavní navigace"><a class="btn btn-ghost btn-sm" href="/cs/">Zpět na web</a></nav>
+  </div>
+</header>
+
+<main class="wrap doc" id="main">
+  <header class="doc-head">
+    <h1>Zpracování dat pro klienty</h1>
+    <p class="lead">Jak zpracováváme osobní údaje pro klienty, kterým Checkdrop nasazujeme nebo provozujeme.</p>
+    <p class="doc-meta">Verze ze 17. listopadu 2026 · Podepsaná smlouva nebo její příloha má přednost.</p>
+  </header>
+
+  <div class="doc-body">
+    <nav class="toc" aria-label="Obsah stránky">
+      <h2>Obsah</h2>
+      <ol>
+        <li><a href="#role">Kdy jsme zpracovatelem</a></li>
+        <li><a href="#udaje">Údaje a osoby</a></li>
+        <li><a href="#ucel">Účel a pokyny</a></li>
+        <li><a href="#dodavatele">Další zpracovatelé</a></li>
+        <li><a href="#zabezpeceni">Zabezpečení</a></li>
+        <li><a href="#vymaz">Uchování a výmaz</a></li>
+        <li><a href="#incidenty">Součinnost a incidenty</a></li>
+        <li><a href="#audity">Audity</a></li>
+      </ol>
+    </nav>
+
+    <div class="doc-text">
+      <section id="role">
+        <h2><span class="n">1.</span>Kdy jsme zpracovatelem</h2>
+        <p>Správcem údajů z formulářů je klient. ECOZZ s.r.o., Moskevská 1842, 272 04 Kladno, IČO 28371003, je jeho zpracovatelem:</p>
+        <ul>
+          <li><strong>Nasazení na server klienta:</strong> jen po dobu, kdy máme k instalaci přístup, tedy při nasazení a sjednané údržbě.</li>
+          <li><strong>Provoz u nás:</strong> po celou dobu, kdy Checkdrop běží na naší instanci.</li>
+        </ul>
+        <p>U vlastní instalace bez naší účasti zpracovatelem nejsme. S každým klientem uzavíráme zpracovatelskou smlouvu podle čl. 28 GDPR. Tato stránka ji shrnuje. Podepsaná smlouva nebo její příloha má přednost.</p>
+      </section>
+
+      <section id="udaje">
+        <h2><span class="n">2.</span>Údaje a osoby</h2>
+        <p><strong>Osoby:</strong> návštěvníci a zákazníci klienta, kteří vyplňují napojený formulář, a lidé klienta s přístupem do administrace.</p>
+        <p><strong>Údaje:</strong> podle napojených polí jméno, e-mail, telefon, adresa, IČO, DIČ a název firmy. K tomu technické údaje o kontrole: náhodný identifikátor relace, čas, výsledek, navrženou opravu a zda ji návštěvník přijal. Číslo objednávky, pokud ho e-shop předá, ukládáme jen jako nevratný otisk. U lidí klienta jejich e-mail pro přihlášení do administrace.</p>
+        <p>Zvláštní kategorie osobních údajů nezpracováváme. Pole s nimi klient nenapojuje.</p>
+      </section>
+
+      <section id="ucel">
+        <h2><span class="n">3.</span>Účel a pokyny</h2>
+        <p>Údaje zpracováváme, abychom je ve formuláři zkontrolovali, navrhli opravu a výsledky ukázali klientovi v monitoru. Dále kvůli podpoře a údržbě.</p>
+        <p>Řídíme se jen doloženými pokyny klienta: smlouvou, nastavením v administraci a jeho e-maily. Na pokyn, který podle nás porušuje předpisy, klienta upozorníme. Údaje klienta nepoužíváme pro vlastní účely a nikomu je nedáváme, kromě dodavatelů níže. Naši lidé s přístupem k údajům jsou vázáni mlčenlivostí.</p>
+      </section>
+
+      <section id="dodavatele">
+        <h2><span class="n">4.</span>Další zpracovatelé</h2>
+        <p>U provozu u nás se podílejí tito dodavatelé:</p>
+        <div class="table">
+          <table>
+            <thead><tr><th scope="col">Dodavatel</th><th scope="col">Služba</th><th scope="col">Místo</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Hetzner Online GmbH</th><td>Server instance a databáze</td><td>Německo (Falkenstein)</td></tr>
+              <tr><th scope="row">Cloudflare, Inc.</th><td>DNS, šifrované spojení, předávání požadavků, ochrana administrace (Cloudflare Access), přeposílání e-mailu podpory</td><td>USA a síť datových center</td></tr>
+              <tr><th scope="row">Cloudflare, Inc. (R2)</th><td>Šifrované zálohy databáze</td><td>EU</td></tr>
+              <tr><th scope="row">Český poskytovatel hostingu</th><td>Poštovní schránka pro e-mail podpory</td><td>Česko</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Pro Cloudflare, Inc. platí certifikace podle rámce pro ochranu osobních údajů mezi EU a USA a standardní smluvní doložky. Při doplnění firmy posíláme do ARES jen IČO. Adresy hledáme v místní kopii registru RÚIAN.</p>
+        <p>U nasazení na server klienta používá klient své vlastní dodavatele. Nového dalšího zpracovatele nebo jeho změnu klientovi oznámíme předem a klient může vznést námitku.</p>
+      </section>
+
+      <section id="zabezpeceni">
+        <h2><span class="n">5.</span>Zabezpečení</h2>
+        <ul>
+          <li>Spojení s instancí je šifrované.</li>
+          <li>Hodnoty v monitoru, tedy zadané údaje a navržené opravy, ukládáme šifrovaně (AES-256-GCM).</li>
+          <li>Administraci chrání Cloudflare Access a přihlášení. K serveru mají přístup jen naši pověření lidé.</li>
+          <li>Databázi každý den šifrovaně zálohujeme do Cloudflare R2 v jurisdikci EU. Zálohy držíme 35&nbsp;dní a prvních 7&nbsp;dní je nelze smazat.</li>
+          <li>Před každou aktualizací vzniká místní záloha na serveru; ponecháváme posledních 10.</li>
+        </ul>
+      </section>
+
+      <section id="vymaz">
+        <h2><span class="n">6.</span>Uchování a výmaz</h2>
+        <p>Zadané údaje a navržené opravy v monitoru mažeme po 90&nbsp;dnech.</p>
+        <p>Po skončení provozu u nás klientovi na požádání předáme export dat. Pak údaje z instance smažeme. Ze záloh zmizí nejpozději do 35&nbsp;dní, kdy záloha vyprší. Údaje uchováme déle jen tehdy, když to vyžaduje zákon.</p>
+        <p>U nasazení na server klienta zůstávají údaje u klienta. Po skončení přístupu si žádné kopie neponecháváme.</p>
+      </section>
+
+      <section id="incidenty">
+        <h2><span class="n">7.</span>Součinnost a incidenty</h2>
+        <p>Pomůžeme klientovi vyřídit žádosti návštěvníků o přístup, opravu nebo výmaz údajů. Pomůžeme i s posouzením vlivu na ochranu údajů, je-li potřeba.</p>
+        <p>Porušení zabezpečení osobních údajů oznámíme klientovi bez zbytečného odkladu poté, co se o něm dozvíme. Uvedeme, co se stalo, kterých údajů a osob se to týká, možné dopady, přijatá opatření a kontakt. Co ještě nevíme, doplníme průběžně.</p>
+      </section>
+
+      <section id="audity">
+        <h2><span class="n">8.</span>Audity</h2>
+        <p>Na požádání doložíme, jak povinnosti plníme. Klient nebo jím pověřený auditor může provést audit či kontrolu. Termín a rozsah domluvíme předem tak, aby nebyly ohroženy údaje jiných klientů.</p>
+        <p>Dotazy ke zpracování posílejte na <a href="mailto:support@checkdrop.dev">support@checkdrop.dev</a>.</p>
+      </section>
+    </div>
+  </div>
+</main>
+<MarketingFooter />
+</body>
+</html>

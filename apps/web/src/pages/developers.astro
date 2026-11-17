@@ -1,10 +1,32 @@
 ---
 // biome-ignore lint/correctness/noUnusedImports: Rendered by the Astro template.
 import SiteAnalytics from "../components/SiteAnalytics.astro";
+
 // Open-source repository. Change only here; every link on this page derives from it.
 const GITHUB_URL = "https://github.com/aenze/checkdrop";
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
 const INSTALL_URL = `${GITHUB_URL}/blob/main/INSTALL.md`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const SELF_HOSTING_URL = `${GITHUB_URL}/blob/main/docs/self-hosting.md`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const OPENAPI_URL = `${GITHUB_URL}/blob/main/packages/contracts/openapi.yaml`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const WORDPRESS_URL = `${GITHUB_URL}/tree/main/integrations/wordpress`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const INSTALL_COMMAND =
+  "curl -fsSL https://raw.githubusercontent.com/aenze/checkdrop/main/install.sh | sudo bash -s -- --domain checks.example.com";
+const SITE = "https://checkdrop.dev";
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const PAGE_URL = `${SITE}/developers/`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const CS_URL = `${SITE}/cs/vyvojari/`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const OG_IMAGE = `${SITE}/frontpage/assets/og-en-20261117.png`;
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const TITLE = "For developers: script, API and self-hosting — Checkdrop";
+// biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
+const DESCRIPTION =
+  "One line in your form, an API for e-mail, phone, Czech addresses from RÚIAN and company IDs from ARES. Open source, on your own server with one command.";
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
 const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>`;
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
@@ -15,9 +37,25 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>For developers — Checkdrop</title>
-<link rel="alternate" hreflang="cs" href="https://checkdrop.dev/cs/vyvojari/">
-<link rel="stylesheet" href="/frontpage/novy.css?v=20261112-1">
+<title>{TITLE}</title>
+<meta name="description" content={DESCRIPTION}>
+<link rel="canonical" href={PAGE_URL}>
+<link rel="alternate" hreflang="en" href={PAGE_URL}>
+<link rel="alternate" hreflang="cs" href={CS_URL}>
+<link rel="alternate" hreflang="x-default" href={PAGE_URL}>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Checkdrop">
+<meta property="og:title" content={TITLE}>
+<meta property="og:description" content={DESCRIPTION}>
+<meta property="og:url" content={PAGE_URL}>
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:image" content={OG_IMAGE}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Checkdrop fixes an e-mail typo right in the form: jan.novak@gmial.com to jan.novak@gmail.com.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261117-1">
 <style>
   .dev { padding: 80px 0 40px; max-width: 760px; }
   .dev h1 { font-size: clamp(36px, 4vw, 56px); line-height: 1.04; }
@@ -25,26 +63,43 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
   .code { margin: 28px 0 0; font: 14px / 1.7 ui-monospace, "SF Mono", Menlo, monospace; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; white-space: pre; overflow-x: auto; color: var(--text); }
   .code .c { color: var(--dim); }
   .code .s { color: #8fb3ff; }
+  .note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+  .note strong { color: var(--text); font-weight: 600; }
+  .note code, .blk p code, .setup-steps code, .spec code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); white-space: nowrap; }
   .blk { padding: 56px 0; border-top: 1px solid var(--line); max-width: 760px; }
   .blk h2 { font-size: 30px; line-height: 1.1; }
+  .blk h3 { margin-top: 40px; font-size: 18px; line-height: 1.3; }
   .blk p { margin-top: 14px; color: var(--muted); }
+  .blk p strong { color: var(--text); font-weight: 600; }
+  .blk a:not(.btn) { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+  .blk a:not(.btn):hover { text-decoration-color: var(--text); }
   .ep { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 12px 20px; margin-top: 24px; font-size: 14px; }
   .ep code { font: 13px ui-monospace, Menlo, monospace; color: var(--text); }
   .ep span { color: var(--muted); }
-  .install { margin-top: 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .install { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
   .install-label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); }
   .install-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
   .install-row code { flex-grow: 1; min-width: 0; font: 14px / 1.5 ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); overflow-wrap: anywhere; }
   .install-row .btn { flex-shrink: 0; min-width: 96px; }
   .blk .install p { margin-top: 12px; font-size: 14px; }
-  .spec { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px 20px; margin: 28px 0 0; font-size: 15px; }
+  .spec { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px 20px; margin: 16px 0 0; font-size: 15px; }
   .spec dt { font-weight: 600; }
   .spec dd { margin: 0; color: var(--muted); }
+  .setup-steps { margin: 16px 0 0; padding: 0; list-style: none; counter-reset: step; border-top: 1px solid var(--line); }
+  .setup-steps li { counter-increment: step; display: grid; grid-template-columns: 24px 150px minmax(0, 1fr); gap: 0 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  .setup-steps li::before { content: counter(step); font-variant-numeric: tabular-nums; color: var(--dim); }
+  .setup-steps li > strong { color: var(--text); font-weight: 600; }
+  .setup-steps li > span strong { color: var(--text); font-weight: 600; }
   .dev-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
   .blk p.aside { margin-top: 20px; font-size: 14px; color: var(--dim); }
-  .blk p.aside a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
-  .blk p.aside a:hover { text-decoration-color: var(--text); }
-  @media (max-width: 640px) { .ep, .spec { grid-template-columns: 1fr; gap: 4px 0; } .ep span, .spec dd { margin-bottom: 10px; } .install-row { flex-direction: column; align-items: stretch; } .dev-actions .btn { width: 100%; } }
+  @media (max-width: 640px) {
+    .ep, .spec { grid-template-columns: 1fr; gap: 4px 0; }
+    .ep span, .spec dd { margin-bottom: 10px; }
+    .setup-steps li { grid-template-columns: 24px minmax(0, 1fr); }
+    .setup-steps li > span { grid-column: 2; margin-top: 2px; }
+    .install-row { flex-direction: column; align-items: stretch; }
+    .dev-actions .btn { width: 100%; }
+  }
 </style>
 <SiteAnalytics />
 </head>
@@ -56,8 +111,8 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
       <a href="/#catches">Product</a>
       <a href="/#pricing">Pricing</a>
       <a href="/developers/" style="color:var(--text)">Developers</a>
-      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Log in</a>
-      <a class="btn btn-blue btn-sm" href="/#contact"><span class="full">Try it on your checkout</span><span class="short">Try it</span></a>
+      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Client login</a>
+      <a class="btn btn-blue btn-sm" href="/#contact"><span class="full">Get Checkdrop</span><span class="short">Inquiry</span></a>
       <div class="lang-switch" aria-label="Language / Jazyk"><a href="/developers/" class="on" aria-current="page" lang="en" hreflang="en">EN</a><a href="/cs/vyvojari/" lang="cs" hreflang="cs">CS</a></div>
     </nav>
   </div>
@@ -65,57 +120,98 @@ const logo = `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx
 
 <main class="wrap">
   <section class="dev">
-    <h1>One line in your checkout.</h1>
+    <h1>One line in your form.</h1>
     <p class="lead">The script finds the fields in your form and starts in silent mode. It changes nothing until you switch a field on in the admin.</p>
-    <pre class="code">&lt;script src=<span class="s">"https://api.checkdrop.dev/v1/embed.js"</span> data-site=<span class="s">"pub_…"</span> defer&gt;&lt;/script&gt;</pre>
+    <pre class="code">&lt;script async src=<span class="s">"https://api.checkdrop.dev/v1/embed.js"</span>
+        data-checkdrop-site=<span class="s">"cdp_site_…"</span>&gt;&lt;/script&gt;</pre>
+    <p class="note">Copy the whole line, including the site key <code>cdp_site_…</code>, from the admin: <strong>Connections → Add website</strong>, then after mapping the fields, the step <strong>Add one line to your shop</strong>. It goes into the shared footer before <code>&lt;/body&gt;</code>. The site key is public and only works from the domain you entered for the website. On your own installation, your domain replaces <code>api.checkdrop.dev</code>. If the shop uses CSP, allow that domain for both <code>script-src</code> and <code>connect-src</code>.</p>
   </section>
 
-  <section class="blk">
+  <section class="blk" id="api">
     <h2>Or the API.</h2>
-    <p>Every response carries a state, a proposal and a source. When we're not sure we return <code>unknown</code> and the form goes through. The key belongs on your server, never in the browser.</p>
-    <pre class="code">POST /v1/addresses/validate
-&#123; "country": "CZ", "line": "Karlovo nám 19 Praha" &#125;
+    <p>For checks from your own server, for example when importing orders. Send the API key in the <code>X-Checkdrop-Key</code> header and never put it in the browser.</p>
+    <pre class="code">POST https://checks.example.com/v1/emails/validate
+X-Checkdrop-Key: cdp_…
+Content-Type: application/json
 
-<span class="c">→ 200</span>
-&#123; "state": <span class="s">"suggest"</span>,
-  "proposal": <span class="s">"Karlovo náměstí 19/13, 120 00 Praha 2"</span>,
-  "source": <span class="s">"ruian"</span> &#125;</pre>
+&#123; "email": <span class="s">"jan.novak@gmial.com"</span> &#125;
+
+<span class="c">→ 200, shortened</span>
+&#123; "status": <span class="s">"correctable"</span>,
+  "action": <span class="s">"suggest"</span>,
+  "suggestion": <span class="s">"jan.novak@gmail.com"</span>,
+  "issues": [&#123; "code": <span class="s">"email.domain_typo"</span>, "severity": <span class="s">"warning"</span>, … &#125;],
+  "evidence": [&#123; "source": <span class="s">"dns"</span>, "state": <span class="s">"absent"</span>, … &#125;, …] &#125;</pre>
+    <p><code>status</code> is <code>valid</code>, <code>correctable</code>, <code>risky</code>, <code>invalid</code> or <code>unknown</code>. <code>action</code> recommends what to do with the value, and <code>evidence</code> shows what the result is based on. When a check cannot run, you get <code>unknown</code> with the action <code>fail_open</code> and the order should go through.</p>
+    <p><strong>API key:</strong> on your own installation the installer generates it into <code>/opt/checkdrop/.env</code> as <code>CHECKDROP_PILOT_API_KEY</code>. The admin cannot create further keys yet. Keys for the hosted service are issued on request.</p>
     <div class="ep">
-      <code>POST /v1/emails/validate</code><span>Format, domain typo, DNS and MX with a hard timeout</span>
+      <code>POST /v1/emails/validate</code><span>Format, domain typo, DNS and MX with a timeout</span>
       <code>POST /v1/phones/validate</code><span>Czech number and normalized format</span>
-      <code>POST /v1/addresses/validate</code><span>Address completeness and a match in the RÚIAN registry</span>
-      <code>POST /v1/addresses/autocomplete</code><span>Suggestions from a local copy of the registry</span>
-      <code>POST /v1/company-ids/validate</code><span>Company ID, checksum, verification in ARES</span>
-      <code>POST /v1/names/validate</code><span>First name, surname, academic titles</span>
+      <code>POST /v1/names/validate</code><span>First name and surname in one field, titles, capitalization</span>
+      <code>POST /v1/addresses/validate</code><span>Name and address, match in the RÚIAN registry</span>
+      <code>POST /v1/addresses/autocomplete</code><span>Address suggestions from a local copy of the registry</span>
+      <code>POST /v1/company-ids/validate</code><span>Company ID (IČO), checksum, verification in ARES</span>
+      <code>POST /v1/companies/autocomplete</code><span>Company suggestions from ARES by name or IČO</span>
+      <code>GET /v1/health</code><span>Server status, no key needed</span>
     </div>
+    <p class="aside">The exact request and response shapes are in the <a href={OPENAPI_URL}>OpenAPI contract</a>.</p>
   </section>
 
   <section class="blk" id="self-hosting">
-    <h2>Or the whole thing on your server.</h2>
-    <p>Checkdrop is open source. Run it yourself with the same script and API as above, free.</p>
-    <div class="install">
-      <span class="install-label">Give your AI agent this link</span>
-      <div class="install-row"><code id="install-url">{INSTALL_URL}</code><button type="button" class="btn btn-ghost btn-sm" data-copy="install-url" data-done="Copied">Copy</button></div>
-      <p>Claude, ChatGPT or another agent that can work on your server installs Checkdrop and checks that everything runs. You only create the admin account with a one-time code.</p>
-    </div>
+    <h2>How to deploy Checkdrop</h2>
+    <p>Checkdrop is open source. Run it on your own server for free, with the same script and API as above.</p>
+
+    <h3>What you need</h3>
     <dl class="spec">
-      <dt>Server</dt><dd>One Linux server with Docker. A small VPS is enough: roughly 2&nbsp;CPU, 4&nbsp;GB RAM, 20&nbsp;GB disk.</dd>
-      <dt>Updates</dt><dd>Automatic. Each installation checks for a new release, backs up, updates and rolls back if something fails. The admin shows the running version and what's new.</dd>
-      <dt>Interface</dt><dd>English and Czech.</dd>
-      <dt>Licences</dt><dd>Server and administration under AGPL-3.0. Validation core, country packs, the checkout script and plugins under MIT.</dd>
+      <dt>Server</dt><dd>Linux (Debian, Ubuntu or similar, 64-bit) with Docker Engine and Compose v2. SSH access as root or a sudo user.</dd>
+      <dt>Size</dt><dd>2&nbsp;CPU, 4&nbsp;GB RAM, 20&nbsp;GB disk. The database with addresses takes about 4&nbsp;GB.</dd>
+      <dt>Domain</dt><dd>A DNS A record (and AAAA with IPv6) pointing to the server, for example <code>checks.example.com</code>.</dd>
+      <dt>Ports</dt><dd>80 and 443 free and open in the firewall. The HTTPS certificate is issued over port 80.</dd>
+    </dl>
+
+    <h3>Install</h3>
+    <div class="install">
+      <span class="install-label">Run on the server with your domain</span>
+      <div class="install-row"><code id="install-command">{INSTALL_COMMAND}</code><button type="button" class="btn btn-ghost btn-sm" data-copy="install-command" data-done="Copied">Copy</button></div>
+      <p>The installer generates passwords and keys, starts the database, the server, the admin and the scheduled jobs, gets an HTTPS certificate and prints a one-time setup code. The server is up in about a minute. Czech addresses from RÚIAN then download in the background in 5–15 minutes depending on the server, and address checks switch on by themselves.</p>
+    </div>
+    <div class="install">
+      <span class="install-label">Or give your AI agent this link</span>
+      <div class="install-row"><code id="agent-url">{INSTALL_URL}</code><button type="button" class="btn btn-ghost btn-sm" data-copy="agent-url" data-done="Copied">Copy</button></div>
+      <p>The guide is written for agents such as Claude Code or Codex. An agent with access to your server installs Checkdrop there, checks that it runs and hands you the admin address and the setup code. The installation runs only on your side; nothing is sent to us.</p>
+    </div>
+
+    <h3>After installing</h3>
+    <ol class="setup-steps">
+      <li><strong>Admin account</strong><span>Open <code>https://your-domain/sign-in</code> and create the account with the setup code. Until the first account exists, <code>sudo /opt/checkdrop/checkdrop setup-code</code> prints the code again.</span></li>
+      <li><strong>Website and form</strong><span><strong>Connections → Add website</strong>: the address of the page with the form and its field mapping.</span></li>
+      <li><strong>Script</strong><span>Copy the <code>&lt;script&gt;</code> line into the shop. On WordPress you can use the plugin instead.</span></li>
+      <li><strong>Silent mode</strong><span>Start checking the form. Fields only observe, and the Monitor shows what Checkdrop would have caught. Customers see nothing.</span></li>
+      <li><strong>Switch fields on</strong><span>When you trust the results, turn on fix suggestions field by field.</span></li>
+    </ol>
+
+    <h3>Running it</h3>
+    <dl class="spec">
+      <dt>Updates</dt><dd>Automatic, once a day: backup of the database and settings, update, health check, and a return to the previous version if anything fails. The admin shows the running version.</dd>
+      <dt>Status</dt><dd><code>sudo /opt/checkdrop/checkdrop status</code> shows what is wrong on one screen. Manual backup: <code>sudo /opt/checkdrop/checkdrop backup</code>.</dd>
+      <dt>WordPress</dt><dd>The <a href={WORDPRESS_URL}>plugin</a> adds the script without editing the theme. For your own installation, enter your server's address in it. Still a pilot release.</dd>
+      <dt>Trial</dt><dd>Without a server, in a clone of the repository: <code>./checkdrop install --local</code>, then <code>http://localhost:8080</code>.</dd>
+      <dt>Interface</dt><dd>Admin in English and Czech. The form script follows the page's language.</dd>
+      <dt>Licences</dt><dd>Server, admin, database layer and installer under AGPL-3.0. Validation core, country packs, the form script, the API contract and the WordPress plugin under MIT.</dd>
       <dt>Address data</dt><dd>Each installation downloads the RÚIAN registry straight from ČÚZK; we don't redistribute it. RÚIAN ©&nbsp;ČÚZK, CC&nbsp;BY&nbsp;4.0.</dd>
     </dl>
     <div class="dev-actions">
       <a class="btn btn-blue" href={GITHUB_URL}><Fragment set:html={iconGithub} />View on GitHub</a>
       <a class="btn btn-ghost" href={INSTALL_URL}>Install guide</a>
+      <a class="btn btn-ghost" href={SELF_HOSTING_URL}>Running an installation</a>
     </div>
-    <p class="aside">Rather not run it yourself? We’ll deploy it and keep the data current, <a href="/#pricing">from CZK&nbsp;9,900</a>.</p>
+    <p class="aside">Rather not run it yourself? We deploy Checkdrop on your server or an EU host and connect your forms. One-off, from CZK&nbsp;9,900 excl. VAT. <a href="/#contact">Ask for a deployment</a></p>
   </section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
-    <span>© 2026 Aenze s.r.o., Kladno, Czech Republic · Company ID 28534395</span>
+    <span>© 2026 ECOZZ s.r.o., Kladno, Czech Republic · Company ID 28371003 · an Aenze project</span>
     <nav aria-label="Footer"><a href="/kontakt/" hreflang="cs">Contact</a><a href="/podminky/" hreflang="cs">Terms</a><a href="/soukromi/" hreflang="cs">Privacy</a><a href="/zpracovani/" hreflang="cs">Data processing</a><a href="/cs/vyvojari/" hreflang="cs">Česky</a></nav>
   </div>
 </footer>

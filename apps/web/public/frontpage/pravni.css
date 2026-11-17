@@ -1,0 +1,308 @@
+/* Legal pages (podmínky, soukromí, zpracování). Loaded after novy.css and reuses its tokens. */
+:root {
+  --doc-text: #c9ceda;
+}
+
+.doc {
+  padding: 56px 0 72px;
+}
+.doc-head {
+  max-width: 70ch;
+}
+.doc-head h1 {
+  font-size: clamp(32px, 3.6vw, 44px);
+  line-height: 1.08;
+}
+.doc-head .lead {
+  margin-top: 14px;
+  font-size: 17px;
+  color: var(--muted);
+}
+.doc-meta {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--dim);
+}
+
+.doc-body {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 70ch);
+  gap: 56px;
+  margin-top: 40px;
+  align-items: start;
+}
+
+/* Pages without a table of contents, such as Kontakt */
+.doc-body.single {
+  grid-template-columns: minmax(0, 70ch);
+}
+
+/* Table of contents */
+.toc {
+  position: sticky;
+  top: 92px;
+  font-size: 14px;
+}
+.toc h2 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.toc ol {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: toc;
+}
+.toc li {
+  counter-increment: toc;
+}
+.toc a {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  color: var(--muted);
+}
+.toc a::before {
+  content: counter(toc) ".";
+  min-width: 18px;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.toc a:hover {
+  color: var(--text);
+}
+
+/* Text */
+.doc-text {
+  color: var(--doc-text);
+  line-height: 1.65;
+}
+.doc-text section {
+  scroll-margin-top: 88px;
+}
+.doc-text section + section {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+.doc-text h2 {
+  display: flex;
+  gap: 10px;
+  font-size: 21px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.doc-text h2 .n {
+  min-width: 24px;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.doc-text h3 {
+  margin: 24px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.doc-text p,
+.doc-text ul,
+.doc-text dl {
+  margin-top: 12px;
+}
+.doc-text h3 + p {
+  margin-top: 6px;
+}
+.doc-text ul {
+  padding-left: 20px;
+}
+.doc-text li + li {
+  margin-top: 4px;
+}
+.doc-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.doc-text a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+.doc-text a:hover {
+  text-decoration-color: var(--text);
+}
+
+/* Identification and other term lists */
+.facts {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 6px 16px;
+  font-size: 15px;
+}
+.facts dt {
+  color: var(--dim);
+}
+.facts dd {
+  margin: 0;
+}
+
+/* Compact tables */
+.table {
+  margin-top: 12px;
+  overflow-x: auto;
+}
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.table th,
+.table td {
+  padding: 9px 14px 9px 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.table th:last-child,
+.table td:last-child {
+  padding-right: 0;
+}
+.table thead th {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--dim);
+  border-bottom-color: var(--line-2);
+}
+.table tbody th {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Shared footer (MarketingFooter) */
+.footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px 32px;
+  padding: 32px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--dim);
+}
+.footer .brand {
+  font-size: 16px;
+  color: var(--text);
+}
+.footer p {
+  margin-top: 8px;
+  line-height: 1.6;
+}
+.footer .registry {
+  margin-top: 4px;
+  font-size: 13px;
+}
+.footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px 20px;
+}
+.footer a:hover {
+  color: var(--text);
+}
+.copyright {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px 24px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .doc-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    margin-top: 28px;
+  }
+  .toc {
+    position: static;
+    padding: 14px 0;
+    border-block: 1px solid var(--line);
+  }
+  .toc ol {
+    columns: 2;
+    column-gap: 24px;
+  }
+  .toc li {
+    break-inside: avoid;
+  }
+}
+@media (max-width: 640px) {
+  .doc {
+    padding: 36px 0 48px;
+  }
+  .toc ol {
+    columns: 1;
+  }
+  .doc-text h2 {
+    font-size: 19px;
+  }
+  .doc-text section + section {
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .facts dd + dt {
+    margin-top: 8px;
+  }
+  .footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media print {
+  .nav,
+  .toc,
+  .footer,
+  .skip {
+    display: none;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .doc {
+    padding: 0;
+  }
+  .doc-body {
+    display: block;
+  }
+  .doc-head .lead,
+  .doc-meta,
+  .doc-text,
+  .doc-text h2,
+  .doc-text h2 .n,
+  .doc-text h3,
+  .doc-text strong,
+  .doc-text a,
+  .facts dt,
+  .table thead th,
+  .table tbody th {
+    color: #000;
+  }
+  .doc-text section {
+    break-inside: avoid;
+  }
+}

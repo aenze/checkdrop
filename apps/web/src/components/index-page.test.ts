@@ -19,7 +19,8 @@ describe("public landing page", () => {
   it("shows the Checkdrop brand and a protected application login without public signup claims", () => {
     expect(page).toContain("Checkdrop");
     expect(page).toContain("https://app.checkdrop.dev/integrations");
-    expect(page).toContain("Log in");
+    expect(page).toContain("Client login");
+    expect(czech).toContain("Přihlášení klientů");
     expect(page).toContain("support@checkdrop.dev");
     expect(page).toContain("RÚIAN");
     expect(page).toContain("ARES");
@@ -34,6 +35,13 @@ describe("public landing page", () => {
     expect(czech).toContain("Zdarma");
   });
 
+  it("sends inquiries through the form that runs Checkdrop, not through a mail client", () => {
+    for (const source of [page, czech]) {
+      expect(source).toContain("<InquiryForm ");
+      expect(source).not.toContain('action="mailto:');
+    }
+  });
+
   it("links the English and Czech versions to each other", () => {
     expect(page).toContain('href="/cs/"');
     expect(czech).toContain('href="/"');
@@ -44,17 +52,22 @@ describe("public landing page", () => {
       expect(source).not.toContain('name="robots"');
       expect(source).toContain("<SiteAnalytics />");
     }
-    // Drafts of the legal texts stay out of search results until they are final.
-    for (const source of [terms, privacy, processing]) {
-      expect(source).toContain('name="robots" content="noindex, nofollow, noarchive"');
+    // The legal texts are final and indexed under their canonical address.
+    for (const [source, path] of [
+      [terms, "podminky"],
+      [privacy, "soukromi"],
+      [processing, "zpracovani"],
+    ]) {
+      expect(source).not.toContain('name="robots"');
+      expect(source).toContain(`<link rel="canonical" href="https://checkdrop.dev/${path}/">`);
       expect(source).toContain("<SiteAnalytics />");
+      expect(sitemap).toContain(`<loc>https://checkdrop.dev/${path}/</loc>`);
     }
     expect(analytics).toContain('data-domains="checkdrop.dev,www.checkdrop.dev"');
     expect(privacy).toContain("Umami");
     expect(privacy).not.toContain("neobsahuje analytické");
     expect(robots).toContain("Sitemap: https://checkdrop.dev/sitemap.xml");
     expect(sitemap).toContain("<loc>https://checkdrop.dev/cs/vyvojari/</loc>");
-    expect(sitemap).not.toContain("soukromi");
   });
 
   it("keeps the GitHub repository URL in one constant per page", () => {
