@@ -1,6 +1,6 @@
 {
   "name": "checkdrop",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "Customer Data Reliability API for explainable email, phone, address and company validation.",
   "license": "AGPL-3.0-only",

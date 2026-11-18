@@ -1230,6 +1230,8 @@ function checkdropEmbedRuntime(
             applyCompanyData(formId, fields, control, company, requestId);
           } else {
             const companies = safeCompanySuggestions(result);
+            // A slower answer for an earlier, shorter IČO must not cover the finished one.
+            if (control.value !== value) return;
             if (companies.length > 0) {
               showCompanySuggestions(formId, fields, control, value, companies);
             } else {
@@ -1957,11 +1959,30 @@ function checkdropEmbedRuntime(
       changedControls.add(mappedControl);
     }
     for (const change of changes) setAddressControlValue(change.control, change.applied);
-    if (changes.length === 0) return;
+    // Nothing to change still deserves an answer: the form already matches the register.
+    if (changes.length === 0) {
+      showConfirmedCompany(control, company.name);
+      return;
+    }
     showAppliedCompany(formId, control, company.name, changes, requestId);
     const changedFields = changes.map((change) => change.canonicalField);
     trackAssistInteraction(formId, requestId, "shown", undefined, changedFields);
     trackAssistInteraction(formId, requestId, "applied", company.name, changedFields);
+  }
+
+  function showConfirmedCompany(control: ValueControl, companyName: string) {
+    installAssistPromptStyles();
+    const prompt = document.createElement("div");
+    prompt.className = "checkdrop-field-assist checkdrop-field-assist-applied";
+    prompt.setAttribute("role", "status");
+    prompt.setAttribute("aria-live", "polite");
+    const copy = document.createElement("span");
+    copy.className = "checkdrop-field-assist-copy";
+    copy.textContent = message("company.confirmed");
+    copy.title = companyName;
+    prompt.append(assistIcon("✓"), copy);
+    insertAssistElement(control, prompt);
+    assistPrompts.set(control, prompt);
   }
 
   function showAppliedCompany(

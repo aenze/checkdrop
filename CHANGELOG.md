@@ -3,6 +3,14 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
+## 0.1.3 — 2026-11-18
+
+- **ARES always answers.** When the company fields already match the register, the form shows
+  “Údaje firmy odpovídají ARES” instead of nothing.
+- **No stale company list.** A slower answer for a shorter IČO no longer covers the result for the
+  finished one.
+- Migrations: none.
+
 ## 0.1.2 — 2026-11-18
 
 - **Company names from ARES** come with single spaces; ARES keeps the registry's double spaces, such

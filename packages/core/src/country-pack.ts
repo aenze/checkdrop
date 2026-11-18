@@ -109,6 +109,7 @@ export type EmbedMessageKey =
   | "company.suggestions_label"
   | "company.pick"
   | "company.filled"
+  | "company.confirmed"
   | "correction.question_prefix_email"
   | "correction.question_suffix"
   | "correction.title"
