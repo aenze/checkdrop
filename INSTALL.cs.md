@@ -9,7 +9,7 @@ a jednorázový instalační kód předaný člověku, který ji bude spravovat.
 
 ## 1. Co potřebujete od člověka
 
-- **Přístup přes SSH** na linuxový server (Debian, Ubuntu a podobné, 64bit) jako root nebo s sudo.
+- **Přístup přes SSH** na linuxový server (Debian, Ubuntu a podobné, 64bit) jako root nebo uživatel s právy sudo.
 - **Doménu**, jejíž záznam DNS A (a AAAA, má-li server IPv6) míří na tento server, například
   `kontrola.example.cz`.
 

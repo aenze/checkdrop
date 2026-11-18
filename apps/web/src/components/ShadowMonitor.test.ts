@@ -62,9 +62,7 @@ describe("shadow integration monitor", () => {
     expect(source).toContain('"person.invalid_characters"');
     expect(source).toContain('country: t("Země objednávky", "Order country")');
     expect(source).toContain('className="monitor-status invalid">{t("Neplatné", "Invalid")}');
-    expect(source).toContain(
-      'aria-label={t("Stránkování shadow monitoru", "Shadow monitor pagination")}',
-    );
+    expect(source).toContain('aria-label={t("Stránkování monitoru", "Monitor pagination")}');
     expect(source).toContain("...localeHeader");
     expect(source).not.toContain('"cs-CZ"');
     expect(source).not.toContain("Přijmout změnu");

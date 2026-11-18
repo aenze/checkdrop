@@ -4,13 +4,13 @@ Installation steps are in [INSTALL.md](../INSTALL.md). This page is for running 
 
 ## What runs
 
-| Service | Role |
-| --- | --- |
-| `postgres` | The installation's only database, on a private Docker network |
-| `migrate` | Applies database migrations before every start of the server, then exits |
-| `app` | API, checkout script, administration API, sign-in |
-| `jobs` | Address import after installation, then daily: RÚIAN check, 90-day cleanup, expired sessions |
-| `web` | Caddy: HTTPS, the administration, and the public API under `/v1/` |
+| Service    | Role                                                                                         |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| `postgres` | The installation's only database, on a private Docker network                                |
+| `migrate`  | Applies database migrations before every start of the server, then exits                     |
+| `app`      | API, checkout script, administration API, sign-in                                            |
+| `jobs`     | Address import after installation, then daily: RÚIAN check, 90-day cleanup, expired sessions |
+| `web`      | Caddy: HTTPS, the administration, and the public API under `/v1/`                            |
 
 Everything lives in the installation directory (default `/opt/checkdrop`): `checkdrop`,
 `compose.yaml`, `.env` (settings and keys, mode 600), `state/` (update status) and `backups/`.
@@ -20,17 +20,17 @@ Data is in the Docker volumes `checkdrop_postgres` and `checkdrop_caddy-data`.
 
 The installer writes them. After editing `.env` by hand, run `./checkdrop apply`.
 
-| Setting | Meaning |
-| --- | --- |
-| `CHECKDROP_PUBLIC_URL` | Public address, e.g. `https://checks.example.com`; used in the script tag shops embed |
-| `CHECKDROP_PUBLIC_API_URL`, `CHECKDROP_PUBLIC_ADMIN_URL` | Optional. Only when the API that shops embed and the administration use different public addresses; both default to `CHECKDROP_PUBLIC_URL` |
-| `CHECKDROP_SITE_ADDRESS` | What Caddy serves: the domain (automatic HTTPS), `http://localhost`, or `:8080` behind another proxy |
-| `CHECKDROP_HTTP_BIND`, `CHECKDROP_HTTPS_BIND` | Host ports, `80` and `443` by default |
-| `CHECKDROP_AUTO_UPDATE` | `true` (default) or `false` |
-| `CHECKDROP_VERSION` | Installed release; changed by `./checkdrop update` |
-| `CHECKDROP_JOBS_TIME` | Daily jobs time in UTC, `03:35` by default |
-| `CHECKDROP_ADMIN_AUTH` | `password` (default). `external` only if an access proxy authenticates every request |
-| Secrets | `CHECKDROP_POSTGRES_PASSWORD`, `…_OPERATOR_TOKEN`, `…_EMBED_SIGNING_SECRET`, `…_OBSERVATION_ENCRYPTION_KEY`, `…_PILOT_API_KEY`, `…_ADMIN_SETUP_CODE` — generated, never shared |
+| Setting                                                  | Meaning                                                                                                                                                                        |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CHECKDROP_PUBLIC_URL`                                   | Public address, e.g. `https://checks.example.com`; used in the script tag shops embed                                                                                          |
+| `CHECKDROP_PUBLIC_API_URL`, `CHECKDROP_PUBLIC_ADMIN_URL` | Optional. Only when the API that shops embed and the administration use different public addresses; both default to `CHECKDROP_PUBLIC_URL`                                     |
+| `CHECKDROP_SITE_ADDRESS`                                 | What Caddy serves: the domain (automatic HTTPS), `http://localhost`, or `:8080` behind another proxy                                                                           |
+| `CHECKDROP_HTTP_BIND`, `CHECKDROP_HTTPS_BIND`            | Host ports, `80` and `443` by default                                                                                                                                          |
+| `CHECKDROP_AUTO_UPDATE`                                  | `true` (default) or `false`                                                                                                                                                    |
+| `CHECKDROP_VERSION`                                      | Installed release; changed by `./checkdrop update`                                                                                                                             |
+| `CHECKDROP_JOBS_TIME`                                    | Daily jobs time in UTC, `03:35` by default                                                                                                                                     |
+| `CHECKDROP_ADMIN_AUTH`                                   | `password` (default). `external` only if an access proxy authenticates every request                                                                                           |
+| Secrets                                                  | `CHECKDROP_POSTGRES_PASSWORD`, `…_OPERATOR_TOKEN`, `…_EMBED_SIGNING_SECRET`, `…_OBSERVATION_ENCRYPTION_KEY`, `…_PILOT_API_KEY`, `…_ADMIN_SETUP_CODE` — generated, never shared |
 
 Losing `CHECKDROP_OBSERVATION_ENCRYPTION_KEY` makes stored monitor values unreadable. Every backup
 keeps a copy of `.env` next to the database dump.
@@ -59,9 +59,29 @@ Migrations only add tables and columns, so a rolled-back server keeps working on
 ./checkdrop restore backups/checkdrop-….dump
 ```
 
-Address data is left out of backups; the jobs service downloads it again after a restore. To move to
-a new server: install there, copy the matching `env-…` file to `.env`, run `./checkdrop install` and
-then `./checkdrop restore`.
+`restore` takes the path of a `.dump` file. It loads the dump into a scratch database first and swaps
+it in only when the whole file loaded, so a bad file leaves the current data untouched. Address data
+is left out of backups; the jobs service downloads it again after a restore.
+
+### Moving to a new server
+
+1. On the old server, run `./checkdrop backup` and copy both new files (`checkdrop-….dump` and the
+   `env-…` file with the same time) to the new server.
+2. On the new server, create the installation directory and put the backup in place:
+
+   ```bash
+   sudo mkdir -p /opt/checkdrop/backups
+   sudo cp env-<time> /opt/checkdrop/.env && sudo chmod 600 /opt/checkdrop/.env
+   sudo cp checkdrop-<version>-<time>.dump /opt/checkdrop/backups/
+   ```
+
+3. Point the domain to the new server and run `install.sh` with the same `--domain`. The installer
+   keeps an existing `.env`: the secrets (including the observation encryption key) and
+   `CHECKDROP_VERSION` stay as they were, only the address and port settings are written again. It
+   starts that version with an empty database and prints a setup code, which you do not need.
+4. In `/opt/checkdrop`, run `./checkdrop restore backups/checkdrop-<version>-<time>.dump`. The
+   administrator accounts, sites and monitor come back; with automatic updates on, the next daily
+   update brings the installation to the newest release.
 
 ## Behind another proxy
 
@@ -73,11 +93,11 @@ Set `CHECKDROP_SITE_ADDRESS=:8080`, `CHECKDROP_HTTP_BIND=127.0.0.1:8080` and
 
 Measured on a local test installation (November 2026):
 
-| | |
-| --- | --- |
-| First address import | 3,023,704 addresses in about 5 minutes on 8 cores; expect 10–15 minutes on 2 cores |
-| Database with addresses | 2.6 GB, Docker volume 3.8 GB |
-| Memory at rest | server ~50 MB, web ~30 MB, PostgreSQL ~100–600 MB; jobs ~400 MB during the import |
+|                         |                                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| First address import    | 3,023,704 addresses in about 5 minutes on 8 cores; expect 10–15 minutes on 2 cores |
+| Database with addresses | 2.6 GB, Docker volume 3.8 GB                                                       |
+| Memory at rest          | server ~50 MB, web ~30 MB, PostgreSQL ~100–600 MB; jobs ~400 MB during the import  |
 
 ## Problems
 

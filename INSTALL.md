@@ -44,9 +44,16 @@ curl -fsSL https://raw.githubusercontent.com/aenze/checkdrop/main/install.sh \
 It installs into `/opt/checkdrop` (change with `--dir`). The last line of the output is JSON:
 
 ```json
-{"status":"installed","admin_url":"https://checks.example.com/sign-in","version":"0.1.0",
- "admin_account_exists":false,"setup_code":"1a2b3c4d-5e6f7a8b-9c0d1e2f",
- "auto_update":"systemd","address_data":"importing","next_step":"…"}
+{
+  "status": "installed",
+  "admin_url": "https://checks.example.com/sign-in",
+  "version": "0.1.3",
+  "admin_account_exists": false,
+  "setup_code": "1a2b3c4d-5e6f7a8b-9c0d1e2f",
+  "auto_update": "systemd",
+  "address_data": "importing",
+  "next_step": "…"
+}
 ```
 
 Running the same command again is safe: it keeps the existing secrets and data.
@@ -99,14 +106,18 @@ docker compose -f compose.yaml -f compose.build.yaml --env-file .env down -v
 
 Every command ends with JSON containing `"error"` when it fails.
 
-| `error` | What to do |
-| --- | --- |
-| `docker_missing`, `compose_missing` | Install Docker Engine with the Compose plugin, then run the installer again. |
-| `docker_unavailable` | Start Docker (`sudo systemctl start docker`) or run with sudo. |
-| `domain_required`, `invalid_domain` | Pass `--domain` with a plain name such as `checks.example.com`. |
-| `app_unhealthy`, `web_unhealthy` | `sudo /opt/checkdrop/checkdrop logs app` (or `web`); fix the cause shown, run the installer again. A port already in use is the most common cause. |
-| `release_unreachable`, `download_failed` | The server cannot reach github.com or ghcr.io over HTTPS; check outbound network. |
-| `checksum_mismatch` | Stop. Do not bypass it; report it to the person. |
+| `error`                                  | What to do                                                                                                                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `docker_missing`, `compose_missing`      | Install Docker Engine with the Compose plugin, then run the installer again.                                                                                             |
+| `curl_missing`, `openssl_missing`        | Install curl or openssl with the distribution's package manager (for example `sudo apt-get install -y curl openssl`), then run the installer again.                      |
+| `docker_unavailable`                     | Start Docker (`sudo systemctl start docker`) or run with sudo.                                                                                                           |
+| `domain_required`, `invalid_domain`      | Pass `--domain` with a plain name such as `checks.example.com`.                                                                                                          |
+| `app_unhealthy`, `web_unhealthy`         | `sudo /opt/checkdrop/checkdrop logs app` (or `web`); fix the cause shown, run the installer again. A port already in use is the most common cause.                       |
+| `release_unreachable`, `download_failed` | The server cannot reach github.com or ghcr.io over HTTPS; check outbound network.                                                                                        |
+| `checksum_mismatch`                      | Stop. Do not bypass it; report it to the person.                                                                                                                         |
+| `rolled_back`                            | The update failed and the previous version runs again. See `sudo /opt/checkdrop/checkdrop logs app`; automatic updates skip that version until you run `update` by hand. |
+| `busy`                                   | Another update or restore is running; wait for it to finish and try again.                                                                                               |
+| `not_installed`                          | There is no `.env` next to this `checkdrop`: use `/opt/checkdrop/checkdrop` (or the `--dir` you installed into), or install first.                                       |
 
 ## Never
 

@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 10.33.0
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -38,7 +38,7 @@ jobs:
             | jq -e '.services.app.environment | .CHECKDROP_PUBLIC_API_URL == "https://api.example.com" and .CHECKDROP_PUBLIC_ADMIN_URL == "http://localhost:8080"'
           for mode in password external; do
             docker run --rm -v "$PWD/infra/web/Caddyfile:/etc/caddy/Caddyfile:ro" -e CHECKDROP_ADMIN_AUTH=$mode \
-              caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile
+              caddy:2.11.9-alpine caddy validate --config /etc/caddy/Caddyfile
           done
           docker run --rm -v "$PWD/infra/site/Caddyfile:/etc/caddy/Caddyfile:ro" \
-            caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile
+            caddy:2.11.9-alpine caddy validate --config /etc/caddy/Caddyfile

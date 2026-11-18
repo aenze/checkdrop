@@ -795,7 +795,7 @@ describe("M1 internal API", () => {
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toMatchObject({
       title: "Invalid request",
-      detail: "Only country 'CZ' is supported in the pilot.",
+      detail: "Only country 'CZ' is supported.",
     });
   });
 

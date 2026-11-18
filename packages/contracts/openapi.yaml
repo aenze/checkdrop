@@ -132,14 +132,27 @@ paths:
               schema:
                 type: object
                 additionalProperties: false
-                required: [object, request_id, integration_id, client_name, environment, state, config_version, form, fields, forms]
+                required:
+                  [
+                    object,
+                    request_id,
+                    integration_id,
+                    client_name,
+                    environment,
+                    state,
+                    config_version,
+                    form,
+                    fields,
+                    forms,
+                  ]
                 properties:
                   object: { type: string, const: integration_config }
                   request_id: { type: string }
                   integration_id: { type: string }
                   client_name: { type: string }
                   environment: { type: string, enum: [test, live] }
-                  state: { type: string, enum: [draft, scanned, configured, shadow, paused, unmatched] }
+                  state:
+                    { type: string, enum: [draft, scanned, configured, shadow, paused, unmatched] }
                   config_version: { type: integer, minimum: 1 }
                   features:
                     description: Optional server capabilities. A missing flag means false; older clients ignore it.
@@ -164,7 +177,16 @@ paths:
                     items:
                       type: object
                       additionalProperties: false
-                      required: [selector, canonical_field, context, condition_key, required, validation_mode, validation_trigger]
+                      required:
+                        [
+                          selector,
+                          canonical_field,
+                          context,
+                          condition_key,
+                          required,
+                          validation_mode,
+                          validation_trigger,
+                        ]
                       properties:
                         selector: { type: string }
                         canonical_field: { type: string }
@@ -173,14 +195,25 @@ paths:
                         required: { type: boolean }
                         validation_mode: { type: string, enum: [off, shadow, suggest] }
                         validation_trigger: { type: string, enum: [input, blur, submit] }
-                        require_complete_name: { type: boolean, default: false, description: "Optional local JavaScript submission guard for personal names. Requires the hosted script and configuration to load; not server-side enforcement." }
-                        submit_selector: { type: [string, 'null'], maxLength: 512, description: "Final action CSS selector for AJAX forms or forms with multiple submit buttons." }
+                        require_complete_name:
+                          {
+                            type: boolean,
+                            default: false,
+                            description: "Optional local JavaScript submission guard for personal names. Requires the hosted script and configuration to load; not server-side enforcement.",
+                          }
+                        submit_selector:
+                          {
+                            type: [string, "null"],
+                            maxLength: 512,
+                            description: "Final action CSS selector for AJAX forms or forms with multiple submit buttons.",
+                          }
                   forms:
                     type: array
                     items:
                       type: object
                       additionalProperties: false
-                      required: [id, name, path_pattern, match_mode, root_selector, config_version, fields]
+                      required:
+                        [id, name, path_pattern, match_mode, root_selector, config_version, fields]
                       properties:
                         id: { type: string }
                         name: { type: string }
@@ -193,19 +226,46 @@ paths:
                           items:
                             type: object
                             additionalProperties: false
-                            required: [selector, canonical_field, context, condition_key, required, validation_mode, validation_trigger]
+                            required:
+                              [
+                                selector,
+                                canonical_field,
+                                context,
+                                condition_key,
+                                required,
+                                validation_mode,
+                                validation_trigger,
+                              ]
                             properties:
                               selector: { type: string }
                               canonical_field:
                                 type: string
-                                enum: [customer_type, full_name, first_name, last_name, email, phone, street_line, city, postal_code, country, company_id, company_name, vat_id, profile_details_enabled, alternate_shipping_enabled, unmapped]
+                                enum:
+                                  [
+                                    customer_type,
+                                    full_name,
+                                    first_name,
+                                    last_name,
+                                    email,
+                                    phone,
+                                    street_line,
+                                    city,
+                                    postal_code,
+                                    country,
+                                    company_id,
+                                    company_name,
+                                    vat_id,
+                                    profile_details_enabled,
+                                    alternate_shipping_enabled,
+                                    unmapped,
+                                  ]
                               context: { type: string, enum: [billing, shipping, company, shared] }
                               condition_key: { type: [string, "null"] }
                               required: { type: boolean }
                               validation_mode: { type: string, enum: [off, shadow, suggest] }
                               validation_trigger: { type: string, enum: [input, blur, submit] }
                               require_complete_name: { type: boolean, default: false }
-                              submit_selector: { type: [string, 'null'], maxLength: 512 }
+                              submit_selector: { type: [string, "null"], maxLength: 512 }
         "401": { $ref: "#/components/responses/Problem" }
         "404": { $ref: "#/components/responses/Problem" }
         "503": { $ref: "#/components/responses/Problem" }
@@ -283,7 +343,19 @@ paths:
                   uniqueItems: true
                   items:
                     type: string
-                    enum: [first_name, last_name, full_name, company_name, company_id, vat_id, street_line, city, postal_code, country]
+                    enum:
+                      [
+                        first_name,
+                        last_name,
+                        full_name,
+                        company_name,
+                        company_id,
+                        vat_id,
+                        street_line,
+                        city,
+                        postal_code,
+                        country,
+                      ]
       responses:
         "204":
           description: Interaction was accepted without exposing whether the referenced observation exists.
@@ -543,7 +615,18 @@ paths:
           schema: { type: string, enum: [all, changed, review], default: all }
         - name: operation
           in: query
-          schema: { type: string, enum: [name.validate, email.validate, phone.validate, address.validate, company_id.validate] }
+          schema:
+            {
+              type: string,
+              enum:
+                [
+                  name.validate,
+                  email.validate,
+                  phone.validate,
+                  address.validate,
+                  company_id.validate,
+                ],
+            }
         - name: result
           in: query
           schema: { $ref: "#/components/schemas/ValidationStatus" }
@@ -595,7 +678,18 @@ paths:
           schema: { type: string, enum: [all, changed, review], default: all }
         - name: operation
           in: query
-          schema: { type: string, enum: [name.validate, email.validate, phone.validate, address.validate, company_id.validate] }
+          schema:
+            {
+              type: string,
+              enum:
+                [
+                  name.validate,
+                  email.validate,
+                  phone.validate,
+                  address.validate,
+                  company_id.validate,
+                ],
+            }
         - name: result
           in: query
           schema: { $ref: "#/components/schemas/ValidationStatus" }
@@ -678,7 +772,12 @@ components:
       in: query
       required: false
       description: Hosted script UUID used only to derive an irreversible server-side grouping reference. The raw UUID is not stored.
-      schema: { type: string, format: uuid, pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$" }
+      schema:
+        {
+          type: string,
+          format: uuid,
+          pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$",
+        }
   securitySchemes:
     ApiKey:
       type: apiKey
@@ -779,7 +878,17 @@ components:
     Company:
       type: object
       additionalProperties: false
-      required: [ico, name, vat_id, address, address_standardized, updated_at, primary_source, registered_office]
+      required:
+        [
+          ico,
+          name,
+          vat_id,
+          address,
+          address_standardized,
+          updated_at,
+          primary_source,
+          registered_office,
+        ]
       properties:
         ico: { type: string, pattern: "^[0-9]{8}$" }
         name: { type: string, minLength: 1, maxLength: 512 }
@@ -900,7 +1009,14 @@ components:
         operation:
           {
             type: string,
-            enum: [name.validate, email.validate, phone.validate, address.validate, company_id.validate],
+            enum:
+              [
+                name.validate,
+                email.validate,
+                phone.validate,
+                address.validate,
+                company_id.validate,
+              ],
           }
         client_name: { type: string, minLength: 1, maxLength: 64 }
         form_id: { type: [string, "null"] }
@@ -942,13 +1058,36 @@ components:
           maxItems: 16
           items:
             type: string
-            enum: [first_name, last_name, full_name, company_name, company_id, vat_id, street_line, city, postal_code, country]
+            enum:
+              [
+                first_name,
+                last_name,
+                full_name,
+                company_name,
+                company_id,
+                vat_id,
+                street_line,
+                city,
+                postal_code,
+                country,
+              ]
         observed_at: { type: string, format: date-time }
         expires_at: { type: string, format: date-time }
     ShadowObservationSummary:
       type: object
       additionalProperties: false
-      required: [total, proposed_changes, review_required, average_server_latency_ms, p95_server_latency_ms, assist_shown, assist_applied, assist_kept, assist_undone]
+      required:
+        [
+          total,
+          proposed_changes,
+          review_required,
+          average_server_latency_ms,
+          p95_server_latency_ms,
+          assist_shown,
+          assist_applied,
+          assist_kept,
+          assist_undone,
+        ]
       properties:
         total: { type: integer, minimum: 0 }
         proposed_changes: { type: integer, minimum: 0 }

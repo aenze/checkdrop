@@ -28,7 +28,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Checkdrop fixes e-mail typos, completes addresses from the official Czech registry and normalizes phone numbers right in your forms: checkout, inquiry, application or sign-up.">
+<meta name="description" content="Checkdrop fixes e-mail typos, completes addresses from the official Czech registry and normalises phone numbers right in your forms: checkout, inquiry, application or sign-up.">
 <title>Checkdrop — catch the typo before it becomes a returned parcel</title>
 <link rel="canonical" href="https://checkdrop.dev/">
 <link rel="alternate" hreflang="en" href="https://checkdrop.dev/">
@@ -46,7 +46,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <meta property="og:image:alt" content="Checkdrop fixes an e-mail typo right in the form: jan.novak@gmial.com to jan.novak@gmail.com.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='13' stroke='%233d7bff' stroke-width='2.6'/%3E%3Cpath d='M10 16.5l4 4 8-9' stroke='%233d7bff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="/frontpage/novy.css?v=20261118-3">
+<link rel="stylesheet" href="/frontpage/novy.css?v=20261118-4">
 <SiteAnalytics />
 </head>
 <body>
@@ -58,7 +58,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
       <a href="#catches">Product</a>
       <a href="#pricing">Pricing</a>
       <a href="/developers/">Developers</a>
-      <a class="nav-login" href="https://app.checkdrop.dev/integrations">Client login</a>
+      <a class="nav-login" href="https://app.checkdrop.dev/integrations" aria-label="Client login"><span class="full">Client login</span><span class="short"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 16.5c.8-2.8 3.1-4 6-4s5.2 1.2 6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></a>
       <a class="btn btn-blue btn-sm" href="#contact"><span class="full">Get Checkdrop</span><span class="short">Inquiry</span></a>
       <div class="lang-switch" aria-label="Language / Jazyk"><a href="/" class="on" aria-current="page" lang="en" hreflang="en">EN</a><a href="/cs/" lang="cs" hreflang="cs">CS</a></div>
     </nav>
@@ -100,7 +100,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         <div class="frow" id="row-phone">
           <span class="ficon"><Fragment set:html={iconPhone} /></span>
           <div class="fbody">
-            <div class="flabel"><label for="f-phone">Phone</label><span class="fstatus">Will be normalized automatically</span></div>
+            <div class="flabel"><label for="f-phone">Phone</label><span class="fstatus">Will be normalised automatically</span></div>
             <input id="f-phone" type="text" value="777123456" autocomplete="off">
           </div>
         </div>
@@ -111,7 +111,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
             <input id="f-street" type="text" value="Karlovo nám 19" autocomplete="off" spellcheck="false" aria-label="Street and number">
             <div class="fgrid">
               <input id="f-city" type="text" value="Praha" autocomplete="off" aria-label="City">
-              <input id="f-zip" type="text" value="" placeholder="ZIP" autocomplete="off" aria-label="ZIP">
+              <input id="f-zip" type="text" value="" placeholder="Postal code" autocomplete="off" aria-label="Postal code">
             </div>
             <div class="suggest" id="s-addr" style="flex-direction:column;align-items:stretch;gap:6px;margin-top:2px">
               <span style="font-size:12px;color:var(--dim)">Pick the address point · source RÚIAN</span>
@@ -140,7 +140,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
   <div class="wrap">
     <div class="section-head">
       <h2>Seventeen seconds, start to finish.</h2>
-      <p>One typo caught, one address completed, one phone number normalized. Sound on.</p>
+      <p>One typo caught, one address completed, one phone number normalised. Sound on.</p>
     </div>
     <div class="video-frame">
       <video id="showreel" preload="metadata" playsinline poster="/frontpage/assets/showreel-poster-20260926.webp" width="1920" height="1080" aria-label="Checkdrop showreel video">
@@ -156,7 +156,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
   <div class="wrap">
     <div class="section-head">
       <h2>You don’t want data like this in your system.</h2>
-      <p>Hover over a card and watch Checkdrop turn the mistake into a clean order.</p>
+      <p>Hover over or tap a card and watch Checkdrop turn the mistake into a clean order.</p>
     </div>
     <div class="fixes">
       <article class="fix" tabindex="0">
@@ -185,7 +185,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         <p class="why">The greeting in your e-mail and on the label looks right, not like spam.</p>
       </article>
       <article class="fix" tabindex="0">
-        <div class="fix-top"><span class="ficon"><Fragment set:html={iconPin} /></span>ZIP code<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
+        <div class="fix-top"><span class="ficon"><Fragment set:html={iconPin} /></span>Postal code<span class="fix-state"><span class="st-bad">As typed</span><span class="st-ok">Fixed</span></span></div>
         <div class="fix-val"><div class="was">Praha 2, 11000</div><div class="now">120 00 Praha 2</div></div>
         <p class="why">The parcel goes straight to the right depot instead of a detour through the wrong sorting centre.</p>
       </article>
@@ -226,6 +226,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
         <h3>We do it for you.</h3>
         <p>We connect your form or checkout, set up the fields and deploy Checkdrop on your server, or run it for you in the EU. The first weeks it only measures; fixes go live once you have seen the results.</p>
         <span class="price">from CZK 9,900<small>one-off, excl. VAT, depending on integration complexity</small></span>
+        <span class="price-note">Running it for you in the EU: monthly fee by offer.</span>
         <a class="btn btn-blue" href="#contact">Arrange a rollout</a>
       </article>
       <article class="way">
@@ -260,7 +261,7 @@ const iconGithub = `<svg viewBox="0 0 16 16" width="18" height="18" fill="curren
 <footer class="foot">
   <div class="wrap">
     <span>© 2026 ECOZZ s.r.o., Kladno, Czech Republic · Company ID 28371003 · an Aenze project</span>
-    <nav aria-label="Footer"><a href="/kontakt/" hreflang="cs">Contact</a><a href="/podminky/" hreflang="cs">Terms</a><a href="/soukromi/" hreflang="cs">Privacy</a><a href="/zpracovani/" hreflang="cs">Data processing</a><a href="/cs/" hreflang="cs">Česky</a></nav>
+    <nav aria-label="Footer"><a class="foot-login" href="https://app.checkdrop.dev/integrations">Client login</a><a href="/cs/" hreflang="cs">Česky</a><span class="foot-cs"><span>In Czech:</span><a href="/kontakt/" hreflang="cs">Contact</a><a href="/podminky/" hreflang="cs">Terms</a><a href="/soukromi/" hreflang="cs">Privacy</a><a href="/zpracovani/" hreflang="cs">Data processing</a></span></nav>
   </div>
 </footer>
 <script is:inline src="/frontpage/novy.js?v=20261112-1"></script>

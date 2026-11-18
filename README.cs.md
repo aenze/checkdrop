@@ -25,18 +25,19 @@ formulář funguje přesně jako dřív.
    zvolíte, jestli Checkdrop jen radí, nebo zastaví i odeslání s údaji, na které nejde doručit.
 5. **Výpadek nic nezastaví.** Když Checkdrop neodpoví včas, formulář se odešle jako dřív.
 
-| Pole | Co Checkdrop ověřuje | Zdroj |
-| --- | --- | --- |
-| E-mail | překlepy v doméně, existence domény a pošty (MX), jednorázové schránky | seznam častých překlepů, DNS |
-| Telefon | platné české číslo, jednotný formát s předvolbou | pravidla pro česká čísla |
-| Adresa | skutečné adresní místo, doplnění PSČ a čísla, adresa mimo Česko | lokální kopie RÚIAN od ČÚZK |
-| IČO a firma | existence firmy, doplnění názvu, DIČ a sídla | ARES |
-| Jméno | jméno i příjmení, velká písmena, titul | pravidla pro česká jména |
+| Pole        | Co Checkdrop ověřuje                                                   | Zdroj                        |
+| ----------- | ---------------------------------------------------------------------- | ---------------------------- |
+| E-mail      | překlepy v doméně, existence domény a pošty (MX), jednorázové schránky | seznam častých překlepů, DNS |
+| Telefon     | platné české číslo, jednotný formát s předvolbou                       | pravidla pro česká čísla     |
+| Adresa      | skutečné adresní místo, doplnění PSČ a čísla, adresa mimo Česko        | lokální kopie RÚIAN od ČÚZK  |
+| IČO a firma | existence firmy, doplnění názvu, DIČ a sídla                           | ARES                         |
+| Jméno       | jméno i příjmení, velká písmena, titul                                 | pravidla pro česká jména     |
 
 ## Kde to běží
 
 Každá instalace běží na vašem serveru a má vlastní databázi. Údaje z formulářů k nám ani nikam
-jinam neposílá. Ven se připojuje jen pro aktualizace (GitHub), adresy (ČÚZK) a údaje firem (ARES).
+jinam neposílá. Ven se připojuje jen pro aktualizace (GitHub), adresy (ČÚZK), údaje firem (ARES), kontrolu
+domén e-mailů (DNS) a certifikát HTTPS (Let's Encrypt).
 Celé hodnoty v monitoru jsou šifrované a po 90 dnech se mažou.
 
 ## Provozujte si to sami, zdarma
@@ -60,13 +61,13 @@ Instalátor vygeneruje všechna hesla a klíče, spustí databázi, server, admi
 Claude Code nebo Codex. Dejte agentovi odkaz a přístup na svůj server. Agent tam Checkdrop
 nainstaluje, ověří výsledek a předá vám instalační kód.
 
-| | |
-| --- | --- |
-| Server | 2 CPU, 4 GB paměti, 20 GB disku, Linux s Docker Engine a Compose v2 |
-| První spuštění | zhruba minuta, pak se na pozadí stáhnou české adresy (5–15 minut) |
-| Aktualizace | automaticky každý den: záloha, aktualizace, kontrola, návrat při chybě |
-| Stav | `./checkdrop status` a přehled v administraci |
-| Jazyky | administrace česky i anglicky, skript ve formuláři podle jazyka stránky |
+|                |                                                                         |
+| -------------- | ----------------------------------------------------------------------- |
+| Server         | 2 CPU, 4 GB paměti, 20 GB disku, Linux s Docker Engine a Compose v2     |
+| První spuštění | zhruba minuta, pak se na pozadí stáhnou české adresy (5–15 minut)       |
+| Aktualizace    | automaticky každý den: záloha, aktualizace, kontrola, návrat při chybě  |
+| Stav           | `./checkdrop status` a přehled v administraci                           |
+| Jazyky         | administrace česky i anglicky, skript ve formuláři podle jazyka stránky |
 
 Vyzkoušet to můžete i na svém počítači: v kopii repozitáře spusťte `./checkdrop install --local`
 a otevřete <http://localhost:8080>.
@@ -76,6 +77,30 @@ a otevřete <http://localhost:8080>.
 Checkdrop nasadíme na váš server nebo k evropskému poskytovateli podle vaší volby, napojíme vaše
 formuláře a nastavíme pole. Na přání ho i provozujeme za vás. Nasazení stojí jednorázově od
 9 900 Kč bez DPH podle složitosti napojení. Poptávka na [checkdrop.dev](https://checkdrop.dev/cs/#poptavka).
+
+## Repozitář
+
+| Cesta                                     | Co to je                                          | Licence  |
+| ----------------------------------------- | ------------------------------------------------- | -------- |
+| `apps/server`                             | API, API administrace, plánované úlohy            | AGPL-3.0 |
+| `apps/server/src/embed-script.ts`         | Skript, který běží na stránce s formulářem        | MIT      |
+| `apps/web`                                | Administrace (`app`) a web checkdrop.dev (`site`) | AGPL-3.0 |
+| `packages/core`                           | Validační pravidla, e-maily a jména               | MIT      |
+| `packages/db`                             | PostgreSQL, migrace, import a hledání RÚIAN       | AGPL-3.0 |
+| `packages/pack-cz`                        | Česká pravidla: adresy, telefony, IČO, DIČ, texty | MIT      |
+| `packages/contracts`                      | Popis API (OpenAPI) a vygenerované typy           | MIT      |
+| `integrations/wordpress`                  | Plugin pro WordPress                              | MIT      |
+| `checkdrop`, `compose.yaml`, `install.sh` | Instalace, aktualizace, zálohy                    | AGPL-3.0 |
+
+Pro vývoj potřebujete Node.js 24 a pnpm 10:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm run ci
+```
+
+Více v [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) a
+[docs/self-hosting.md](docs/self-hosting.md).
 
 ## Licence a data
 

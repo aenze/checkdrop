@@ -530,9 +530,6 @@ function IntegrationTopbar() {
         <span>/</span>
         <strong>{t("Napojení", "Connections")}</strong>
       </span>
-      <span className="pilot-chip">
-        <span className="pilot-dot" /> {t("Český pilot", "Czech pilot")}
-      </span>
       <span className="operator-chip">
         <ShieldCheck size={16} /> {t("Chráněná administrace", "Protected administration")}
       </span>

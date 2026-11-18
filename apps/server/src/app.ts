@@ -1272,7 +1272,7 @@ export function createApp(dependencies: AppDependencies = {}) {
         context,
         400,
         "Invalid request",
-        `Field 'country' must be ${supportedCountriesText()} in the Czech pilot.`,
+        `Field 'country' must be ${supportedCountriesText()}.`,
       );
     }
     if (
@@ -1704,7 +1704,7 @@ function unsupportedCountry(context: Context): Response {
     context,
     400,
     "Invalid request",
-    `Only country ${supportedCountriesText()} is supported in the pilot.`,
+    `Only country ${supportedCountriesText()} is supported.`,
   );
 }
 
@@ -2530,7 +2530,7 @@ function containsControlCharacters(value: string): boolean {
 }
 
 function unauthorized(context: Context): Response {
-  return problem(context, 401, "Unauthorized", "A valid pilot API key is required.");
+  return problem(context, 401, "Unauthorized", "A valid API key is required.");
 }
 
 function rateLimited(context: Context, decision: RateLimitDecision): Response {
@@ -2538,7 +2538,7 @@ function rateLimited(context: Context, decision: RateLimitDecision): Response {
     context,
     429,
     "Too many requests",
-    "The pilot request limit has been reached. Retry later.",
+    "The request limit has been reached. Retry later.",
     {
       "Retry-After": String(decision.retryAfterSeconds),
       // Lets the hosted script read when to resume; it is not a CORS-safelisted header.

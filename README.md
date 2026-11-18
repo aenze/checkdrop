@@ -31,12 +31,12 @@ website and paste one script tag into the page with the form.
 or Codex: give the agent that link and access to your server; it installs Checkdrop there, checks the
 result and hands you the setup code. Nothing is sent to us.
 
-| | |
-| --- | --- |
-| Server | 2 CPU, 4 GB RAM, 20 GB disk, Linux with Docker Engine and Compose v2 |
+|             |                                                                                |
+| ----------- | ------------------------------------------------------------------------------ |
+| Server      | 2 CPU, 4 GB RAM, 20 GB disk, Linux with Docker Engine and Compose v2           |
 | First start | about 1 minute, then Czech addresses download in the background (5–15 minutes) |
-| Updates | automatic and daily: backup, update, health check, rollback if anything fails |
-| Languages | Czech and English administration; the form script follows the page's language |
+| Updates     | automatic and daily: backup, update, health check, rollback if anything fails  |
+| Languages   | Czech and English administration; the form script follows the page's language  |
 
 Try it on your own computer first: `./checkdrop install --local` in a clone of this repository, then
 open <http://localhost:8080> (details in [INSTALL.md](INSTALL.md#trying-it-on-your-own-computer-instead)).
@@ -59,19 +59,27 @@ integration. [checkdrop.dev](https://checkdrop.dev/#contact)
 - **Same application everywhere.** The hosted service at checkdrop.dev runs the same release images
   as every self-hosted installation; only data and connections differ.
 
+| Field           | What Checkdrop checks                                                            | Source                        |
+| --------------- | -------------------------------------------------------------------------------- | ----------------------------- |
+| E-mail          | domain typos, whether the domain and its mail (MX) exist, disposable mailboxes   | list of common typos, DNS     |
+| Phone           | valid Czech number, one format with the country code                             | rules for Czech numbers       |
+| Address         | a real address point, postal code and number completion, address outside Czechia | local copy of RÚIAN from ČÚZK |
+| IČO and company | the company exists, name, DIČ and registered address filled in                   | ARES                          |
+| Name            | first name and surname, capitalization, titles                                   | rules for Czech names         |
+
 ## Repository
 
-| Path | What it is | Licence |
-| --- | --- | --- |
-| `apps/server` | API, administration API, jobs | AGPL-3.0 |
-| `apps/server/src/embed-script.ts` | Hosted checkout script that runs in the shop page | MIT |
-| `apps/web` | Administration (`app`) and the checkdrop.dev website (`site`) | AGPL-3.0 |
-| `packages/core` | Validation policy, e-mail and name rules | MIT |
-| `packages/db` | PostgreSQL, migrations, RÚIAN import and search | AGPL-3.0 |
-| `packages/pack-cz` | Czech rules: addresses, phones, IČO, DIČ, texts | MIT |
-| `packages/contracts` | OpenAPI contract and generated types | MIT |
-| `integrations/wordpress` | WordPress plugin | MIT |
-| `checkdrop`, `compose.yaml`, `install.sh` | Installation, updates, backups | AGPL-3.0 |
+| Path                                      | What it is                                                    | Licence  |
+| ----------------------------------------- | ------------------------------------------------------------- | -------- |
+| `apps/server`                             | API, administration API, jobs                                 | AGPL-3.0 |
+| `apps/server/src/embed-script.ts`         | Hosted checkout script that runs in the shop page             | MIT      |
+| `apps/web`                                | Administration (`app`) and the checkdrop.dev website (`site`) | AGPL-3.0 |
+| `packages/core`                           | Validation policy, e-mail and name rules                      | MIT      |
+| `packages/db`                             | PostgreSQL, migrations, RÚIAN import and search               | AGPL-3.0 |
+| `packages/pack-cz`                        | Czech rules: addresses, phones, IČO, DIČ, texts               | MIT      |
+| `packages/contracts`                      | OpenAPI contract and generated types                          | MIT      |
+| `integrations/wordpress`                  | WordPress plugin                                              | MIT      |
+| `checkdrop`, `compose.yaml`, `install.sh` | Installation, updates, backups                                | AGPL-3.0 |
 
 Development needs Node.js 24 and pnpm 10:
 

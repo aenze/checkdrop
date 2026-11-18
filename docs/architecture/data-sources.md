@@ -3,13 +3,13 @@
 Each capability adapter exposes source name, retrieval time, effective/version date, freshness
 state, timeout state, and the evidence that supports its issue codes.
 
-| Capability | Intended source | Use |
-| --- | --- | --- |
-| Email | Syntax, IDNA/DNS, disposable/role metadata | Deterministic normalization and risk evidence |
-| Phone | libphonenumber plus ČTÚ metadata | Format, country, type, and plausibility |
-| Company | ARES | Czech organization identity and status |
-| VAT | Local Czech DIČ rules | Format normalization only; no live registration claim |
-| Address | RÚIAN in PostgreSQL with `pg_trgm` | Czech address normalization and suggestions |
+| Capability | Intended source                            | Use                                                   |
+| ---------- | ------------------------------------------ | ----------------------------------------------------- |
+| Email      | Syntax, IDNA/DNS, disposable/role metadata | Deterministic normalization and risk evidence         |
+| Phone      | libphonenumber plus ČTÚ metadata           | Format, country, type, and plausibility               |
+| Company    | ARES                                       | Czech organization identity and status                |
+| VAT        | Local Czech DIČ rules                      | Format normalization only; no live registration claim |
+| Address    | RÚIAN in PostgreSQL with `pg_trgm`         | Czech address normalization and suggestions           |
 
 Source terms, quotas, redistribution rights, and retention are release gates. A successful HTTP
 response alone is not proof of current or authoritative data. Stale or unavailable sources produce
@@ -31,7 +31,7 @@ explicit evidence and do not silently become `valid`.
 
 ARES documents a possible restriction above 500 requests per minute and for duplicate, random, or
 highly concurrent traffic. Its data are informative rather than legally authoritative. CI uses an
-injected fixture response only; live smoke checks are explicit operator actions.
+injected fixture response only; live checks are explicit manual actions.
 
 Official contracts:
 
@@ -48,5 +48,5 @@ hours so a failed refresh never replaces verified data.
 
 Local evidence is recorded in `benchmarks/results/2026-08-15-full-ruian-local.json`. It proves the
 current import/query path at full row-count scale, not source redistribution rights, production
-latency, or pilot accuracy. The address validation and autocomplete API use the active snapshot and
+latency or accuracy. The address validation and autocomplete API use the active snapshot and
 propose a correction only when the result is unambiguous.

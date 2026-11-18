@@ -9,13 +9,13 @@ const outputIndex = args.indexOf("--out");
 const nameIndex = args.indexOf("--name");
 const projectIndex = args.indexOf("--project");
 const outputArgument = outputIndex >= 0 ? args[outputIndex + 1] : undefined;
-const name = nameIndex >= 0 ? args[nameIndex + 1] : "Czech pilot";
-const projectRef = projectIndex >= 0 ? args[projectIndex + 1] : "pilot-cz";
+const name = nameIndex >= 0 ? args[nameIndex + 1] : "Default";
+const projectRef = projectIndex >= 0 ? args[projectIndex + 1] : "default";
 const connectionString = process.env.CHECKDROP_DATABASE_URL;
 
 if (!connectionString || !outputArgument || !name || !projectRef) {
   process.stderr.write(
-    "Usage: CHECKDROP_DATABASE_URL=... pnpm pilot-key:create -- --out <secure-file> [--name <name>] [--project <ref>]\n",
+    "Usage: CHECKDROP_DATABASE_URL=... pnpm api-key:create -- --out <secure-file> [--name <name>] [--project <ref>]\n",
   );
   process.exitCode = 2;
 } else {

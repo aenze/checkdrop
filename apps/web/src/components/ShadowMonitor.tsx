@@ -692,9 +692,9 @@ function MonitorTopbar({
       </a>
       <span className="topbar-divider" aria-hidden="true" />
       <nav className="breadcrumbs" aria-label={t("Drobečková navigace", "Breadcrumbs")}>
-        <span>{t("Integrace", "Integrations")}</span>
+        <span>{t("Napojení", "Connections")}</span>
         <span aria-hidden="true">/</span>
-        <strong>Shadow monitor</strong>
+        <strong>Monitor</strong>
       </nav>
       <span className="pilot-chip monitor-mode-chip">
         <Eye size={15} weight="fill" aria-hidden="true" />
@@ -793,7 +793,7 @@ function MonitorPagination({
   return (
     <nav
       className="monitor-pagination"
-      aria-label={t("Stránkování shadow monitoru", "Shadow monitor pagination")}
+      aria-label={t("Stránkování monitoru", "Monitor pagination")}
     >
       <button
         type="button"

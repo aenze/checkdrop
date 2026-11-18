@@ -820,6 +820,8 @@ function checkdropEmbedRuntime(
       for (const value of layer.slice(-500)) {
         if (!value || typeof value !== "object" || seenPurchases.has(value)) continue;
         seenPurchases.add(value);
+        // GA4 `purchase`, plus `purchase_velkoobchod` (Czech for wholesale) that some Czech shops
+        // push for business orders; it is reported as the b2b channel.
         if (value.event !== "purchase" && value.event !== "purchase_velkoobchod") continue;
         const order = String(value.ecommerce?.transaction_id ?? "");
         if (!/^[A-Za-z0-9_-]{1,80}$/.test(order)) continue;

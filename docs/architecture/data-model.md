@@ -11,21 +11,23 @@
 The importer stages and validates a snapshot before one transaction activates it. A failed import
 never replaces active data.
 
-## Pilot application data
+## Application data
 
-- `app.api_keys`: operator-created pilot keys with prefix, one-way verifier, project ownership, and
-  lifecycle state. Full keys are never persisted.
+- `app.api_keys`: API keys created in the administration, with prefix, one-way verifier, project
+  ownership and lifecycle state. Full keys are never persisted.
 - `app.usage_events`: idempotent operation metadata, units, result class, bounded client metadata,
   duration, and a key-scoped HMAC. It does not store the validated value or request body.
 - `app.integrations` and mapping history: origin, site identifier, state, form `root_selector`, field
   selectors, validation mode/trigger, and rollback versions. Multiple profiles may match one path
   when they have distinct roots, for example checkout, registration modal, billing, and shipping.
 - `app.shadow_observations`: AES-256-GCM encrypted input/proposal values, masked legacy fallbacks,
-technical evidence, and the customer's shown/applied/kept/undone assist outcome for the protected
-operator monitor. The outcome points to the same concrete encrypted e-mail or phone observation,
-so the operator sees who acted without duplicating plaintext PII. Rows are project-isolated and
-expire after 90 days. Atomic address/company assistance also stores a bounded allowlist of changed
-field names, not another plaintext payload. The encryption key is stored outside PostgreSQL.
+  technical evidence, and the customer's shown/applied/kept/undone assist outcome for the
+  monitor. The outcome points to the same concrete encrypted e-mail or phone observation,
+  so the administrator sees who acted without duplicating plaintext PII. Rows are project-isolated and
+  expire after 90 days. Atomic address/company assistance also stores a bounded allowlist of changed
+  field names, not another plaintext payload. The encryption key is stored outside PostgreSQL.
+- `app.admin_users`, `app.admin_sessions`: administrator accounts and their sessions.
+- `app.instance_jobs`: state of the installation's scheduled jobs.
 
 ## Legacy audit tables
 
@@ -34,8 +36,7 @@ runtime, API, worker, and UI are removed. The migrations remain immutable so exi
 continue forward safely. Dropping unused tables requires a new forward migration after backup and
 production usage verification.
 
-## SaaS progression
+## Later
 
-Users, organizations, projects, roles, sessions, customer API keys, and audit trails arrive before
-billing. Batch files arrive later through S3-compatible object storage plus a real queue lifecycle;
+If batch file processing is added, files go to object storage with a real queue lifecycle;
 PostgreSQL must not again be the primary file blob and polling queue.

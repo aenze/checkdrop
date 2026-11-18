@@ -2,8 +2,7 @@
 # Every installation runs the same images; only .env differs.
 name: checkdrop
 
-x-server: &server
-  # A minimal init forwards signals, so stopping or updating never waits for a kill.
+x-server: &server # A minimal init forwards signals, so stopping or updating never waits for a kill.
   init: true
   image: ${CHECKDROP_IMAGE_PREFIX:-ghcr.io/aenze/checkdrop}-server:${CHECKDROP_VERSION:?CHECKDROP_VERSION is required}
   read_only: true

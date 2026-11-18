@@ -2,6 +2,8 @@
 
 Status: Accepted on 2026-08-15.
 
+Context: written for the 2026 hosted pilot; ADR-0011 describes the current setup.
+
 ## Decision
 
 The Czech pilot runs one Node.js/Hono application and one PostgreSQL database behind Caddy and

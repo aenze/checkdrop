@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.build.json && node scripts/build-embed.mjs",
     "cli": "tsx src/cli.ts",
     "dev": "tsx watch src/server.ts",
-    "pilot-key:create": "tsx src/create-pilot-key.ts",
+    "api-key:create": "tsx src/create-api-key.ts",
     "start": "node dist/server.js",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -16,10 +16,10 @@
     "@checkdrop/core": "workspace:*",
     "@checkdrop/db": "workspace:*",
     "@checkdrop/pack-cz": "workspace:*",
-    "@hono/node-server": "2.1.7",
+    "@hono/node-server": "2.1.8",
     "hono": "4.13.18",
     "jose": "^6.2.17",
-    "parse5": "7.3.0"
+    "parse5": "8.1.1"
   },
   "devDependencies": {
     "@types/jsdom": "^30.0.0",
@@ -28,7 +28,7 @@
     "jsdom": "^30.1.3",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
-    "vitest": "4.1.10"
+    "vitest": "5.1.0"
   },
   "license": "AGPL-3.0-only"
 }

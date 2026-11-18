@@ -1,23 +1,41 @@
-# Měření průchodu košíkem
+# Checkout measurement
 
-Události se sbírají pouze pro namapovaný formulář. `started` znamená první editaci mapovaného pole, nikoliv návštěvu košíku. Aktivita se vzorkuje nejvýše jednou za 30 sekund. `submit_attempt` je pokus, `submit_dispatched` pouze nezrušená browserová událost submit; ani jedno nepotvrzuje vytvoření či zaplacení objednávky. `page_left` může být běžný přechod na platbu nebo obnovení stránky.
+The embed script reports how people move through a mapped form to
+`POST /v1/checkout/events?site=…&form=…&session=…`. The endpoint uses the same origin check and active
+site as validation, has its own rate limit and never blocks the form: a failed event is dropped.
 
-`blocked` obsahuje pouze pevný kód důvodu a kanonické pole. Vlastní kontrola Checkdropu rozlišuje chybějící celé jméno. Nativní validace rozlišuje povinné pole / formát. U Nette se čte pouze odkaz na chybné pole, nikoliv zpráva s případnými osobními údaji. Obecně zrušený submit je označen `shop_cancelled` a může znamenat také AJAX odeslání; není automaticky chybou.
+## What it records
 
-Endpoint `POST /v1/checkout/events?site=…&form=…&session=…` vyžaduje stejné origin ověření a aktivní napojení jako validace. Přijímá jen `event_id` (UUID v4), `event`, `source`, `reason`, `field`, `context`. Nepřijímá kontaktní hodnoty ani URL. Session je na serveru HMAC stejným způsobem jako u kontrol polí. Duplicitní event ID se ukládá jen jednou. Měření má samostatný rate-limit rozpočet a nesmí ubírat kapacitu validacím. Selhání měření nic neblokuje.
+| Event               | Meaning                                                                        |
+| ------------------- | ------------------------------------------------------------------------------ |
+| `started`           | First edit of a mapped field (not a page visit)                                |
+| `activity`          | Still filling in; sampled at most once per 30 seconds                          |
+| `submit_attempt`    | The person tried to submit                                                     |
+| `blocked`           | Submit was stopped; carries a fixed reason code and the field, never a message |
+| `submit_dispatched` | The browser submit event was not cancelled                                     |
+| `page_left`         | The page was left (also a normal step to payment or a reload)                  |
+| `purchase_reported` | The page reported a purchase in its `dataLayer` (see below)                    |
 
-Pro QA otevřete košík s `?checkdrop_test=1` (nebo `&checkdrop_test=1`). Označení je explicitní, nikoli automatická detekce robota; neoznačené testy nelze spolehlivě odlišit od zákazníků. Monitor standardně označené testy skryje. Retence je 90 dní, mazání provádí existující cleanup úloha.
+Blocking reasons distinguish Checkdrop's own checks (`checkdrop_name`, `checkdrop_foreign_address`),
+the browser's required/format validation, the shop's own validation and a generically cancelled
+submit (`shop_cancelled`, which may also be an AJAX submit and is not an error by itself).
 
-Operátorský endpoint `GET /v1/operator/checkout-sessions` je chráněný stávajícím operátorským oprávněním a omezený na projekt. Vrací posledních 24 hodin a nejvýše 100 relací; lze zadat `from` a `include_tests=1`. Relace se propojuje s kontrolami přes session_ref a formulář. Záznamy chybějící kvůli adblocku či výpadku nelze dopočítat.
+The body accepts only `event_id` (UUID v4), `event`, `source`, `reason`, `field` and `context`, plus
+`order_ref` and `purchase_channel` for purchases. No contact values or URLs are accepted. The session
+reference is stored as an HMAC, a repeated event ID is stored once, and records are deleted after
+90 days. Neither `submit_attempt` nor `submit_dispatched` proves that an order was created or paid.
 
-## Potvrzení hlášené prohlížečem
+## Reported purchases
 
-Runtime pasivně čte existující i nově vložené objekty `dataLayer` s eventem `purchase` nebo `purchase_velkoobchod` a neprázdným `ecommerce.transaction_id`. Nepřepisuje push ani nevyvolává marketingové události. Vyžaduje předchozí interakci s namapovaným formulářem v témže sessionStorage, nejvýše 24 hodin starou. Před zahájením nové interakce zahodí již přítomné staré události. Při nedostupném úložišti nebo API nic neblokuje. Síťové chyby opakuje nejvýše třikrát.
+The script passively reads objects in the page's `dataLayer` with the event `purchase` (or the
+wholesale variant `purchase_velkoobchod`) and a non-empty `ecommerce.transaction_id`. It only counts
+them after an interaction with the mapped form in the same browser session within 24 hours. The
+order number (1–80 letters, digits, `-` or `_`) is stored only as an HMAC, so the same order is
+counted once; products, values and the rest of the `dataLayer` are not copied.
 
-Endpoint navíc přijímá `purchase_reported` s `order_ref` (1–80 ASCII písmen/číslic, pomlčka/podtržítko) a `purchase_channel` b2c/b2b. Číslo objednávky ukládá pouze jako HMAC, oddělený podle integrace a testovacího zdroje. Unikátní index zamezí opakovanému započtení stejné objednávky. Retence zůstává 90 dní. Sběr nekopíruje celý dataLayer, e-mail, produkty ani hodnotu nákupu.
+The monitor shows these as purchases reported by the page in the browser, not as confirmed payments.
 
-Monitor označuje výsledek jako objednávku hlášenou e-shopem z prohlížeče; nejde o potvrzení platby ani ověření serverem. B2B není důkaz objednávky obchodního zástupce. První skutečný zachycený nákup je třeba porovnat s administrací.
+## Test traffic
 
-## Původní diagnostika před rozšířením
-
-Potvrzovací DOM/URL ani backendové potvrzení vzniku objednávky nebylo zatím ověřeno. Žádný browserový event `order_confirmed` endpoint nepřijímá. Monitor proto po 30 minutách píše „Neaktivní, výsledek neznámý“, nikoli opuštěný košík a nepočítá dropout %. K dokončení je třeba ověřený signál z děkovací stránky (browserem hlášené dokončení) nebo serverové potvrzení vytvořené objednávky. Události z platební brány a změna URL samy nestačí. Historii před zapnutím nelze rekonstruovat.
+Open the form with `?checkdrop_test=1` to mark your own tests. The monitor hides marked tests by
+default. Unmarked tests cannot be told apart from real customers.

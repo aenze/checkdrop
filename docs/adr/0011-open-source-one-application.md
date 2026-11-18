@@ -33,7 +33,4 @@ licence.
 
 ## Consequences
 
-- The hosted service must be migrated to the release images, the jobs service and accounts.
 - Public issues, security reports and releases need a maintained process (SECURITY.md).
-- The private repository keeps customer records, internal plans and hosted infrastructure; the public
-  repository is generated from it with `scripts/public/snapshot.sh`.

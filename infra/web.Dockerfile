@@ -13,7 +13,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 RUN CHECKDROP_WEB_TARGET=${CHECKDROP_WEB_TARGET} PUBLIC_CHECKDROP_INQUIRY_SITE=${PUBLIC_CHECKDROP_INQUIRY_SITE} pnpm --filter @checkdrop/web... build
 
-FROM caddy:2.10.2-alpine AS runtime
+FROM caddy:2.11.9-alpine AS runtime
 ARG CADDYFILE
 COPY ${CADDYFILE} /etc/caddy/Caddyfile
 COPY --from=build /workspace/apps/web/dist /srv
