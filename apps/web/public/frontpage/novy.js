@@ -124,6 +124,7 @@
   const rowAddr = $("row-addr");
   let emailDone = false;
   let addrDone = false;
+  let playing = false;
   const timers = {};
   const versions = { email: 0, address: 0 };
 
@@ -136,12 +137,14 @@
     const n =
       (rowEmail.classList.contains("is-suggest") ? 1 : 0) +
       (rowAddr.classList.contains("is-suggest") ? 1 : 0);
-    $("f-count").textContent = n === 0 ? T.allOk : n === 1 ? T.one : T.many(n);
+    const empty = !email.value && !phone.value && !street.value;
+    $("f-count").textContent = empty ? T.waiting : n === 0 ? T.allOk : n === 1 ? T.one : T.many(n);
   }
 
   // Live lookups go to the anonymous demo route with a server-side key. Failures and
   // late replies never touch the field: a suggestion is only shown, never applied.
   function live(kind, route, body, onResult) {
+    if (playing) return;
     clearTimeout(timers[kind]);
     const version = ++versions[kind];
     timers[kind] = setTimeout(async () => {
@@ -298,20 +301,117 @@
     addrDone = false;
     checkAddr();
   });
-  $("f-reset").addEventListener("click", () => {
-    email.value = INITIAL.email;
-    phone.value = INITIAL.phone;
-    street.value = INITIAL.street;
-    city.value = INITIAL.city;
-    zip.value = INITIAL.zip;
+  function fill(values) {
+    email.value = values.email;
+    phone.value = values.phone;
+    street.value = values.street;
+    city.value = values.city;
+    zip.value = values.zip;
     emailDone = false;
     addrDone = false;
     checkEmail();
     checkPhone(false);
     checkAddr();
-  });
+  }
+  $("f-reset").addEventListener("click", () => fill(INITIAL));
 
-  checkEmail();
-  checkPhone(false);
-  checkAddr();
+  // The demo plays by itself: a visitor types a typo, Checkdrop suggests the fix, the visitor
+  // accepts it; the phone is normalised; an address is picked from RÚIAN. It loops while the card
+  // is on screen and stops for good as soon as the visitor touches the card.
+  const card = document.querySelector(".review");
+  const note = $("demo-note");
+  // No animation without matchMedia (old browsers, tests) or when the visitor asks for less motion.
+  const reduced =
+    typeof window.matchMedia !== "function" ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let stopped = reduced || !card;
+  let visible = false;
+  const wait = (ms) =>
+    new Promise((resolve, reject) => {
+      let left = ms;
+      const tick = () => {
+        if (stopped) return reject(new Error("stopped"));
+        if (visible && !document.hidden) left -= 100;
+        if (left <= 0) return resolve();
+        setTimeout(tick, 100);
+      };
+      setTimeout(tick, 0);
+    });
+  async function type(input, text, check) {
+    input.classList.add("is-typing");
+    for (let i = 1; i <= text.length; i++) {
+      input.value = text.slice(0, i);
+      check();
+      await wait(100);
+    }
+    input.classList.remove("is-typing");
+  }
+  async function press(button) {
+    button.classList.add("is-press");
+    await wait(300);
+    button.classList.remove("is-press");
+    button.click();
+  }
+  async function play() {
+    for (;;) {
+      fill({ email: "", phone: "", street: "", city: "", zip: "" });
+      await wait(900);
+      await type(email, "jan.novak@gmil.com", () => {
+        emailDone = false;
+        checkEmail();
+      });
+      await wait(1800);
+      await press($("s-email-use"));
+      await wait(700);
+      await type(phone, "777123456", () => checkPhone(false));
+      await wait(900);
+      checkPhone(true);
+      await wait(1200);
+      await type(street, "Karlovo nám 19", () => {
+        addrDone = false;
+        checkAddr();
+      });
+      await wait(1800);
+      const first = $("s-addr-list").querySelector("button");
+      if (first) await press(first);
+      await wait(600);
+      const pay = $("f-reset");
+      pay.classList.add("is-press");
+      await wait(2600);
+      pay.classList.remove("is-press");
+    }
+  }
+  function stop() {
+    if (stopped) return;
+    stopped = true;
+    playing = false;
+    for (const el of card.querySelectorAll(".is-typing, .is-press")) {
+      el.classList.remove("is-typing", "is-press");
+    }
+    fill(INITIAL);
+    if (note) note.textContent = note.dataset.manual;
+  }
+
+  fill(INITIAL);
+  if (!stopped) {
+    // The tallest moment of the animation is the address with RÚIAN options; keep that height so
+    // the page below does not jump while the demo plays.
+    const body = card.querySelector(".review-body");
+    fill({ email: "jan.novak@gmail.com", phone: "", street: "Karlovo nám 19", city: "", zip: "" });
+    body.style.minHeight = `${body.offsetHeight}px`;
+    fill(INITIAL);
+    playing = true;
+    if (note) note.textContent = note.dataset.auto;
+    for (const kind of ["pointerdown", "focusin", "keydown"]) {
+      card.addEventListener(kind, stop, { capture: true });
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => {
+        visible = entries.some((e) => e.isIntersecting);
+      }).observe(card);
+    } else {
+      visible = true;
+    }
+    play().catch(() => {});
+  }
 })();

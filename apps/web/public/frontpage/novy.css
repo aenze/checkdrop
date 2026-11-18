@@ -370,9 +370,17 @@ h2 {
   color: var(--text);
   outline: none;
 }
-.frow input:focus {
+.frow input:focus,
+.frow input.is-typing {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px var(--blue-soft);
+}
+.review .is-press {
+  transform: scale(0.96);
+  filter: brightness(1.15);
+  transition:
+    transform 0.12s ease,
+    filter 0.12s ease;
 }
 .fgrid {
   display: grid;
