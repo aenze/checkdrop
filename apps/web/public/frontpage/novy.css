@@ -943,7 +943,8 @@ h2 {
 .inquiry-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px 12px;
+  gap: 16px 12px;
+  align-items: start;
 }
 .inquiry .field {
   display: flex;
@@ -962,8 +963,9 @@ h2 {
   font-size: 13px;
   color: var(--muted);
 }
-.inquiry input,
+.cta .inquiry input,
 .inquiry textarea {
+  flex: none;
   width: 100%;
   min-width: 0;
   height: 44px;
@@ -975,22 +977,130 @@ h2 {
   font: inherit;
   font-size: 15px;
   outline: none;
+  transition: border-color 0.15s ease;
 }
 .inquiry textarea {
   height: auto;
-  min-height: 88px;
+  min-height: 96px;
   padding: 10px 12px;
   resize: vertical;
 }
-.inquiry input:focus,
+.cta .inquiry input:focus,
 .inquiry textarea:focus {
   border-color: var(--blue);
 }
+
+/* Checkdrop's own suggestions, restyled for this page: same palette, and they ease in. */
+.inquiry .checkdrop-field-assist,
+.inquiry .checkdrop-address-assist {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line-2);
+  background: #151922;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  overflow: hidden;
+  animation: inquiry-assist-in 0.22s ease-out both;
+}
+.inquiry .checkdrop-field-assist strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.inquiry .checkdrop-field-assist-icon {
+  background: var(--blue-soft);
+  color: #9bbcff;
+}
+.inquiry .checkdrop-field-assist button {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--blue);
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+}
+.inquiry .checkdrop-field-assist .checkdrop-field-assist-keep,
+.inquiry .checkdrop-field-assist .checkdrop-field-assist-undo {
+  border-color: var(--line-2);
+  background: transparent;
+  color: var(--muted);
+}
+.inquiry .checkdrop-field-assist-applied {
+  border-color: rgba(70, 211, 138, 0.32);
+  background: var(--green-soft);
+  color: #a8e6c4;
+}
+.inquiry .checkdrop-field-assist-applied .checkdrop-field-assist-icon {
+  background: rgba(70, 211, 138, 0.18);
+  color: var(--green);
+}
+.inquiry .checkdrop-field-assist-warning {
+  width: 100%;
+  border-color: rgba(242, 180, 65, 0.34);
+  background: var(--amber-soft);
+  color: #f6d38d;
+  font-weight: 500;
+}
+.inquiry .checkdrop-field-assist-warning .checkdrop-field-assist-icon {
+  background: rgba(242, 180, 65, 0.18);
+  color: var(--amber);
+}
+.inquiry .checkdrop-address-assist {
+  padding: 0;
+  max-height: 210px;
+  overflow: auto;
+}
+.inquiry .checkdrop-address-assist-title {
+  color: var(--dim);
+}
+.inquiry .checkdrop-address-assist-option {
+  border-top-color: var(--line);
+  background: transparent;
+  color: var(--text);
+}
+.inquiry .checkdrop-address-assist-option[aria-selected="true"],
+.inquiry .checkdrop-address-assist-option:hover {
+  background: #1b2030;
+}
+.inquiry .checkdrop-name-ok {
+  display: none;
+}
+@keyframes inquiry-assist-in {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    max-height: 120px;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inquiry .checkdrop-field-assist,
+  .inquiry .checkdrop-address-assist {
+    animation: none;
+  }
+}
+
 .inquiry-foot {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 18px;
+  margin-top: 22px;
+}
+.cta .inquiry-consent {
+  margin: 10px 0 0;
+  max-width: none;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
 }
 .cta .inquiry-status {
   margin: 0;
@@ -1004,12 +1114,14 @@ h2 {
   color: var(--amber);
 }
 .cta .inquiry-note {
-  margin: 14px 0 0;
+  margin: 6px 0 0;
   max-width: none;
   font-size: 13px;
+  line-height: 1.5;
   color: var(--dim);
 }
 .inquiry-note a,
+.inquiry-consent a,
 .cta small a {
   color: inherit;
   text-decoration: underline;

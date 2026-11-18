@@ -133,7 +133,7 @@ describe("required name hosted JavaScript", () => {
           )
             .map((element) => element.textContent)
             .join(" "),
-        ).toContain("Doplňte jméno i příjmení, ať se doručení nezpozdí."),
+        ).toContain("Doplňte jméno i příjmení."),
       );
       expect(f.input().getAttribute("aria-invalid")).toBeNull();
       expect(f.submit().defaultPrevented).toBe(false);

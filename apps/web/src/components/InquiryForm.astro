@@ -32,6 +32,8 @@ const copy = {
     note: "Formulář běží s Checkdropem: zkuste překlep v e-mailu, telefon bez předvolby nebo IČO firmy.",
     privacy: "Jak s údaji nakládáme",
     privacyHref: "/soukromi/",
+    consent:
+      "Odesláním poptávky souhlasíte se zasíláním e-mailů s novinkami o Checkdropu. Souhlas můžete kdykoli odvolat odkazem v e-mailu nebo na support@checkdrop.dev.",
   },
   en: {
     name: "Full name",
@@ -55,6 +57,8 @@ const copy = {
     note: "This form runs Checkdrop: try a typo in the e-mail, a phone without the prefix or a Czech company ID.",
     privacy: "How we handle the data",
     privacyHref: "/soukromi/",
+    consent:
+      "By sending the inquiry you agree to receive e-mails with Checkdrop news. You can withdraw at any time through the link in each e-mail or at support@checkdrop.dev.",
   },
 }[lang];
 // biome-ignore lint/correctness/noUnusedVariables: Rendered by the Astro template.
@@ -87,10 +91,12 @@ const messages = JSON.stringify({
     <div class="field wide"><label for="inquiry-shop">{copy.shop}</label><input id="inquiry-shop" name="shop_url" inputmode="url" placeholder={copy.shopHint} maxlength="300"></div>
     <div class="field wide"><label for="inquiry-message">{copy.message}</label><textarea id="inquiry-message" name="message" rows="3" maxlength="4000"></textarea></div>
   </div>
+  <input type="hidden" name="newsletter" value="ano">
   <div class="inquiry-foot">
     <button class="btn btn-blue" type="submit">{copy.submit}</button>
     <p class="inquiry-status" role="status" aria-live="polite"></p>
   </div>
+  <p class="inquiry-consent">{copy.consent}</p>
   <p class="inquiry-note">{copy.note} <a href={copy.privacyHref}>{copy.privacy}</a>.</p>
 </form>
 <script is:inline>

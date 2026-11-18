@@ -3,6 +3,14 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
+## 0.1.2 — 2026-11-18
+
+- **Company names from ARES** come with single spaces; ARES keeps the registry's double spaces, such
+  as `ECOZZ  s.r.o.`, which were copied into forms.
+- **Name reminder** no longer mentions delivery (“Doplňte jméno i příjmení.”), so it fits any form,
+  not only a checkout.
+- Migrations: none.
+
 ## 0.1.1 — 2026-11-17
 
 - **Separate API address.** `CHECKDROP_PUBLIC_API_URL` and `CHECKDROP_PUBLIC_ADMIN_URL` in `.env`

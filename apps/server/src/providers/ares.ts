@@ -265,7 +265,8 @@ export async function searchAresCompanies(
 function parseAresCompany(body: unknown, expectedIco?: string): AresCompany | null {
   if (!isRecord(body)) return null;
   const ico = nullableString(body.ico);
-  const name = nullableString(body.obchodniJmeno, 512);
+  // ARES keeps the registry's spacing, such as "ECOZZ  s.r.o."; forms get it with single spaces.
+  const name = nullableString(body.obchodniJmeno, 512)?.replace(/\s+/g, " ").trim() || null;
   if (!ico || (expectedIco !== undefined && ico !== expectedIco) || !name) return null;
 
   const seat = isRecord(body.sidlo) ? body.sidlo : null;

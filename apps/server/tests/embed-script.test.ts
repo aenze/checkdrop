@@ -86,7 +86,7 @@ describe("hosted checkout script", () => {
     expect(CHECKDROP_EMBED_SCRIPT).toContain("Jméno je v pořádku");
     expect(CHECKDROP_EMBED_SCRIPT).toContain("first_name");
     expect(CHECKDROP_EMBED_SCRIPT).toContain("last_name");
-    expect(CHECKDROP_EMBED_SCRIPT).toContain("Doplňte jméno i příjmení, ať se doručení nezpozdí.");
+    expect(CHECKDROP_EMBED_SCRIPT).toContain("Doplňte jméno i příjmení.");
     expect(CHECKDROP_EMBED_SCRIPT).toContain('"correction.title":"Opravit {field} na {value}?"');
     expect(CHECKDROP_EMBED_SCRIPT).toContain('apply.textContent = message("correction.apply")');
     expect(CHECKDROP_EMBED_SCRIPT).toContain("checkdrop-field-assist-actions");

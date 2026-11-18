@@ -65,6 +65,14 @@ describe("ARES adapter", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("returns the company name with single spaces", async () => {
+    const output = await lookupAresCompany("28371003", {
+      fetchImpl: async () => jsonResponse({ ico: "28371003", obchodniJmeno: "ECOZZ  s.r.o. " }),
+      now: fixedNow,
+    });
+    expect(output.company?.name).toBe("ECOZZ s.r.o.");
+  });
+
   it("does not call ARES for an invalid local IČO", async () => {
     const fetchImpl = vi.fn<FetchLike>();
     const output = await lookupAresCompany("123", { fetchImpl, now: fixedNow });
