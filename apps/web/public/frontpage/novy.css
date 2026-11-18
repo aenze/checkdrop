@@ -1113,18 +1113,30 @@ h2 {
   }
 }
 
+.inquiry-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+  cursor: pointer;
+}
+.inquiry .inquiry-consent input {
+  flex: 0 0 18px;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  padding: 0;
+  accent-color: var(--blue);
+}
 .inquiry-foot {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 22px;
-}
-.cta .inquiry-consent {
-  margin: 10px 0 0;
-  max-width: none;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--muted);
+  margin-top: 18px;
 }
 .cta .inquiry-status {
   margin: 0;
@@ -1138,7 +1150,7 @@ h2 {
   color: var(--amber);
 }
 .cta .inquiry-note {
-  margin: 6px 0 0;
+  margin: 12px 0 0;
   max-width: none;
   font-size: 13px;
   line-height: 1.5;

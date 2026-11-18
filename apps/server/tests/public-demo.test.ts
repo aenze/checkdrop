@@ -110,10 +110,10 @@ describe("public demo ownership of user input", () => {
     expect(status("row-phone")).toBe("Valid Czech number");
     type("f-phone", "777123456");
     expect(field("f-phone").value).toBe("777123456");
-    expect(status("row-phone")).toBe("Will be normalized automatically");
+    expect(status("row-phone")).toBe("Will be normalised automatically");
     field("f-phone").dispatchEvent(new w.Event("blur"));
     expect(field("f-phone").value).toBe("+420 777 123 456");
-    expect(status("row-phone")).toBe("Format normalized");
+    expect(status("row-phone")).toBe("Format normalised");
     await vi.advanceTimersByTimeAsync(1000);
     expect(fetch).not.toHaveBeenCalled();
   });

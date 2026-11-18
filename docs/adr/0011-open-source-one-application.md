@@ -6,12 +6,12 @@ Status: accepted by the owner on 17 November 2026. Supersedes ADR-0008.
 
 - Checkdrop is published as open source in full, with no open-core split: there is no closed or
   paid-only feature. What is paid is the service: installation, operation, data maintenance and
-  support by Aenze s.r.o.
+  support by ECOZZ s.r.o., which operates Checkdrop (Aenze is the brand).
 - The server, administration, database layer and installation tools are AGPL-3.0-only. The
   validation core (`packages/core`), country packs, the hosted checkout script, the API contract and
   plugins are MIT, so everything that runs inside a shop or is embedded elsewhere is permissive.
-- The public repository is `aenze/checkdrop` under the Aenze organisation. Copyright: Aenze s.r.o.
-  and Checkdrop contributors.
+- The public repository is `aenze/checkdrop` under the Aenze organisation. Copyright: ECOZZ s.r.o.
+  and Checkdrop contributors. The name and logo belong to Aenze s.r.o.
 - Contributions are accepted under the licence of the package they change (inbound = outbound),
   without a CLA. Consequence: contributed code cannot later be relicensed by Aenze alone.
 - Every installation runs the same release images, including the hosted service at checkdrop.dev.

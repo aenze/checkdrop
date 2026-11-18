@@ -3,6 +3,12 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
+## 0.1.5 — 2026-11-18
+
+- **Licences:** the MIT licences name ECOZZ s.r.o., which operates Checkdrop, as the copyright
+  holder. The name and logo stay with Aenze s.r.o.
+- Migrations: none.
+
 ## 0.1.4 — 2026-11-18
 
 - **Clearer messages.** API errors and the administration no longer mention a pilot; the monitor
