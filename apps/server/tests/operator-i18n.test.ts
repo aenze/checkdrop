@@ -133,6 +133,45 @@ describe("operator API language", () => {
     });
   });
 
+  it("translates a required phone on another field", async () => {
+    const app = operatorApp();
+    const body = JSON.stringify({
+      fields: [
+        {
+          selector: "#email",
+          label: "E-mail",
+          name: "email",
+          canonical_field: "email",
+          context: "shared",
+          condition_key: null,
+          required: true,
+          require_valid_phone: true,
+          validation_mode: "shadow",
+          validation_trigger: "blur",
+          confidence: 99,
+          detected: true,
+        },
+      ],
+    });
+    const czech = await app.request("/v1/operator/integrations/missing/fields", {
+      method: "PUT",
+      headers: headers(),
+      body,
+    });
+    expect(czech.status).toBe(409);
+    await expect(czech.json()).resolves.toMatchObject({
+      detail: "Povinný platný telefon lze zapnout pouze u kontrolovaného telefonu.",
+    });
+    const english = await app.request("/v1/operator/integrations/missing/fields", {
+      method: "PUT",
+      headers: headers({ "X-Checkdrop-Locale": "en" }),
+      body,
+    });
+    await expect(english.json()).resolves.toMatchObject({
+      detail: "A required valid phone can only be turned on for a checked phone field.",
+    });
+  });
+
   it("keeps scanner error codes stable in both languages", () => {
     const error = new FormScanError("not_html", "Zadaná URL nevrací HTML stránku.", "Not HTML.");
     expect(error).toMatchObject({ code: "not_html", message: error.cs, en: "Not HTML." });

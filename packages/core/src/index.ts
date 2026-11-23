@@ -65,4 +65,5 @@ export * from "./email-suggestion.js";
 export * from "./name-requirement.js";
 export type * from "./operator-contracts.js";
 export * from "./person-name.js";
+export * from "./phone-requirement.js";
 export * from "./provider.js";

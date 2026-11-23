@@ -87,7 +87,12 @@ export function MappingRow({
           "Zahraniční adresu ukážeme zákazníkovi a první dokončení jednou zastavíme.",
           "We show a foreign address to the customer and stop the first completion once.",
         )
-      : availableModeOptions.find((option) => option.value === field.validation_mode)?.note;
+      : field.require_valid_phone
+        ? t(
+            "Prázdný nebo neplatný telefon zabrání dokončení formuláře, dokud je náš skript načtený.",
+            "An empty or invalid phone number stops the form from completing while our script is loaded.",
+          )
+        : availableModeOptions.find((option) => option.value === field.validation_mode)?.note;
   return (
     <li className={`mapping-card ${ignored ? "ignored" : ""}`}>
       <details
@@ -102,8 +107,10 @@ export function MappingRow({
               ? t("Povinné celé jméno", "Full name required")
               : field.require_domestic_address
                 ? t("Doručení jen v ČR", "Delivery only in Czechia")
-                : availableModeOptions.find((option) => option.value === field.validation_mode)
-                    ?.label}
+                : field.require_valid_phone
+                  ? t("Povinný platný telefon", "Valid phone required")
+                  : availableModeOptions.find((option) => option.value === field.validation_mode)
+                      ?.label}
           </span>
           <CaretDown className="mapping-expand-icon" size={14} aria-hidden="true" />
         </summary>
@@ -134,6 +141,7 @@ export function MappingRow({
                     : false,
                   require_domestic_address:
                     value === "postal_code" ? field.require_domestic_address : false,
+                  require_valid_phone: value === "phone" ? field.require_valid_phone : false,
                   validation_mode:
                     value === "unmapped"
                       ? "off"
@@ -166,6 +174,7 @@ export function MappingRow({
                   require_complete_name: value === "off" ? false : field.require_complete_name,
                   require_domestic_address:
                     value === "off" ? false : field.require_domestic_address,
+                  require_valid_phone: value === "off" ? false : field.require_valid_phone,
                   validation_trigger:
                     value === "suggest"
                       ? ["street_line", "company_name", "company_id"].includes(
@@ -329,6 +338,50 @@ export function MappingRow({
                       {t(
                         "Slovenské PSČ nebo město zastaví první dokončení jednou, druhé už projde.",
                         "A Slovak PSČ or city stops the first completion once; the second goes through.",
+                      )}
+                    </small>
+                  </label>
+                )}
+              </>
+            )}
+            {field.canonical_field === "phone" && (
+              <>
+                <label className="required-control">
+                  <input
+                    type="checkbox"
+                    checked={field.require_valid_phone ?? false}
+                    disabled={ignored}
+                    onChange={(event) =>
+                      onChange({ require_valid_phone: event.currentTarget.checked })
+                    }
+                  />
+                  <span>
+                    {t(
+                      "Vyžadovat platný telefon před odesláním",
+                      "Require a valid phone number before submitting",
+                    )}
+                  </span>
+                </label>
+                {field.require_valid_phone && (
+                  <label>
+                    <span>
+                      {t(
+                        "Tlačítko dokončení (volitelný CSS selektor)",
+                        "Completion button (optional CSS selector)",
+                      )}
+                    </span>
+                    <input
+                      value={field.submit_selector ?? ""}
+                      placeholder={t("Např. .order-submit", "E.g. .order-submit")}
+                      maxLength={512}
+                      onChange={(event) =>
+                        onChange({ submit_selector: event.currentTarget.value.trim() || null })
+                      }
+                    />
+                    <small>
+                      {t(
+                        "Prázdné pole, e-mail nebo neúplné číslo zastaví dokončení. Platné číslo projde i bez formátování.",
+                        "An empty field, an e-mail or an incomplete number stops completion. A valid number passes even unformatted.",
                       )}
                     </small>
                   </label>

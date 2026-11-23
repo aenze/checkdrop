@@ -39,6 +39,10 @@ export const czEmbedTexts: EmbedTexts = {
     "name.ok": "Jméno je v pořádku",
     "phone.impossible": "Telefon musí mít 9 číslic (např. 777 123 456).",
     "phone.foreign": "Pro ČR použijte české číslo s předvolbou +420.",
+    "phone.required": "Doplňte telefon. Bez něj nemůže dopravce objednávku doručit.",
+    "phone.email": "Do pole telefonu patří telefonní číslo, ne e-mail.",
+    "phone.invalid":
+      "Zkontrolujte telefon. České číslo má 9 číslic, zahraniční zadejte s předvolbou (např. +421).",
     undo: "Vrátit",
   },
 };
@@ -84,6 +88,10 @@ export const czEmbedTextsEn: EmbedTexts = {
     "name.ok": "Name looks good",
     "phone.impossible": "The phone number must have 9 digits (e.g. 777 123 456).",
     "phone.foreign": "For Czechia, use a Czech number with the +420 prefix.",
+    "phone.required": "Enter a phone number. The carrier cannot deliver the order without it.",
+    "phone.email": "This field needs a phone number, not an e-mail address.",
+    "phone.invalid":
+      "Check the phone number. A Czech number has 9 digits; enter a foreign one with its dialling code (e.g. +421).",
     undo: "Undo",
   },
 };

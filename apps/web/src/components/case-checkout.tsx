@@ -30,6 +30,7 @@ const labels: Record<string, string> = {
   purchase_reported: t("Objednávka hlášena prohlížečem", "Order reported by the browser"),
   checkdrop_name: t("chybí celé jméno", "full name missing"),
   checkdrop_foreign_address: t("adresa nevypadá jako česká", "address does not look Czech"),
+  checkdrop_phone: t("chybí platný telefon", "valid phone missing"),
   native_required: t("chybí povinné pole", "required field missing"),
   native_format: t("neplatný formát", "invalid format"),
   shop_validation: t("validace e-shopu", "shop validation"),

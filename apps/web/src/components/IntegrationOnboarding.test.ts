@@ -65,6 +65,12 @@ describe("integration onboarding", () => {
     expect(source).toContain('? "input"');
     expect(source).toContain("Asistence je aktivní");
     expect(source).toContain("Neúplné jméno vysvětlíme bez blokace objednávky");
+    expect(source).toContain("Bez celého jména objednávku nedokončíme.");
+    expect(source).toContain("Bez platného telefonu objednávku nedokončíme.");
+    expect(source).toContain("Zahraniční adresu ukážeme a první dokončení jednou zastavíme.");
+    expect(source).toContain("Jiné kontroly objednávku neblokují");
+    expect(source).toContain("Vyžadovat platný telefon před odesláním");
+    expect(source).toContain("assistedFieldCount + guardCount > 0");
     expect(source).toContain("Český telefon se bezpečně a tiše zformátuje");
     expect(source).toContain("Výběr z RÚIAN doplní ulici, město a PSČ");
     expect(source).toContain("Výběr firmy doplní firemní a fakturační údaje z ARES");

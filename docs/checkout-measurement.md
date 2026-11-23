@@ -16,9 +16,10 @@ site as validation, has its own rate limit and never blocks the form: a failed e
 | `page_left`         | The page was left (also a normal step to payment or a reload)                  |
 | `purchase_reported` | The page reported a purchase in its `dataLayer` (see below)                    |
 
-Blocking reasons distinguish Checkdrop's own checks (`checkdrop_name`, `checkdrop_foreign_address`),
-the browser's required/format validation, the shop's own validation and a generically cancelled
-submit (`shop_cancelled`, which may also be an AJAX submit and is not an error by itself).
+Blocking reasons distinguish Checkdrop's own checks (`checkdrop_name`, `checkdrop_phone`,
+`checkdrop_foreign_address`), the browser's required/format validation, the shop's own validation
+and a generically cancelled submit (`shop_cancelled`, which may also be an AJAX submit and is not an
+error by itself).
 
 The body accepts only `event_id` (UUID v4), `event`, `source`, `reason`, `field` and `context`, plus
 `order_ref` and `purchase_channel` for purchases. No contact values or URLs are accepted. The session

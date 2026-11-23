@@ -43,6 +43,7 @@ export interface IntegrationField {
   readonly required: boolean;
   readonly requireCompleteName?: boolean;
   readonly requireDomesticAddress?: boolean;
+  readonly requireValidPhone?: boolean;
   readonly submitSelector?: string | null;
   readonly validationMode: FieldValidationMode;
   readonly validationTrigger: FieldValidationTrigger;
@@ -172,6 +173,7 @@ export type RuntimeIntegrationField = Pick<
   | "required"
   | "requireCompleteName"
   | "requireDomesticAddress"
+  | "requireValidPhone"
   | "submitSelector"
   | "validationMode"
   | "validationTrigger"
@@ -302,6 +304,7 @@ interface IntegrationFieldRow {
   required: boolean;
   require_complete_name: boolean;
   require_domestic_address: boolean;
+  require_valid_phone: boolean;
   submit_selector: string | null;
   validation_mode: FieldValidationMode;
   validation_trigger: FieldValidationTrigger;
@@ -435,6 +438,7 @@ export function createPostgresIntegrationStore(connectionString: string): Integr
                'context', field.field_context, 'conditionKey', field.condition_key,
                'required', field.required, 'requireCompleteName', field.require_complete_name,
                'requireDomesticAddress', field.require_domestic_address,
+               'requireValidPhone', field.require_valid_phone,
                'submitSelector', field.submit_selector, 'validationMode', field.validation_mode,
                'validationTrigger', field.validation_trigger)
                ORDER BY field.field_context, field.source_label, field.source_selector)
@@ -861,7 +865,7 @@ async function hydrateIntegrations(
       `SELECT id, integration_id, form_id, source_selector, source_label, source_name,
               canonical_field, field_context, condition_key, required, validation_mode,
               validation_trigger, confidence, detected, require_complete_name, submit_selector,
-              require_domestic_address
+              require_domestic_address, require_valid_phone
        FROM app.integration_fields
        WHERE integration_id = ANY($1::text[])
        ORDER BY field_context, source_label, source_selector`,
@@ -956,6 +960,7 @@ function mapField(row: IntegrationFieldRow): IntegrationField {
     required: row.required,
     requireCompleteName: row.require_complete_name ?? false,
     requireDomesticAddress: row.require_domestic_address ?? false,
+    requireValidPhone: row.require_valid_phone ?? false,
     submitSelector: row.submit_selector ?? null,
     validationMode: row.validation_mode,
     validationTrigger: row.validation_trigger,
@@ -976,8 +981,9 @@ async function insertField(
        id, integration_id, form_id, source_selector, source_label, source_name, canonical_field,
        field_context, condition_key, required, validation_mode, validation_trigger,
        confidence, detected, created_at, updated_at, require_complete_name, submit_selector,
-       require_domestic_address
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $15, $16, $17, $18)`,
+       require_domestic_address, require_valid_phone
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $15, $16, $17, $18,
+       $19)`,
     [
       field.id,
       integrationId,
@@ -997,6 +1003,7 @@ async function insertField(
       field.requireCompleteName ?? false,
       field.submitSelector ?? null,
       field.requireDomesticAddress ?? false,
+      field.requireValidPhone ?? false,
     ],
   );
 }

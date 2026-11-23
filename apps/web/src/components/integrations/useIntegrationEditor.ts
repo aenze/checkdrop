@@ -3,6 +3,7 @@ import { t } from "../../i18n";
 import { api, messageFrom } from "./api";
 import type { NewFormInput, NewIntegrationInput } from "./Forms";
 import {
+  assistanceSummary,
   type CanonicalField,
   type ConfigVersion,
   defaultForm,
@@ -563,70 +564,11 @@ export function useIntegrationEditor() {
   const persistedFields = selectedForm?.fields ?? [];
   const assistanceActive = selected?.state === "shadow" && selectedForm?.state === "configured";
   const mappedCount = fields.filter(isExecutableField).length;
-  const assistableFields = new Set<CanonicalField>([
-    "full_name",
-    "first_name",
-    "last_name",
-    "email",
-    "phone",
-    "street_line",
-    "company_name",
-    "company_id",
-  ]);
-  const assistedFieldCount = persistedFields.filter(
-    (field) => assistableFields.has(field.canonical_field) && field.validation_mode === "suggest",
-  ).length;
-  const assistedNameCount = persistedFields.filter(
-    (field) =>
-      ["full_name", "first_name", "last_name"].includes(field.canonical_field) &&
-      field.validation_mode === "suggest",
-  ).length;
-  const assistedEmailCount = persistedFields.filter(
-    (field) => field.canonical_field === "email" && field.validation_mode === "suggest",
-  ).length;
-  const automaticPhoneCount = persistedFields.filter(
-    (field) => field.canonical_field === "phone" && field.validation_mode === "suggest",
-  ).length;
-  const assistedAddressCount = persistedFields.filter(
-    (field) => field.canonical_field === "street_line" && field.validation_mode === "suggest",
-  ).length;
-  const assistedCompanyCount = persistedFields.filter(
-    (field) =>
-      ["company_name", "company_id"].includes(field.canonical_field) &&
-      field.validation_mode === "suggest",
-  ).length;
-  const assistanceDescription = [
-    assistedNameCount > 0
-      ? t(
-          "Neúplné jméno vysvětlíme bez blokace objednávky.",
-          "An incomplete name is explained without blocking the order.",
-        )
-      : null,
-    assistedEmailCount > 0
-      ? t("Opravu e-mailu zákazník potvrzuje.", "The customer confirms an email fix.")
-      : null,
-    automaticPhoneCount > 0
-      ? t(
-          "Český telefon se bezpečně a tiše zformátuje.",
-          "A Czech phone number is formatted safely and silently.",
-        )
-      : null,
-    assistedAddressCount > 0
-      ? t(
-          "Výběr z RÚIAN doplní ulici, město a PSČ až po potvrzení zákazníkem.",
-          "Picking from RÚIAN fills in street, city and PSČ only after the customer confirms.",
-        )
-      : null,
-    assistedCompanyCount > 0
-      ? t(
-          "Výběr firmy doplní firemní a fakturační údaje z ARES s možností vrácení.",
-          "Picking a company fills in company and billing details from ARES, with undo.",
-        )
-      : null,
-    t("Objednávka se neblokuje.", "The order is never blocked."),
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const {
+    assistedFieldCount,
+    guardCount,
+    description: assistanceDescription,
+  } = assistanceSummary(persistedFields);
   const totalMappedCount =
     selected?.forms
       .filter((form) => form.state === "configured")
@@ -681,6 +623,7 @@ export function useIntegrationEditor() {
     assistanceActive,
     mappedCount,
     assistedFieldCount,
+    guardCount,
     assistanceDescription,
     totalMappedCount,
     receivedData,

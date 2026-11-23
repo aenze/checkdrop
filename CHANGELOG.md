@@ -3,6 +3,18 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
+## 0.1.6 — 2026-11-23
+
+- **Required phone number.** A phone field can be set to "Vyžadovat platný telefon před odesláním":
+  an empty phone, an e-mail address or an incomplete number stops the order with a message at the
+  field. Czech, Slovak and foreign numbers with their dialling code always pass, formatted or not.
+  The check runs in the browser only, so an unreachable Checkdrop never blocks an order. Off by
+  default.
+- **Saved configuration behaviour** in the administration now names every check that can stop an
+  order (full name, phone, foreign address) instead of saying that nothing blocks.
+- Migrations: `0034_required_phone_guard` adds the field option and the `checkdrop_phone` checkout
+  reason. It is additive; existing configurations do not change.
+
 ## 0.1.5 — 2026-11-18
 
 - **Licences:** the MIT licences name ECOZZ s.r.o., which operates Checkdrop, as the copyright

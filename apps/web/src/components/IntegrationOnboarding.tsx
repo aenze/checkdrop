@@ -63,6 +63,7 @@ export default function IntegrationOnboarding() {
     assistanceActive,
     mappedCount,
     assistedFieldCount,
+    guardCount,
     assistanceDescription,
     totalMappedCount,
     receivedData,
@@ -361,11 +362,11 @@ export default function IntegrationOnboarding() {
                   <strong>
                     {!assistanceActive
                       ? t("Asistence není spuštěná", "Assistance is not running")
-                      : assistedFieldCount > 0
+                      : assistedFieldCount + guardCount > 0
                         ? t("Asistence je aktivní", "Assistance is active")
                         : t("Teď pouze měříme", "Only measuring for now")}
-                  </strong>
-                  {assistanceActive && assistedFieldCount > 0
+                  </strong>{" "}
+                  {assistanceActive && assistedFieldCount + guardCount > 0
                     ? assistanceDescription
                     : t(
                         "Žádná hodnota ve formuláři ani objednávce se automaticky nezmění.",

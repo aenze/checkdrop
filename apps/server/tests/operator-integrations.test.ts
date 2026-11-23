@@ -671,6 +671,87 @@ describe("self-service integration operator API", () => {
     }
   });
 
+  it("persists a required valid phone, keeps old mappings off and rejects it elsewhere", async () => {
+    const store = memoryIntegrationStore();
+    const integration = await store.createIntegration({
+      id: "phone-guard",
+      projectRef: "project-a",
+      name: "Phone QA",
+      clientName: "phone-qa",
+      environment: "test",
+      formUrl: "https://example.test/checkout",
+      createdAt: new Date(),
+    });
+    const app = createApp({
+      integrationStore: store,
+      operatorToken: "operator-secret-value",
+      operatorProjectRef: "project-a",
+    });
+    const headers = {
+      "Content-Type": "application/json",
+      "X-Checkdrop-Operator-Key": "operator-secret-value",
+    };
+    const endpoint = `/v1/operator/integrations/${integration.id}/forms/${integration.forms[0]?.id}/fields`;
+    const field = {
+      selector: "#phone",
+      label: "Telefon",
+      name: "phone",
+      canonical_field: "phone",
+      context: "billing",
+      condition_key: null,
+      required: true,
+      require_valid_phone: true,
+      submit_selector: ".JS_orderSendButton",
+      validation_mode: "suggest",
+      validation_trigger: "blur",
+      confidence: null,
+      detected: false,
+    };
+    const saved = await app.request(endpoint, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({ fields: [field], expected_version: 1 }),
+    });
+    expect(saved.status).toBe(200);
+    await expect(saved.json()).resolves.toMatchObject({
+      forms: [
+        {
+          fields: [
+            {
+              canonical_field: "phone",
+              require_valid_phone: true,
+              require_complete_name: false,
+              require_domestic_address: false,
+              submit_selector: ".JS_orderSendButton",
+            },
+          ],
+        },
+      ],
+    });
+    const { require_valid_phone: _flag, ...legacyField } = field;
+    const legacy = await app.request(endpoint, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({ fields: [legacyField] }),
+    });
+    expect(legacy.status).toBe(200);
+    await expect(legacy.json()).resolves.toMatchObject({
+      forms: [{ fields: [{ canonical_field: "phone", require_valid_phone: false }] }],
+    });
+    for (const patch of [
+      { canonical_field: "email" },
+      { validation_mode: "off" },
+      { require_valid_phone: "yes" },
+    ]) {
+      const rejected = await app.request(endpoint, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ fields: [{ ...field, ...patch }] }),
+      });
+      expect([400, 409]).toContain(rejected.status);
+    }
+  });
+
   it("creates, scans, maps, keys and activates an integration", async () => {
     const store = memoryIntegrationStore();
     let id = 0;
@@ -1077,6 +1158,17 @@ describe("self-service integration operator API", () => {
       source: "test",
     });
     expect(JSON.stringify(checkoutRecords)).not.toContain("123456789abc");
+    const phoneBlock = {
+      ...eventBody,
+      event_id: "12345678-1234-4234-8234-123456789abe",
+      event: "blocked",
+      reason: "checkdrop_phone",
+      field: "phone",
+      context: "billing",
+    };
+    expect((await sendEvent(phoneBlock)).status).toBe(204);
+    expect(checkoutRecords.at(-1)).toMatchObject({ event: "blocked", reason: "checkdrop_phone" });
+    expect((await sendEvent({ ...phoneBlock, reason: "checkdrop_fax" })).status).toBe(400);
     expect((await sendEvent({ ...eventBody, email: "private@example.cz" })).status).toBe(400);
     expect((await sendEvent({ ...eventBody, event: "order_confirmed" })).status).toBe(400);
     expect((await sendEvent(eventBody, "https://evil.example")).status).toBe(403);

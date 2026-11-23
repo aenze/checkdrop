@@ -6,6 +6,7 @@ import {
   type EmbedTexts,
   parseEmailForSuggestion,
   personNameRequirement,
+  phoneRequirement,
 } from "@checkdrop/core";
 import { defaultCountryPack } from "./country-packs.js";
 
@@ -16,6 +17,7 @@ function checkdropEmbedRuntime(
   defaultTexts: EmbedTexts,
   looksForeign: (address: string, city: string | null, postalCode: string | null) => boolean,
   translations: Readonly<Record<string, EmbedTexts>>,
+  phoneRule: typeof phoneRequirement,
 ) {
   // The shop page's language picks the texts; Czech pages and unknown languages keep the default.
   const pageLanguage = (document.documentElement.lang || "").slice(0, 2).toLowerCase();
@@ -300,6 +302,7 @@ function checkdropEmbedRuntime(
     required: boolean;
     require_complete_name?: boolean;
     require_domestic_address?: boolean;
+    require_valid_phone?: boolean;
     submit_selector?: string | null;
     validation_mode: "shadow" | "suggest";
     validation_trigger: "input" | "blur" | "submit";
@@ -373,6 +376,35 @@ function checkdropEmbedRuntime(
       if (field.validation_mode !== "suggest" || acceptedNameValues.get(control) === control.value)
         showNameOkay(control);
       return true;
+    };
+    // A shop that cannot deliver without a phone marks its phone field. Only the typed value is
+    // judged, locally and synchronously: an unreachable API never blocks, and an unformatted valid
+    // number passes.
+    const phoneErrors = new Map<ValueControl, string | null>();
+    const activePhone = (field: ConfiguredField, control: ValueControl) =>
+      field.require_valid_phone === true &&
+      field.canonical_field === "phone" &&
+      visibleControl(control) &&
+      conditionMatches(
+        field.condition_key,
+        fields.filter((item) => item.form_id === field.form_id),
+      );
+    const clearPhoneError = (control: ValueControl) => {
+      if (!phoneErrors.has(control)) return;
+      restoreAttribute(control, "aria-invalid", phoneErrors.get(control) ?? null);
+      phoneErrors.delete(control);
+      clearAssistPrompt(control);
+    };
+    const checkPhone = (field: ConfiguredField, control: ValueControl) => {
+      const error = activePhone(field, control) ? phoneRule(control.value) : null;
+      if (!error) {
+        clearPhoneError(control);
+        return true;
+      }
+      if (!phoneErrors.has(control)) phoneErrors.set(control, control.getAttribute("aria-invalid"));
+      control.setAttribute("aria-invalid", "true");
+      showAssistWarning(field.form_id, control, message(error), null);
+      return false;
     };
     // A shop that delivers only within Czechia marks its PSČ field. A clearly foreign address in
     // that group is pointed out on leaving a field and stops the final click once; the same address
@@ -481,8 +513,9 @@ function checkdropEmbedRuntime(
     };
     const guard = (event: Event, form: HTMLFormElement, submitter: Element | null) => {
       let firstInvalid: ValueControl | null = null;
+      let firstInvalidField: ConfiguredField | undefined;
       for (const field of fields) {
-        if (!field.require_complete_name) continue;
+        if (!field.require_complete_name && !field.require_valid_phone) continue;
         const control = firstControl(field.selector, field.root_selector);
         if (
           !control ||
@@ -501,8 +534,18 @@ function checkdropEmbedRuntime(
             continue;
           }
         }
+        if (field.require_valid_phone) {
+          if (!checkPhone(field, control) && !firstInvalid) {
+            firstInvalid = control;
+            firstInvalidField = field;
+          }
+          continue;
+        }
         if (!checkName(field, control)) {
-          firstInvalid ??= control;
+          if (!firstInvalid) {
+            firstInvalid = control;
+            firstInvalidField = field;
+          }
           schedule(
             field.form_id,
             field,
@@ -518,9 +561,9 @@ function checkdropEmbedRuntime(
       event.stopImmediatePropagation();
       checkdropBlockedEvents.add(event);
       recordCheckoutEvent(
-        fields.find((field) => firstControl(field.selector, field.root_selector) === firstInvalid),
+        firstInvalidField,
         "blocked",
-        "checkdrop_name",
+        firstInvalidField?.require_valid_phone ? "checkdrop_phone" : "checkdrop_name",
       );
       if (firstInvalid instanceof HTMLElement) firstInvalid.focus();
       return true;
@@ -528,7 +571,12 @@ function checkdropEmbedRuntime(
     const onFinalClick = (event: Event) => {
       if (!(event.target instanceof Element)) return;
       for (const field of fields) {
-        if (!field.require_complete_name && !field.require_domestic_address) continue;
+        if (
+          !field.require_complete_name &&
+          !field.require_domestic_address &&
+          !field.require_valid_phone
+        )
+          continue;
         let button: Element | null;
         try {
           button = event.target.closest(
@@ -674,6 +722,15 @@ function checkdropEmbedRuntime(
           completedRequests.delete(`${field.form_id}:${field.context}:${field.canonical_field}`);
           clearAssistPrompt(control);
         }
+        // Leaving a filled phone field, or editing one already marked, checks it locally; an empty
+        // field is only pointed out on the final click.
+        if (
+          matches &&
+          field.require_valid_phone &&
+          (phoneErrors.has(control) || (trigger === "blur" && control.value.trim()))
+        ) {
+          checkPhone(field, control);
+        }
         if (
           matches &&
           field.canonical_field === "email" &&
@@ -801,6 +858,7 @@ function checkdropEmbedRuntime(
       document.removeEventListener("focusout", onControlEvent, true);
       document.removeEventListener("submit", onSubmit, true);
       for (const control of nameErrors.keys()) clearNameError(control);
+      for (const control of phoneErrors.keys()) clearPhoneError(control);
       for (const [control, previous] of preparedPhoneControls) {
         restoreAttribute(control, "inputmode", previous.inputMode);
         restoreAttribute(control, "placeholder", previous.placeholder);
@@ -1177,6 +1235,13 @@ function checkdropEmbedRuntime(
           const suggestion =
             safePhoneSuggestion(result) ??
             (liveFormattedPhones.has(control) ? safeValidCzechPhone(result) : null);
+          // A local required-phone error stays until the customer fixes the number.
+          if (
+            field.require_valid_phone &&
+            control.getAttribute("aria-invalid") === "true" &&
+            phoneRule(control.value)
+          )
+            return;
           if (suggestion) applyPhoneNormalization(control, value, suggestion);
           else {
             const warning = safePhoneWarning(result);
@@ -2903,6 +2968,6 @@ function checkdropEmbedRuntime(
   }
 }
 
-// Build-time data only: the reviewed typo list, text catalogues and three self-contained functions,
+// Build-time data only: the reviewed typo list, text catalogues and four self-contained functions,
 // no customer data.
-export const CHECKDROP_EMBED_SCRIPT = `"use strict";\n(${checkdropEmbedRuntime.toString()})(${personNameRequirement.toString()}, ${parseEmailForSuggestion.toString()}, ${JSON.stringify(defaultCountryPack.emailRules.instantCorrections ?? {})}, ${JSON.stringify(defaultCountryPack.embedTexts)}, ${defaultCountryPack.address.looksForeign.toString()}, ${JSON.stringify(defaultCountryPack.embedTranslations ?? {})});\n`;
+export const CHECKDROP_EMBED_SCRIPT = `"use strict";\n(${checkdropEmbedRuntime.toString()})(${personNameRequirement.toString()}, ${parseEmailForSuggestion.toString()}, ${JSON.stringify(defaultCountryPack.emailRules.instantCorrections ?? {})}, ${JSON.stringify(defaultCountryPack.embedTexts)}, ${defaultCountryPack.address.looksForeign.toString()}, ${JSON.stringify(defaultCountryPack.embedTranslations ?? {})}, ${phoneRequirement.toString()});\n`;

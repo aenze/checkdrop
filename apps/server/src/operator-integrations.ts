@@ -1586,6 +1586,7 @@ function parseMappedField(
       "required",
       "require_complete_name",
       "require_domestic_address",
+      "require_valid_phone",
       "submit_selector",
       "validation_mode",
       "validation_trigger",
@@ -1608,6 +1609,7 @@ function parseMappedField(
       typeof field.require_complete_name !== "boolean") ||
     (field.require_domestic_address !== undefined &&
       typeof field.require_domestic_address !== "boolean") ||
+    (field.require_valid_phone !== undefined && typeof field.require_valid_phone !== "boolean") ||
     (field.submit_selector !== undefined &&
       field.submit_selector !== null &&
       (typeof field.submit_selector !== "string" ||
@@ -1636,6 +1638,7 @@ function parseMappedField(
     required: field.required,
     requireCompleteName: field.require_complete_name === true,
     requireDomesticAddress: field.require_domestic_address === true,
+    requireValidPhone: field.require_valid_phone === true,
     submitSelector: typeof field.submit_selector === "string" ? field.submit_selector.trim() : null,
     validationMode: field.validation_mode as FieldValidationMode,
     validationTrigger: field.validation_trigger as FieldValidationTrigger,
@@ -1679,6 +1682,15 @@ function validateMappedFields(fields: readonly SaveIntegrationFieldInput[]): Bil
       return {
         cs: "Doručení jen v ČR lze zapnout pouze u kontrolovaného PSČ.",
         en: "Delivery to the Czech Republic only can only be turned on for a checked PSČ.",
+      };
+    }
+    if (
+      field.requireValidPhone &&
+      (field.canonicalField !== "phone" || field.validationMode === "off")
+    ) {
+      return {
+        cs: "Povinný platný telefon lze zapnout pouze u kontrolovaného telefonu.",
+        en: "A required valid phone can only be turned on for a checked phone field.",
       };
     }
     if (field.requireCompleteName && ["first_name", "last_name"].includes(field.canonicalField)) {

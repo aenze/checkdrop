@@ -66,6 +66,47 @@ describe("runtime integration projection and concurrent editing", () => {
     mocks.query.mockResolvedValue({ rows: [] });
     expect(await store.getRuntimeConfigById?.("missing")).toBeNull();
   });
+  it("stores and reads the required-phone flag next to the other guards", async () => {
+    mocks.query
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ id: "form", config_version: 3 }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ config_version: 4 }] })
+      .mockResolvedValue({ rows: [] });
+    const store = createPostgresIntegrationStore("test-only");
+    const phone = {
+      id: "field-phone",
+      sourceSelector: "#phone",
+      sourceLabel: "Telefon",
+      sourceName: "phone",
+      canonicalField: "phone",
+      context: "billing",
+      conditionKey: null,
+      required: true,
+      requireValidPhone: true,
+      submitSelector: ".JS_orderSendButton",
+      validationMode: "suggest",
+      validationTrigger: "blur",
+      confidence: null,
+      detected: false,
+    } as const;
+    await store.replaceFormFields("project", "integration", "form", [phone], new Date(), 3);
+    const insert = mocks.query.mock.calls.find((call) =>
+      String(call[0]).includes("INSERT INTO app.integration_fields"),
+    );
+    expect(insert?.[0]).toContain("require_valid_phone");
+    expect(insert?.[1]).toHaveLength(19);
+    expect(insert?.[1]?.at(-1)).toBe(true);
+    expect(insert?.[1]?.at(-2)).toBe(false);
+
+    mocks.query.mockReset();
+    mocks.query.mockResolvedValue({ rows: [{ runtime: { id: "integration-a", forms: [] } }] });
+    await store.getRuntimeConfigById?.("integration-a");
+    expect(mocks.query.mock.calls[0]?.[0]).toContain(
+      "'requireValidPhone', field.require_valid_phone",
+    );
+  });
   it("checks the saved version under a lock and rolls back before deleting any fields", async () => {
     mocks.query
       .mockResolvedValueOnce({ rows: [] })

@@ -301,10 +301,122 @@ export function fieldRequest(field: IntegrationField) {
     required: field.required,
     require_complete_name: field.require_complete_name ?? false,
     require_domestic_address: field.require_domestic_address ?? false,
+    require_valid_phone: field.require_valid_phone ?? false,
     submit_selector: field.submit_selector ?? null,
     validation_mode: field.validation_mode,
     validation_trigger: field.validation_trigger,
     confidence: field.confidence,
     detected: field.detected,
   };
+}
+
+/** What the saved mapping does to a customer's checkout, as shown in "Saved configuration behaviour". */
+export function assistanceSummary(fields: readonly IntegrationField[]) {
+  const assistableFields = new Set<CanonicalField>([
+    "full_name",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "street_line",
+    "company_name",
+    "company_id",
+  ]);
+  const assistedFieldCount = fields.filter(
+    (field) => assistableFields.has(field.canonical_field) && field.validation_mode === "suggest",
+  ).length;
+  const assistedNameCount = fields.filter(
+    (field) =>
+      ["full_name", "first_name", "last_name"].includes(field.canonical_field) &&
+      field.validation_mode === "suggest",
+  ).length;
+  const assistedEmailCount = fields.filter(
+    (field) => field.canonical_field === "email" && field.validation_mode === "suggest",
+  ).length;
+  const automaticPhoneCount = fields.filter(
+    (field) => field.canonical_field === "phone" && field.validation_mode === "suggest",
+  ).length;
+  const assistedAddressCount = fields.filter(
+    (field) => field.canonical_field === "street_line" && field.validation_mode === "suggest",
+  ).length;
+  const assistedCompanyCount = fields.filter(
+    (field) =>
+      ["company_name", "company_id"].includes(field.canonical_field) &&
+      field.validation_mode === "suggest",
+  ).length;
+  // Guards work in measuring mode too, so they are described whether or not a field suggests.
+  const nameGuarded = fields.some(
+    (field) =>
+      ["full_name", "first_name", "last_name"].includes(field.canonical_field) &&
+      field.validation_mode !== "off" &&
+      field.require_complete_name,
+  );
+  const phoneGuarded = fields.some(
+    (field) =>
+      field.canonical_field === "phone" &&
+      field.validation_mode !== "off" &&
+      field.require_valid_phone,
+  );
+  const foreignAddressGuarded = fields.some(
+    (field) =>
+      field.canonical_field === "postal_code" &&
+      field.validation_mode !== "off" &&
+      field.require_domestic_address,
+  );
+  const guardCount = [nameGuarded, phoneGuarded, foreignAddressGuarded].filter(Boolean).length;
+  const description = [
+    nameGuarded
+      ? t(
+          "Bez celého jména objednávku nedokončíme.",
+          "The order cannot be completed without a full name.",
+        )
+      : assistedNameCount > 0
+        ? t(
+            "Neúplné jméno vysvětlíme bez blokace objednávky.",
+            "An incomplete name is explained without blocking the order.",
+          )
+        : null,
+    phoneGuarded
+      ? t(
+          "Bez platného telefonu objednávku nedokončíme.",
+          "The order cannot be completed without a valid phone number.",
+        )
+      : null,
+    foreignAddressGuarded
+      ? t(
+          "Zahraniční adresu ukážeme a první dokončení jednou zastavíme.",
+          "A foreign address is pointed out and the first completion is stopped once.",
+        )
+      : null,
+    assistedEmailCount > 0
+      ? t("Opravu e-mailu zákazník potvrzuje.", "The customer confirms an email fix.")
+      : null,
+    automaticPhoneCount > 0
+      ? t(
+          "Český telefon se bezpečně a tiše zformátuje.",
+          "A Czech phone number is formatted safely and silently.",
+        )
+      : null,
+    assistedAddressCount > 0
+      ? t(
+          "Výběr z RÚIAN doplní ulici, město a PSČ až po potvrzení zákazníkem.",
+          "Picking from RÚIAN fills in street, city and PSČ only after the customer confirms.",
+        )
+      : null,
+    assistedCompanyCount > 0
+      ? t(
+          "Výběr firmy doplní firemní a fakturační údaje z ARES s možností vrácení.",
+          "Picking a company fills in company and billing details from ARES, with undo.",
+        )
+      : null,
+    guardCount > 0
+      ? t(
+          "Jiné kontroly objednávku neblokují a při výpadku Checkdropu projde vše.",
+          "No other check blocks the order, and everything goes through if Checkdrop is down.",
+        )
+      : t("Objednávka se neblokuje.", "The order is never blocked."),
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return { assistedFieldCount, guardCount, description };
 }

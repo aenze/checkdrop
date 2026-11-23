@@ -128,4 +128,7 @@ export type EmbedMessageKey =
   | "name.ok"
   | "phone.impossible"
   | "phone.foreign"
+  | "phone.required"
+  | "phone.email"
+  | "phone.invalid"
   | "undo";

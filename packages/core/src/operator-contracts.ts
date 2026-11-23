@@ -35,6 +35,7 @@ export interface IntegrationField {
   readonly required: boolean;
   readonly require_complete_name?: boolean;
   readonly require_domestic_address?: boolean;
+  readonly require_valid_phone?: boolean;
   readonly submit_selector?: string | null;
   readonly validation_mode: ValidationMode;
   readonly validation_trigger: ValidationTrigger;
