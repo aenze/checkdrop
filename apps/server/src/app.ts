@@ -426,9 +426,11 @@ export function createApp(dependencies: AppDependencies = {}) {
 
   app.get("/v1/embed.js", (context) => {
     const headers = {
-      // Five minutes keeps rollbacks fast; a stale copy may be used only while revalidating or
-      // when the origin fails, so a checkout never loses assistance because of a short outage.
-      "Cache-Control": "public, max-age=300, stale-while-revalidate=86400, stale-if-error=86400",
+      // Five minutes keeps releases and rollbacks fast. A browser may run a stale copy for at most
+      // five more minutes while it revalidates, so a new check (such as a required phone) is in
+      // force within ten minutes of a release. Only an origin failure allows a day-old copy, so a
+      // checkout never loses assistance because of a short outage.
+      "Cache-Control": "public, max-age=300, stale-while-revalidate=300, stale-if-error=86400",
       "Content-Type": "application/javascript; charset=utf-8",
       "Cross-Origin-Resource-Policy": "cross-origin",
       ETag: embedETag,

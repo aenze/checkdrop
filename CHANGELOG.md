@@ -3,6 +3,14 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
+## 0.1.7 — 2026-11-24
+
+- **New checks take effect within ten minutes.** Browsers may keep using an older copy of the
+  checkout script for at most five minutes while they fetch the new one (previously up to a day),
+  so a check turned on right after a release, such as a required phone, applies to every visitor
+  soon after. A day-old copy is still used when the server cannot be reached.
+- Migrations: none.
+
 ## 0.1.6 — 2026-11-23
 
 - **Required phone number.** A phone field can be set to "Vyžadovat platný telefon před odesláním":

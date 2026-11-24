@@ -98,6 +98,8 @@ describe("required phone in the hosted script", () => {
     ["+420 ", "Doplňte telefon"],
     ["jana.novakova@seznam.cz", "ne e-mail"],
     ["777 123", "České číslo má 9 číslic"],
+    // The value of the 24. 11. order that went through on a stale copy of the script.
+    ["+420 777 836", "České číslo má 9 číslic"],
     ["nemám telefon", "České číslo má 9 číslic"],
   ])("blocks %j with a message at the field and focuses it", async (value, text) => {
     const f = await fixture();

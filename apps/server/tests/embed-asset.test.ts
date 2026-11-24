@@ -59,7 +59,7 @@ describe("hosted embed asset", () => {
     expect(await first.text()).toBe("console.log(1);");
     expect(etag).toBe(`"${asset.sha256.slice(0, 32)}"`);
     expect(first.headers.get("Cache-Control")).toBe(
-      "public, max-age=300, stale-while-revalidate=86400, stale-if-error=86400",
+      "public, max-age=300, stale-while-revalidate=300, stale-if-error=86400",
     );
     expect(first.headers.get("Content-Type")).toBe("application/javascript; charset=utf-8");
     expect(first.headers.get("Cross-Origin-Resource-Policy")).toBe("cross-origin");
