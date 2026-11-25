@@ -23,6 +23,7 @@ import {
   type ShadowObservationStore,
   selectIntegrationForms,
 } from "@checkdrop/db";
+import { formatCzechVillageStreetLine } from "@checkdrop/pack-cz";
 import { type Context, Hono } from "hono";
 import { requestId } from "hono/request-id";
 import { registerAdminAuthRoutes } from "./admin-auth.js";
@@ -244,7 +245,8 @@ type AddressAdviceResponse =
         | "address.no_match"
         | "address.country_mismatch";
     }
-  | { readonly code: "address.postal_code_mismatch"; readonly postal_code: string };
+  | { readonly code: "address.postal_code_mismatch"; readonly postal_code: string }
+  | { readonly code: "address.village_street"; readonly street_line: string };
 
 interface AddressAutocompleteEnvelope {
   readonly advice?: AddressAdviceResponse;
@@ -256,6 +258,8 @@ interface AddressAutocompleteEnvelope {
     readonly id: string;
     readonly label: string;
     readonly street_line: string;
+    /** Only for an address point without a street: its official line, "<část obce> <číslo>". */
+    readonly village_street_line?: string;
     readonly street: string | null;
     readonly house_number: string;
     readonly orientation_number: string | null;
@@ -631,6 +635,7 @@ export function createApp(dependencies: AppDependencies = {}) {
         require_complete_name: field.requireCompleteName ?? false,
         require_domestic_address: field.requireDomesticAddress ?? false,
         require_valid_phone: field.requireValidPhone ?? false,
+        fill_village_street: field.fillVillageStreet ?? false,
         submit_selector: field.submitSelector ?? null,
         validation_mode: field.validationMode,
         validation_trigger: field.validationTrigger,
@@ -663,6 +668,7 @@ export function createApp(dependencies: AppDependencies = {}) {
           require_complete_name: field.requireCompleteName ?? false,
           require_domestic_address: field.requireDomesticAddress ?? false,
           require_valid_phone: field.requireValidPhone ?? false,
+          fill_village_street: field.fillVillageStreet ?? false,
           submit_selector: field.submitSelector ?? null,
           validation_mode: field.validationMode,
           validation_trigger: field.validationTrigger,
@@ -1517,7 +1523,9 @@ export function createApp(dependencies: AppDependencies = {}) {
                     ? "The street, number and municipality match one address with another PSČ."
                     : response.advice.code === "address.country_mismatch"
                       ? "The PSČ or municipality belongs to another country than Czechia."
-                      : "The street is known in the municipality but the house number is missing.",
+                      : response.advice.code === "address.village_street"
+                        ? "The municipality has no streets; the street line needs its name before the number."
+                        : "The street is known in the municipality but the house number is missing.",
               },
             ]
           : []),
@@ -1863,7 +1871,9 @@ async function autocompleteCzechAddress(
           advice:
             advice.code === "address.postal_code_mismatch"
               ? { code: advice.code, postal_code: advice.postal_code }
-              : { code: advice.code },
+              : advice.code === "address.village_street"
+                ? { code: advice.code, street_line: advice.street_line }
+                : { code: advice.code },
         }
       : {}),
     country: "CZ",
@@ -1875,6 +1885,9 @@ async function autocompleteCzechAddress(
         id: suggestion.id,
         label: suggestion.addressLine,
         street_line: [suggestion.street, compoundNumber].filter(Boolean).join(" "),
+        ...(suggestion.street
+          ? {}
+          : { village_street_line: formatCzechVillageStreetLine(suggestion) }),
         street: suggestion.street,
         house_number: suggestion.houseNumber,
         orientation_number: suggestion.orientationNumber,

@@ -28,8 +28,10 @@ describe.skipIf(!connection)("address advice on isolated PostgreSQL", () => {
     }
     await pool.query(`
       INSERT INTO reference_cz.dataset_versions (id, source, version, effective_at, row_count, checksum, state)
-      VALUES ('dataset-a', 'ruian-st-uads', '2026-08-03', '2026-08-03', 7, 'a', 'active')`);
-    const rows: [string, string, string | null, string, string | null, string][] = [
+      VALUES ('dataset-a', 'ruian-st-uads', '2026-08-03', '2026-08-03', 22, 'a', 'active')`);
+    // [id, municipality, street, house number, orientation, PSČ, part of municipality, number type]
+    type Row = [string, string, string | null, string, string | null, string, string?, string?];
+    const rows: Row[] = [
       ["1", "Obec A", "Testovací", "12", "4a", "12345"],
       ["2", "Obec A", "Testovací", "12", "4b", "12345"],
       ["3", "Obec B", "Testovací", "12", "4a", "67890"],
@@ -37,16 +39,53 @@ describe.skipIf(!connection)("address advice on isolated PostgreSQL", () => {
       ["5", "Obec C", "Dvojitá", "7", null, "11112"],
       ["6", "Ves", null, "134", null, "22222"],
       ["7", "Obec A", "Dlouhá", "12345", null, "12345"],
+      // Municipalities without streets, as RÚIAN records them (Sudoměřice, okres Hodonín).
+      ["8", "Sudoměřice", null, "242", null, "69666", "Sudoměřice", "1"],
+      ["9", "Sudoměřice", null, "241", null, "69666", "Sudoměřice", "1"],
+      ["10", "Adršpach", null, "13", null, "54952", "Dolní Adršpach", "1"],
+      ["11", "Adršpach", null, "14", null, "54957", "Horní Adršpach", "1"],
+      // The same number in two parts with one PSČ, and in two parts with different PSČ.
+      ["12", "Dvojice", null, "5", null, "33301", "Horní Dvojice", "1"],
+      ["13", "Dvojice", null, "5", null, "33301", "Dolní Dvojice", "1"],
+      ["14", "Rozdíl", null, "7", null, "44401", "Rozdíl", "1"],
+      ["15", "Rozdíl", null, "7", null, "44402", "Malý Rozdíl", "1"],
+      // A town with streets in one part and a village part without them.
+      ["16", "Smíšená", "Hlavní", "3", null, "55501", "Smíšená", "1"],
+      ["17", "Smíšená", null, "3", null, "55501", "Lhota", "1"],
+      ["18", "Smíšená", "Hlavní", "4", null, "55501", "Smíšená", "1"],
+      // A recreation area: the same number as č. p. and as č. ev.
+      ["19", "Chatová", null, "8", null, "66601", "Chatová", "1"],
+      ["20", "Chatová", null, "8", null, "66601", "Chatová", "2"],
+      ["21", "Chatová", null, "9", null, "66601", "Chatová", "2"],
+      ["22", "Smíšená", "Hlavní", "4", "2", "55501", "Smíšená", "1"],
     ];
-    for (const [id, municipality, street, houseNumber, orientation, postalCode] of rows) {
+    for (const [
+      id,
+      municipality,
+      street,
+      houseNumber,
+      orientation,
+      postalCode,
+      part = null,
+      numberType = "",
+    ] of rows) {
       const compound = orientation ? `${houseNumber}/${orientation}` : houseNumber;
-      const structured = [street, compound, municipality, postalCode].filter(Boolean).join(" ");
+      const printedNumber = numberType === "2" ? `č. ev. ${compound}` : compound;
+      const structured = [
+        street,
+        compound,
+        part !== municipality ? part : null,
+        municipality,
+        postalCode,
+      ]
+        .filter(Boolean)
+        .join(" ");
       await pool.query(
         `INSERT INTO reference_cz.addresses (
            id, dataset_version_id, municipality, municipality_part, street, house_number_type,
            house_number, orientation_number, postal_code, address_line,
            search_full, search_city, search_street, search_postal_code
-         ) VALUES ($1, 'dataset-a', $2, NULL, $3, '', $4, $5, $6, $7, $8, $9, $10, $6)`,
+         ) VALUES ($1, 'dataset-a', $2, $11, $3, $12, $4, $5, $6, $7, $8, $9, $10, $6)`,
         [
           id,
           municipality,
@@ -54,10 +93,12 @@ describe.skipIf(!connection)("address advice on isolated PostgreSQL", () => {
           houseNumber,
           orientation,
           postalCode,
-          `${[street, compound].filter(Boolean).join(" ")}, ${postalCode} ${municipality}`,
+          `${[street ?? part, printedNumber].filter(Boolean).join(" ")}, ${postalCode} ${municipality}`,
           normalizeCzechAddressSearch(structured),
           normalizeCzechAddressSearch(municipality),
-          normalizeCzechAddressSearch(`${street ?? municipality} ${compound}`),
+          normalizeCzechAddressSearch(`${street ?? part ?? municipality} ${compound}`),
+          part,
+          numberType,
         ],
       );
     }
@@ -118,6 +159,105 @@ describe.skipIf(!connection)("address advice on isolated PostgreSQL", () => {
     const result = await search("Neexistující 9", "Obec Z", "99999");
     expect(result.suggestions).toEqual([]);
     expect(result.advice).toEqual({ code: "address.no_match" });
+  });
+
+  describe("municipality without streets", () => {
+    const village = (street_line: string, city: string, postal_code: string) =>
+      search(street_line, city, postal_code).then((result) => ({
+        advice: result.advice,
+        ids: result.suggestions.map((s) => s.id),
+      }));
+
+    it("completes a bare number to the part of the municipality and the number", async () => {
+      expect(await village("242", "Sudoměřice", "696 66")).toEqual({
+        advice: { code: "address.village_street", street_line: "Sudoměřice 242" },
+        ids: ["8"],
+      });
+      expect(await village("242", "Sudoměřice", "")).toEqual({
+        advice: { code: "address.village_street", street_line: "Sudoměřice 242" },
+        ids: ["8"],
+      });
+    });
+
+    it("drops a typed č. p. and keeps what followed the number", async () => {
+      expect((await village("č.p. 242", "Sudoměřice", "69666")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Sudoměřice 242",
+      });
+      expect((await village("242/3", "Sudoměřice", "69666")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Sudoměřice 242/3",
+      });
+      expect((await village("242a", "sudomerice", "69666")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Sudoměřice 242a",
+      });
+    });
+
+    it("uses the part of the municipality, not the municipality", async () => {
+      expect((await village("13", "Adršpach", "54952")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Dolní Adršpach 13",
+      });
+    });
+
+    it("writes an evidence number with č. ev. and tells č. p. from č. ev.", async () => {
+      expect((await village("9", "Chatová", "66601")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Chatová č. ev. 9",
+      });
+      expect((await village("8", "Chatová", "66601")).advice?.code).not.toBe(
+        "address.village_street",
+      );
+      expect((await village("č.p. 8", "Chatová", "66601")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Chatová 8",
+      });
+      expect((await village("č. ev. 8", "Chatová", "66601")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Chatová č. ev. 8",
+      });
+    });
+
+    it("does nothing when the number is in two parts with the same PSČ", async () => {
+      const result = await village("5", "Dvojice", "33301");
+      expect(result.advice?.code).not.toBe("address.village_street");
+      expect(result.advice?.code).not.toBe("address.postal_code_mismatch");
+    });
+
+    it("lets a typed PSČ pick the part when the parts differ in PSČ", async () => {
+      expect((await village("7", "Rozdíl", "44402")).advice).toEqual({
+        code: "address.village_street",
+        street_line: "Malý Rozdíl 7",
+      });
+      expect((await village("7", "Rozdíl", "")).advice?.code).not.toBe("address.village_street");
+    });
+
+    it("does nothing in a municipality where the number belongs to a street", async () => {
+      expect((await village("12", "Obec A", "12345")).advice?.code).not.toBe(
+        "address.village_street",
+      );
+      expect((await village("4", "Smíšená", "55501")).advice?.code).not.toBe(
+        "address.village_street",
+      );
+      // Hlavní 3 and Lhota 3 share the number, so a bare "3" is ambiguous.
+      expect((await village("3", "Smíšená", "55501")).advice?.code).not.toBe(
+        "address.village_street",
+      );
+    });
+
+    it("reports a wrong PSČ instead of changing the street", async () => {
+      expect(await village("242", "Sudoměřice", "69667")).toEqual({
+        advice: { code: "address.postal_code_mismatch", postal_code: "69666" },
+        ids: ["8"],
+      });
+    });
+
+    it("accepts the official form as typed, without any advice", async () => {
+      const result = await village("Sudoměřice 242", "Sudoměřice", "69666");
+      expect(result.advice).toBeUndefined();
+      expect(result.ids[0]).toBe("8");
+    });
   });
 
   it("keeps the legacy query path without advice", async () => {

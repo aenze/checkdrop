@@ -603,6 +603,66 @@ describe("M1 internal API", () => {
     expect((seen.at(-1) as { components?: unknown }).components).toBeUndefined();
   });
 
+  it("returns the official village street line and its advice", async () => {
+    const searcher: AddressSearcher = {
+      async search(input) {
+        return {
+          object: "address_search_result",
+          status: "matched",
+          input,
+          normalized: input,
+          advice: { code: "address.village_street", street_line: "Sudoměřice 242" },
+          suggestions: [
+            {
+              id: "sudomerice-242",
+              addressLine: "Sudoměřice 242, 696 66 Sudoměřice",
+              municipality: "Sudoměřice",
+              municipalityPart: "Sudoměřice",
+              street: null,
+              houseNumber: "242",
+              houseNumberType: "1",
+              orientationNumber: null,
+              postalCode: "69666",
+              matchScore: 1,
+              reasons: ["address.exact_village_number_city"],
+            },
+          ],
+          evidence: {
+            source: "ruian-st-uads",
+            sourceVersion: "2026-11-01",
+            effectiveAt: "2026-11-01T00:00:00.000Z",
+            state: "confirmed",
+          },
+        };
+      },
+      async close() {},
+    };
+    const response = await createApp({
+      pilotStore: memoryStore(activeKey),
+      addressSearcher: searcher,
+    }).request("/v1/addresses/autocomplete", {
+      method: "POST",
+      headers: { "content-type": "application/json", "X-Checkdrop-Key": rawKey },
+      body: JSON.stringify({
+        query: "242 Sudoměřice 69666",
+        components: { street_line: "242", city: "Sudoměřice", postal_code: "69666" },
+      }),
+    });
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as {
+      advice: unknown;
+      suggestions: { street_line: string; village_street_line?: string }[];
+    };
+    expect(body.advice).toEqual({ code: "address.village_street", street_line: "Sudoměřice 242" });
+    expect(body.suggestions[0]).toMatchObject({
+      street_line: "242",
+      village_street_line: "Sudoměřice 242",
+      street: null,
+      city: "Sudoměřice",
+      city_part: "Sudoměřice",
+    });
+  });
+
   it("offers no Czech address for a Slovak PSČ or town and records the country mismatch", async () => {
     const searched: string[] = [];
     const observations = memoryShadowObservationStore();

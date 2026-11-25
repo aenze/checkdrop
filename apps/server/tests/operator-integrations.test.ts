@@ -752,6 +752,75 @@ describe("self-service integration operator API", () => {
     }
   });
 
+  it("saves the village street option only on a suggesting street field", async () => {
+    const store = memoryIntegrationStore();
+    const integration = await store.createIntegration({
+      id: "integration-village",
+      projectRef: "project-a",
+      name: "Village QA",
+      clientName: "village-qa",
+      environment: "test",
+      formUrl: "https://example.test/checkout",
+      createdAt: new Date(),
+    });
+    const app = createApp({
+      integrationStore: store,
+      operatorToken: "operator-secret-value",
+      operatorProjectRef: "project-a",
+    });
+    const headers = {
+      "Content-Type": "application/json",
+      "X-Checkdrop-Operator-Key": "operator-secret-value",
+    };
+    const endpoint = `/v1/operator/integrations/${integration.id}/forms/${integration.forms[0]?.id}/fields`;
+    const street = {
+      selector: "#street_delivery",
+      label: "Ulice a č. p.",
+      name: "street_delivery",
+      canonical_field: "street_line",
+      context: "shipping",
+      condition_key: null,
+      required: true,
+      fill_village_street: true,
+      validation_mode: "suggest",
+      validation_trigger: "input",
+      confidence: null,
+      detected: false,
+    };
+    const saved = await app.request(endpoint, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({ fields: [street], expected_version: 1 }),
+    });
+    expect(saved.status).toBe(200);
+    await expect(saved.json()).resolves.toMatchObject({
+      forms: [{ fields: [{ canonical_field: "street_line", fill_village_street: true }] }],
+    });
+    const { fill_village_street: _flag, ...legacyField } = street;
+    const legacy = await app.request(endpoint, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({ fields: [legacyField] }),
+    });
+    expect(legacy.status).toBe(200);
+    await expect(legacy.json()).resolves.toMatchObject({
+      forms: [{ fields: [{ canonical_field: "street_line", fill_village_street: false }] }],
+    });
+    for (const patch of [
+      { canonical_field: "city", validation_trigger: "blur" },
+      { validation_mode: "shadow" },
+      { validation_mode: "off" },
+      { fill_village_street: "yes" },
+    ]) {
+      const rejected = await app.request(endpoint, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ fields: [{ ...street, ...patch }] }),
+      });
+      expect([400, 409]).toContain(rejected.status);
+    }
+  });
+
   it("creates, scans, maps, keys and activates an integration", async () => {
     const store = memoryIntegrationStore();
     let id = 0;

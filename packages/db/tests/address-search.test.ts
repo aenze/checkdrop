@@ -328,6 +328,127 @@ describe("in-memory municipality index", () => {
   });
 });
 
+describe("municipality without streets (RÚIAN rows in memory)", () => {
+  type Row = {
+    id: string;
+    municipality: string;
+    municipality_part: string | null;
+    street: string | null;
+    house_number_type: string;
+    house_number: string;
+    orientation_number: string | null;
+    postal_code: string;
+  };
+  const row = (
+    id: string,
+    municipality: string,
+    part: string | null,
+    street: string | null,
+    houseNumber: string,
+    postalCode: string,
+    type = "1",
+  ): Row => ({
+    id,
+    municipality,
+    municipality_part: part,
+    street,
+    house_number_type: type,
+    house_number: houseNumber,
+    orientation_number: null,
+    postal_code: postalCode,
+  });
+  const table: Row[] = [
+    row("sudomerice-242", "Sudoměřice", "Sudoměřice", null, "242", "69666"),
+    row("sudomerice-241", "Sudoměřice", "Sudoměřice", null, "241", "69666"),
+    row("adrspach-13", "Adršpach", "Dolní Adršpach", null, "13", "54952"),
+    row("dvojice-horni-5", "Dvojice", "Horní Dvojice", null, "5", "33301"),
+    row("dvojice-dolni-5", "Dvojice", "Dolní Dvojice", null, "5", "33301"),
+    row("smisena-hlavni-3", "Smíšená", "Smíšená", "Hlavní", "3", "55501"),
+    row("smisena-lhota-3", "Smíšená", "Lhota", null, "3", "55501"),
+    row("chatova-ev-9", "Chatová", "Chatová", null, "9", "66601", "2"),
+  ];
+  const normalize = (value: string) => value.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  const queries: string[] = [];
+  const queryable = {
+    async query(text: string, values: unknown[] = []) {
+      queries.push(text);
+      if (!text.includes("house_number_type = $3")) return { rows: [] };
+      const [city, houseNumber, type] = values as [string, string, string | null];
+      return {
+        rows: table
+          .filter(
+            (candidate) =>
+              normalize(candidate.municipality) === city &&
+              candidate.house_number === houseNumber &&
+              (type === null || candidate.house_number_type === type),
+          )
+          .map((candidate) => ({
+            ...candidate,
+            dataset_version_id: "dataset-a",
+            address_line: `${candidate.street ?? candidate.municipality_part} ${candidate.house_number}, ${candidate.postal_code} ${candidate.municipality}`,
+          })),
+      };
+    },
+  };
+  const search = (street_line: string, city: string, postal_code: string) =>
+    searchCzechAddresses(queryable, [street_line, city, postal_code].filter(Boolean).join(" "), {
+      components: { street_line, city, postal_code },
+    });
+
+  it("returns Sudoměřice 242 for a bare 242 in Sudoměřice", async () => {
+    const result = await search("242", "Sudoměřice", "696 66");
+    expect(result.advice).toEqual({
+      code: "address.village_street",
+      street_line: "Sudoměřice 242",
+    });
+    expect(result.status).toBe("matched");
+    expect(result.suggestions.map((s) => [s.id, s.houseNumberType])).toEqual([
+      ["sudomerice-242", "1"],
+    ]);
+    expect(result.evidence.datasetVersionId).toBe("dataset-a");
+  });
+
+  it("keeps a slash or a letter and drops a typed č. p.", async () => {
+    expect((await search("242/3", "Sudoměřice", "69666")).advice).toMatchObject({
+      street_line: "Sudoměřice 242/3",
+    });
+    expect((await search("242a", "Sudoměřice", "69666")).advice).toMatchObject({
+      street_line: "Sudoměřice 242a",
+    });
+    expect((await search("č. p. 242", "Sudoměřice", "")).advice).toMatchObject({
+      street_line: "Sudoměřice 242",
+    });
+  });
+
+  it("uses the part name and writes č. ev.", async () => {
+    expect((await search("13", "Adršpach", "")).advice).toMatchObject({
+      street_line: "Dolní Adršpach 13",
+    });
+    expect((await search("9", "Chatová", "")).advice).toMatchObject({
+      street_line: "Chatová č. ev. 9",
+    });
+    expect((await search("č.p. 9", "Chatová", "")).advice?.code).not.toBe("address.village_street");
+  });
+
+  it("gives no village advice when the number is ambiguous or on a street", async () => {
+    expect((await search("5", "Dvojice", "33301")).advice?.code).not.toBe("address.village_street");
+    expect((await search("3", "Smíšená", "55501")).advice?.code).not.toBe("address.village_street");
+    expect((await search("999", "Sudoměřice", "")).advice?.code).not.toBe("address.village_street");
+  });
+
+  it("reports a different PSČ instead of completing the street", async () => {
+    const result = await search("242", "Sudoměřice", "69667");
+    expect(result.advice).toEqual({ code: "address.postal_code_mismatch", postal_code: "69666" });
+  });
+
+  it("does not look up villages for a street name or without a city", async () => {
+    queries.length = 0;
+    await search("Hlavní 3", "Smíšená", "55501");
+    await search("242", "", "69666");
+    expect(queries.some((text) => text.includes("house_number_type = $3"))).toBe(false);
+  });
+});
+
 function candidate(
   overrides: Partial<{
     id: string;

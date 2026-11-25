@@ -935,6 +935,13 @@ components:
               properties:
                 code: { type: string, const: address.postal_code_mismatch }
                 postal_code: { type: string, pattern: "^[0-9]{5}$" }
+            - type: object
+              additionalProperties: false
+              required: [code, street_line]
+              description: The street line holds only a house number (e.g. `242`, `č. p. 242`, `242/3`) and the municipality has exactly one address point with that number, and it has no street. `street_line` is its official form, the part of the municipality and the number (`Sudoměřice 242`), keeping what was typed after the number. The address is the only suggestion.
+              properties:
+                code: { type: string, const: address.village_street }
+                street_line: { type: string, maxLength: 200 }
         evidence:
           type: array
           items: { $ref: "#/components/schemas/Evidence" }
@@ -955,6 +962,9 @@ components:
         id: { type: string, description: RÚIAN address-place identifier. }
         label: { type: string }
         street_line: { type: string }
+        village_street_line:
+          type: string
+          description: Only for an address point without a street. The official street line, the part of the municipality and the number (`Sudoměřice 242`, `Chatová č. ev. 9`), which carriers expect instead of the bare number in `street_line`.
         street: { type: [string, "null"] }
         house_number: { type: string }
         orientation_number: { type: [string, "null"] }

@@ -7,6 +7,7 @@ const filledPlaceholders: Readonly<Record<string, readonly string[]>> = {
   "correction.title": ["field", "value"],
   "correction.apply_label": ["field", "value"],
   "correction.keep_label": ["field"],
+  "address.village_undo_label": ["value"],
 };
 
 describe("Czech hosted-script texts", () => {

@@ -1,7 +1,9 @@
 import {
   type CzechAddressComponents,
+  formatCzechVillageStreetLine,
   normalizeCzechAddressSearch,
   parseCzechStreetNumber,
+  parseCzechVillageNumber,
 } from "@checkdrop/pack-cz";
 import { Pool, type PoolConfig, type QueryResultRow } from "pg";
 import {
@@ -17,6 +19,8 @@ export interface AddressSuggestion {
   municipalityPart: string | null;
   street: string | null;
   houseNumber: string;
+  /** RÚIAN TypCislaDomovnihoKod: "1" číslo popisné, "2" číslo evidenční; may be absent. */
+  houseNumberType?: string;
   orientationNumber: string | null;
   postalCode: string;
   matchScore: number;
@@ -26,7 +30,12 @@ export interface AddressSuggestion {
 export type AddressAdvice =
   | { code: "address.house_number_missing" }
   | { code: "address.postal_code_mismatch"; postal_code: string }
-  | { code: "address.no_match" };
+  | { code: "address.no_match" }
+  /**
+   * The street field holds only a house number and the municipality has exactly one address point
+   * with that number and no street. `street_line` is its official form, "<část obce> <číslo>".
+   */
+  | { code: "address.village_street"; street_line: string };
 
 export interface AddressSearchResult {
   object: "address_search_result";
@@ -98,6 +107,7 @@ interface CandidateRow extends QueryResultRow {
   municipality: string;
   municipality_part: string | null;
   street: string | null;
+  house_number_type: string;
   house_number: string;
   orientation_number: string | null;
   postal_code: string;
@@ -349,6 +359,7 @@ async function searchCandidates(
       address.municipality,
       address.municipality_part,
       address.street,
+      address.house_number_type,
       address.house_number,
       address.orientation_number,
       address.postal_code,
@@ -515,6 +526,7 @@ interface ExactRow extends QueryResultRow {
   municipality: string;
   municipality_part: string | null;
   street: string | null;
+  house_number_type: string;
   house_number: string;
   orientation_number: string | null;
   postal_code: string;
@@ -539,17 +551,26 @@ async function withComponentAdvice(
   const parsed = parseCzechStreetNumber(components.street_line);
   const city = normalizeCzechAddressSearch(components.city);
   const postalCode = componentPostalCode(components);
-  const sameStreet = (street: string | null) =>
+  // Without a street, RÚIAN writes the part of the municipality in its place ("Sudoměřice 242").
+  const sameStreet = (
+    s: Pick<AddressSuggestion, "street" | "municipality" | "municipalityPart">,
+  ) =>
     parsed?.street
-      ? normalizeCzechAddressSearch(street ?? "") === normalizeCzechAddressSearch(parsed.street)
-      : street === null;
+      ? s.street === null
+        ? normalizeCzechAddressSearch(s.municipalityPart || s.municipality) ===
+          normalizeCzechAddressSearch(parsed.street)
+        : normalizeCzechAddressSearch(s.street) === normalizeCzechAddressSearch(parsed.street)
+      : s.street === null;
   const exact = (suggestion: AddressSuggestion) =>
     Boolean(parsed) &&
     normalizeCzechAddressSearch(suggestion.municipality) === city &&
-    sameStreet(suggestion.street) &&
+    sameStreet(suggestion) &&
     suggestion.houseNumber === parsed?.houseNumber &&
     (!parsed?.orientationNumber ||
       suggestion.orientationNumber?.toLowerCase() === parsed.orientationNumber);
+
+  const village = city ? await villageStreetAdvice(queryable, result, components, city) : null;
+  if (village) return village;
 
   if (parsed && city) {
     if (postalCode && result.suggestions.some((s) => exact(s) && s.postalCode === postalCode)) {
@@ -560,8 +581,8 @@ async function withComponentAdvice(
       : null;
     const rows = (
       await queryable.query<ExactRow>(
-        `SELECT id, dataset_version_id, municipality, municipality_part, street, house_number,
-                orientation_number, postal_code, address_line
+        `SELECT id, dataset_version_id, municipality, municipality_part, street, house_number_type,
+                house_number, orientation_number, postal_code, address_line
            FROM reference_cz.addresses_active
           WHERE search_city = $1
             AND house_number = $2
@@ -583,24 +604,7 @@ async function withComponentAdvice(
         ],
       )
     ).rows;
-    const toSuggestion = (row: ExactRow, reasons: string[]): AddressSuggestion => ({
-      id: row.id,
-      addressLine: row.address_line,
-      municipality: row.municipality,
-      municipalityPart: row.municipality_part,
-      street: row.street,
-      houseNumber: row.house_number,
-      orientationNumber: row.orientation_number,
-      postalCode: row.postal_code,
-      matchScore: 1,
-      reasons,
-    });
-    // Suggestions must carry the dataset they came from, or the cache treats them as a rotation.
-    const evidenceFrom = (row: ExactRow) => ({
-      ...result.evidence,
-      state: "confirmed" as const,
-      datasetVersionId: row.dataset_version_id,
-    });
+    const evidenceFrom = (row: ExactRow) => exactEvidence(result, row);
     const only = rows.length === 1 ? rows[0] : undefined;
     if (postalCode && only && only.postal_code.replace(/\s+/g, "") !== postalCode) {
       return {
@@ -628,7 +632,7 @@ async function withComponentAdvice(
       // A wrong PSČ narrows the ordinary search to another area. When nothing there belongs to the
       // typed street and municipality, search once more without the PSČ, without claiming it.
       const typedStreetFound = result.suggestions.some(
-        (s) => sameStreet(s.street) && normalizeCzechAddressSearch(s.municipality) === city,
+        (s) => sameStreet(s) && normalizeCzechAddressSearch(s.municipality) === city,
       );
       if (!typedStreetFound) {
         const withoutPostalCode = await searchCandidates(
@@ -657,6 +661,101 @@ async function withComponentAdvice(
   }
   if (result.suggestions.length === 0) return { ...result, advice: { code: "address.no_match" } };
   return result;
+}
+
+function toSuggestion(row: ExactRow, reasons: string[]): AddressSuggestion {
+  return {
+    id: row.id,
+    addressLine: row.address_line,
+    municipality: row.municipality,
+    municipalityPart: row.municipality_part,
+    street: row.street,
+    houseNumber: row.house_number,
+    ...(row.house_number_type ? { houseNumberType: row.house_number_type } : {}),
+    orientationNumber: row.orientation_number,
+    postalCode: row.postal_code,
+    matchScore: 1,
+    reasons,
+  };
+}
+
+// Suggestions must carry the dataset they came from, or the cache treats them as a rotation.
+function exactEvidence(
+  result: AddressSearchResult,
+  row: ExactRow,
+): AddressSearchResult["evidence"] {
+  return { ...result.evidence, state: "confirmed", datasetVersionId: row.dataset_version_id };
+}
+
+/**
+ * A customer in a municipality without streets often types only the house number ("242",
+ * "č. p. 242", "242/3"). Carriers then refuse the address, so when RÚIAN has exactly one address
+ * point in the typed municipality with that number, and it has no street, the official street line
+ * "<část obce> <číslo>" is returned as advice. What the customer typed after the number is kept.
+ * Several matches (e.g. the same number in two parts of the municipality) narrow by the PSČ when
+ * typed; otherwise nothing is advised and the ordinary search continues. A PSČ that differs from
+ * the only match is reported as a PSČ mismatch instead, without changing the street.
+ */
+async function villageStreetAdvice(
+  queryable: Queryable,
+  result: AddressSearchResult,
+  components: CzechAddressComponents,
+  city: string,
+): Promise<AddressSearchResult | null> {
+  const village = parseCzechVillageNumber(components.street_line);
+  if (!village) return null;
+  const postalCode = componentPostalCode(components);
+  const rows = (
+    await queryable.query<ExactRow>(
+      `SELECT id, dataset_version_id, municipality, municipality_part, street, house_number_type,
+              house_number, orientation_number, postal_code, address_line
+         FROM reference_cz.addresses_active
+        WHERE search_city = $1
+          AND house_number = $2
+          AND ($3::text IS NULL OR house_number_type = $3)
+          AND ($4::text IS NULL OR dataset_version_id = $4)
+        ORDER BY id
+        LIMIT 5`,
+      [
+        city,
+        village.houseNumber,
+        village.houseNumberType,
+        result.evidence.datasetVersionId ?? null,
+      ],
+    )
+  ).rows;
+  const samePostalCode = postalCode
+    ? rows.filter((row) => row.postal_code.replace(/\s+/g, "") === postalCode)
+    : [];
+  const only = rows.length === 1 ? rows[0] : samePostalCode.length === 1 ? samePostalCode[0] : null;
+  // The same number on a street elsewhere in the municipality makes the bare number ambiguous.
+  if (!only || only.street !== null) return null;
+  if (postalCode && only.postal_code.replace(/\s+/g, "") !== postalCode) {
+    return {
+      ...result,
+      status: "matched",
+      suggestions: [
+        toSuggestion(only, ["address.exact_village_number_city", "address.postal_code_differs"]),
+      ],
+      evidence: exactEvidence(result, only),
+      advice: { code: "address.postal_code_mismatch", postal_code: only.postal_code },
+    };
+  }
+  return {
+    ...result,
+    status: "matched",
+    suggestions: [toSuggestion(only, ["address.exact_village_number_city"])],
+    evidence: exactEvidence(result, only),
+    advice: {
+      code: "address.village_street",
+      street_line: `${formatCzechVillageStreetLine({
+        municipality: only.municipality,
+        municipalityPart: only.municipality_part,
+        houseNumber: only.house_number,
+        houseNumberType: only.house_number_type,
+      })}${village.suffix}`,
+    },
+  };
 }
 
 /**
@@ -775,6 +874,7 @@ function scoreCandidate(
     municipalityPart: candidate.municipality_part,
     street: candidate.street,
     houseNumber: candidate.house_number,
+    ...(candidate.house_number_type ? { houseNumberType: candidate.house_number_type } : {}),
     orientationNumber: candidate.orientation_number,
     postalCode: candidate.postal_code,
     matchScore: Math.round(Math.min(1, score) * 10_000) / 10_000,

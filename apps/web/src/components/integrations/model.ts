@@ -302,6 +302,7 @@ export function fieldRequest(field: IntegrationField) {
     require_complete_name: field.require_complete_name ?? false,
     require_domestic_address: field.require_domestic_address ?? false,
     require_valid_phone: field.require_valid_phone ?? false,
+    fill_village_street: field.fill_village_street ?? false,
     submit_selector: field.submit_selector ?? null,
     validation_mode: field.validation_mode,
     validation_trigger: field.validation_trigger,
@@ -338,6 +339,12 @@ export function assistanceSummary(fields: readonly IntegrationField[]) {
   ).length;
   const assistedAddressCount = fields.filter(
     (field) => field.canonical_field === "street_line" && field.validation_mode === "suggest",
+  ).length;
+  const villageStreetCount = fields.filter(
+    (field) =>
+      field.canonical_field === "street_line" &&
+      field.validation_mode === "suggest" &&
+      field.fill_village_street,
   ).length;
   const assistedCompanyCount = fields.filter(
     (field) =>
@@ -401,6 +408,12 @@ export function assistanceSummary(fields: readonly IntegrationField[]) {
       ? t(
           "Výběr z RÚIAN doplní ulici, město a PSČ až po potvrzení zákazníkem.",
           "Picking from RÚIAN fills in street, city and PSČ only after the customer confirms.",
+        )
+      : null,
+    villageStreetCount > 0
+      ? t(
+          "V obci bez ulic doplníme k číslu domu název obce; zákazník to může vrátit.",
+          "In a municipality without streets the house number gets the village name; the customer can undo it.",
         )
       : null,
     assistedCompanyCount > 0

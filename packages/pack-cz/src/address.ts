@@ -41,6 +41,60 @@ export function parseCzechStreetNumber(value: string): StreetNumberParts | null 
   };
 }
 
+export interface CzechVillageNumber {
+  /** The house number without its prefix, e.g. "242". */
+  readonly houseNumber: string;
+  /** RÚIAN TypCislaDomovnihoKod when the customer typed it: "1" č. p., "2" č. ev. */
+  readonly houseNumberType: "1" | "2" | null;
+  /** What followed the number, kept as typed in a normalized form: "/3", "/3a" or "a". */
+  readonly suffix: string;
+}
+
+/**
+ * Recognises a street field that holds only a house number, as customers in a municipality
+ * without streets often type it: "242", "č. p. 242", "čp.242", "č.ev. 12", "242/3" or "242a".
+ * Anything with a name in it is not a bare number and returns null.
+ */
+export function parseCzechVillageNumber(value: string): CzechVillageNumber | null {
+  const plain = value.normalize("NFD").replace(/\p{M}/gu, "").trim().toLowerCase();
+  const match = plain.match(
+    /^(?:(c\.?\s*p\.?|cp\.?|c\.?\s*ev\.?|ev\.?\s*c\.?|cislo\s+popisne|cislo\s+evidencni)\s*)?(\d{1,4})(?:\s*\/\s*(\d{1,4})\s*([a-z])?|\s*([a-z]))?$/u,
+  );
+  if (!match?.[2]) return null;
+  const prefix = match[1]?.replace(/[\s.]/g, "") ?? "";
+  const houseNumber = match[2].replace(/^0+(?=\d)/, "");
+  const suffix = match[3] ? `/${match[3]}${match[4] ?? ""}` : (match[5] ?? "");
+  return {
+    houseNumber,
+    houseNumberType: !prefix
+      ? null
+      : prefix.includes("ev") || prefix === "cisloevidencni"
+        ? "2"
+        : "1",
+    suffix,
+  };
+}
+
+/**
+ * The official street line of an address point without a street (vyhláška č. 359/2011 Sb.,
+ * příloha 1): the name of the municipality part and the house number, e.g. "Sudoměřice 242" or
+ * "Dolní Adršpach 13". An evidence number is written with "č. ev.".
+ */
+export function formatCzechVillageStreetLine(address: {
+  readonly municipality: string;
+  readonly municipalityPart: string | null;
+  readonly houseNumber: string;
+  readonly houseNumberType?: string | null;
+  readonly orientationNumber?: string | null;
+}): string {
+  const number = address.orientationNumber
+    ? `${address.houseNumber}/${address.orientationNumber}`
+    : address.houseNumber;
+  return `${address.municipalityPart || address.municipality} ${
+    address.houseNumberType === "2" ? "č. ev. " : ""
+  }${number}`;
+}
+
 /**
  * Flags an address that clearly belongs to another country, such as a Slovak PSČ or country name.
  * Only obvious signals count, so a Czech address is never refused by guesswork: a Czech PSČ always

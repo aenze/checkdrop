@@ -1587,6 +1587,7 @@ function parseMappedField(
       "require_complete_name",
       "require_domestic_address",
       "require_valid_phone",
+      "fill_village_street",
       "submit_selector",
       "validation_mode",
       "validation_trigger",
@@ -1610,6 +1611,7 @@ function parseMappedField(
     (field.require_domestic_address !== undefined &&
       typeof field.require_domestic_address !== "boolean") ||
     (field.require_valid_phone !== undefined && typeof field.require_valid_phone !== "boolean") ||
+    (field.fill_village_street !== undefined && typeof field.fill_village_street !== "boolean") ||
     (field.submit_selector !== undefined &&
       field.submit_selector !== null &&
       (typeof field.submit_selector !== "string" ||
@@ -1639,6 +1641,7 @@ function parseMappedField(
     requireCompleteName: field.require_complete_name === true,
     requireDomesticAddress: field.require_domestic_address === true,
     requireValidPhone: field.require_valid_phone === true,
+    fillVillageStreet: field.fill_village_street === true,
     submitSelector: typeof field.submit_selector === "string" ? field.submit_selector.trim() : null,
     validationMode: field.validation_mode as FieldValidationMode,
     validationTrigger: field.validation_trigger as FieldValidationTrigger,
@@ -1691,6 +1694,15 @@ function validateMappedFields(fields: readonly SaveIntegrationFieldInput[]): Bil
       return {
         cs: "Povinný platný telefon lze zapnout pouze u kontrolovaného telefonu.",
         en: "A required valid phone can only be turned on for a checked phone field.",
+      };
+    }
+    if (
+      field.fillVillageStreet &&
+      (field.canonicalField !== "street_line" || field.validationMode !== "suggest")
+    ) {
+      return {
+        cs: "Doplňování obce u adres bez ulic lze zapnout pouze u ulice v režimu návrhů.",
+        en: "Completing village addresses can only be turned on for a street field that suggests.",
       };
     }
     if (field.requireCompleteName && ["first_name", "last_name"].includes(field.canonicalField)) {

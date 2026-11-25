@@ -40,8 +40,22 @@ function checkdropEmbedRuntime(
     fields: readonly ConfiguredField[];
     result: unknown;
     requestId: string | null;
+    fingerprint: string;
   };
   const addressAnswers = new WeakMap<ValueControl, AddressAnswer>();
+  // A village line the customer undid is not filled in again for the same typed street and city.
+  const declinedVillageStreets = new WeakMap<ValueControl, string>();
+  // The note about a completed village line stays until the customer edits the street or undoes it,
+  // so typing the city or PSČ afterwards, or a later check of the street, does not hide it.
+  const villageNotes = new WeakMap<ValueControl, { line: string; prompt: HTMLElement }>();
+  const keepsVillageNote = (control: ValueControl) => {
+    const note = villageNotes.get(control);
+    return Boolean(
+      note?.prompt.isConnected &&
+        assistPrompts.get(control) === note.prompt &&
+        control.value === note.line,
+    );
+  };
   const script = document.currentScript;
   if (!(script instanceof HTMLScriptElement)) return;
   const site = script.dataset.checkdropSite?.trim() ?? "";
@@ -303,6 +317,7 @@ function checkdropEmbedRuntime(
     require_complete_name?: boolean;
     require_domestic_address?: boolean;
     require_valid_phone?: boolean;
+    fill_village_street?: boolean;
     submit_selector?: string | null;
     validation_mode: "shadow" | "suggest";
     validation_trigger: "input" | "blur" | "submit";
@@ -668,7 +683,7 @@ function checkdropEmbedRuntime(
             timers.delete(key);
             active.get(key)?.abort();
             completedRequests.delete(key);
-            clearAssistPrompt(streetControl);
+            if (!keepsVillageNote(streetControl)) clearAssistPrompt(streetControl);
           }
         }
         if (
@@ -778,8 +793,32 @@ function checkdropEmbedRuntime(
         ) {
           const answer = addressAnswers.get(control);
           // An answer received while typing stayed neutral; leaving the field shows its advice.
-          if (answer && answer.value === control.value && safeAddressAdvice(answer.result))
+          if (
+            answer &&
+            answer.value === control.value &&
+            (safeAddressAdvice(answer.result) || villageStreetFor(answer))
+          )
             renderAddressAnswer(control, answer, false);
+        }
+        if (matches && eventType === "focusout" && field.canonical_field === "city") {
+          // A village fill waits while the city is still being typed; leaving the city applies it.
+          const street = formFields.find(
+            (candidate) =>
+              candidate.canonical_field === "street_line" &&
+              candidate.context === field.context &&
+              candidate.fill_village_street === true,
+          );
+          const streetControl = street ? firstControl(street.selector, street.root_selector) : null;
+          const answer = streetControl ? addressAnswers.get(streetControl) : undefined;
+          if (
+            streetControl &&
+            answer &&
+            answer.value === streetControl.value &&
+            villageStreetFor(answer) &&
+            JSON.stringify(validationRequest(answer.field, formFields, streetControl.value)) ===
+              answer.fingerprint
+          )
+            renderAddressAnswer(streetControl, answer, false);
         }
         if (field.validation_trigger !== trigger || !matches) continue;
         if (
@@ -1307,7 +1346,15 @@ function checkdropEmbedRuntime(
             }
           }
         } else {
-          const answer = { value, formId, field, fields, result, requestId };
+          const answer = {
+            value,
+            formId,
+            field,
+            fields,
+            result,
+            requestId,
+            fingerprint: requestFingerprint,
+          };
           addressAnswers.set(control, answer);
           // While the customer types in the street, hints stay neutral; warnings wait for blur.
           renderAddressAnswer(control, answer, document.activeElement === control);
@@ -1670,6 +1717,8 @@ function checkdropEmbedRuntime(
     id: string;
     label: string;
     streetLine: string;
+    /** For an address point without a street: "<část obce> <číslo>". */
+    villageStreetLine: string | null;
     city: string;
     postalCode: string;
   };
@@ -1684,6 +1733,7 @@ function checkdropEmbedRuntime(
         id?: unknown;
         label?: unknown;
         street_line?: unknown;
+        village_street_line?: unknown;
         city?: unknown;
         postal_code?: unknown;
       };
@@ -1702,6 +1752,9 @@ function checkdropEmbedRuntime(
           id: suggestion.id,
           label: suggestion.label,
           streetLine: suggestion.street_line,
+          villageStreetLine: safeAssistText(suggestion.village_street_line, 200)
+            ? suggestion.village_street_line
+            : null,
           city: suggestion.city,
           postalCode: suggestion.postal_code.replace(/^(\d{3})(\d{2})$/, "$1 $2"),
         },
@@ -1724,6 +1777,26 @@ function checkdropEmbedRuntime(
       code === "address.no_match" ||
       code === "address.country_mismatch"
       ? { code, postalCode: null }
+      : null;
+  }
+
+  // The official line of the only address point, for a street field that holds just its number.
+  // It must keep the typed number, so a stale or foreign answer never replaces the street.
+  function safeVillageStreet(value: unknown, typed: string): string | null {
+    if (!value || typeof value !== "object") return null;
+    const advice = (value as { advice?: unknown }).advice;
+    if (!advice || typeof advice !== "object") return null;
+    const { code, street_line: line } = advice as { code?: unknown; street_line?: unknown };
+    if (code !== "address.village_street" || !safeAssistText(line, 200)) return null;
+    const number = typed.match(/\d+/)?.[0];
+    return number && line.includes(number) && normalizeLookup(line) !== normalizeLookup(typed)
+      ? line
+      : null;
+  }
+
+  function villageStreetFor(answer: AddressAnswer): string | null {
+    return answer.field.fill_village_street === true
+      ? safeVillageStreet(answer.result, answer.value)
       : null;
   }
 
@@ -2110,8 +2183,24 @@ function checkdropEmbedRuntime(
 
   function renderAddressAnswer(control: ValueControl, answer: AddressAnswer, typing: boolean) {
     const { value, formId, field, fields, result, requestId } = answer;
+    const villageStreet = villageStreetFor(answer);
+    if (villageStreet && !typing && control.value === value) {
+      const cityField = findExactField(fields, "city", field.context);
+      const cityControl = cityField
+        ? firstControl(cityField.selector, cityField.root_selector)
+        : null;
+      const declined = declinedVillageStreets.get(control);
+      const declinedKey = `${value}\u0000${cityControl?.value ?? ""}`;
+      // The city may still be in progress; its focusout applies the answer when it is final.
+      if (declined !== declinedKey && !(cityControl && document.activeElement === cityControl)) {
+        applyVillageStreet(formId, control, value, villageStreet, declinedKey, requestId);
+        return;
+      }
+    }
     const suggestions = safeAddressSuggestions(result);
     const advice = safeAddressAdvice(result);
+    // A completed village line keeps its note; only a different PSČ is still worth saying.
+    if (keepsVillageNote(control) && advice?.code !== "address.postal_code_mismatch") return;
     if (suggestions.length > 0) {
       showAddressSuggestions(
         formId,
@@ -2208,7 +2297,9 @@ function checkdropEmbedRuntime(
     if (
       suggestions.some(
         (suggestion) =>
-          normalizeLookup(original) === normalizeLookup(suggestion.streetLine) &&
+          [suggestion.streetLine, suggestion.villageStreetLine].some(
+            (line) => line !== null && normalizeLookup(original) === normalizeLookup(line),
+          ) &&
           cityControl &&
           normalizeLookup(cityControl.value) === normalizeLookup(suggestion.city) &&
           postalCodeControl &&
@@ -2223,8 +2314,12 @@ function checkdropEmbedRuntime(
       option.textContent = suggestion.label;
       option.addEventListener("click", () => {
         if (control.value !== original) return;
+        const streetLine =
+          field.fill_village_street === true && suggestion.villageStreetLine
+            ? suggestion.villageStreetLine
+            : suggestion.streetLine;
         const values = [
-          { control, original: control.value, applied: suggestion.streetLine },
+          { control, original: control.value, applied: streetLine },
           ...(cityControl
             ? [{ control: cityControl, original: cityControl.value, applied: suggestion.city }]
             : []),
@@ -2303,6 +2398,52 @@ function checkdropEmbedRuntime(
     prompt.append(icon, copy, undo);
     insertAssistElement(control, prompt);
     assistPrompts.set(control, prompt);
+  }
+
+  function applyVillageStreet(
+    formId: string,
+    control: ValueControl,
+    original: string,
+    line: string,
+    declinedKey: string,
+    requestId: string | null,
+  ) {
+    clearAssistPrompt(control);
+    if (!control.isConnected || control.value !== original) return;
+    setAddressControlValue(control, line);
+    installAssistPromptStyles();
+    const prompt = document.createElement("div");
+    // The whole sentence matters here, so it wraps instead of being cut on a phone.
+    prompt.className =
+      "checkdrop-field-assist checkdrop-field-assist-applied checkdrop-field-assist-village";
+    prompt.setAttribute("role", "status");
+    prompt.setAttribute("aria-live", "polite");
+    const copy = document.createElement("span");
+    copy.className = "checkdrop-field-assist-copy";
+    const value = document.createElement("strong");
+    value.textContent = line;
+    copy.append(
+      message("address.village_filled_prefix"),
+      value,
+      message("address.village_filled_suffix"),
+    );
+    const undo = document.createElement("button");
+    undo.type = "button";
+    undo.className = "checkdrop-field-assist-undo";
+    undo.textContent = message("address.village_undo");
+    undo.setAttribute("aria-label", message("address.village_undo_label", { value: original }));
+    undo.addEventListener("click", () => {
+      if (control.value === line) setAddressControlValue(control, original);
+      declinedVillageStreets.set(control, declinedKey);
+      trackAssistInteraction(formId, requestId, "undone", undefined, ["street_line"]);
+      clearAssistPrompt(control);
+    });
+    prompt.append(assistIcon("✓"), copy, undo);
+    insertAssistElement(control, prompt);
+    assistPrompts.set(control, prompt);
+    villageNotes.set(control, { line, prompt });
+    trackAssistInteraction(formId, requestId, "shown", undefined, ["street_line"]);
+    trackAssistInteraction(formId, requestId, "applied", line, ["street_line"]);
   }
 
   function setAddressControlValue(control: ValueControl, value: string) {
@@ -2562,6 +2703,7 @@ function checkdropEmbedRuntime(
       ".checkdrop-field-assist-applied .checkdrop-field-assist-icon{background:#dff3e7;color:#18713c}",
       ".checkdrop-field-assist-warning{background:#fff7f6;border-color:#f1c5c1;color:#9f2d20;font-weight:650;width:fit-content}",
       ".checkdrop-field-assist-warning .checkdrop-field-assist-copy{overflow:visible;text-overflow:clip;white-space:normal}",
+      ".checkdrop-field-assist-village .checkdrop-field-assist-copy{overflow:visible;text-overflow:clip;white-space:normal}",
       ".checkdrop-field-assist-warning .checkdrop-field-assist-icon{background:#fce8e6;color:#b42318}",
       ".checkdrop-name-ok{align-items:center;color:#18713c;display:inline-flex;font:bold 16px/1 system-ui;height:20px;justify-content:center;margin:4px 0 0 6px;vertical-align:middle;width:20px}",
       ".checkdrop-address-assist{background:#fff;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;color:#172033;font:500 13px/1.35 system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;margin:6px 0 0;max-height:210px;max-width:100%;overflow:auto;width:100%}",

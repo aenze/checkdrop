@@ -3,6 +3,23 @@
 Every release lists what changed for people running Checkdrop and whether it contains database
 migrations. Installations update automatically; migrations run before the new server starts.
 
+## 0.1.8 — 2026-11-25
+
+- **Village addresses without streets.** A street field can be set to "Doplňovat obec u adres bez
+  ulic". When a customer types only the house number ("242", "č. p. 242", "242/3") and RÚIAN has
+  exactly one address point with that number in the municipality, and it has no street, the
+  checkout completes the field to the official form "Sudoměřice 242" (the part of the municipality
+  and the number), shows what changed and offers to undo it. Carriers often refuse a bare number.
+  Nothing changes when the match is ambiguous, the number belongs to a street or the PSČ differs.
+  Off by default.
+- **The official village form is accepted as typed.** "Sudoměřice 242" no longer triggers a
+  suggestion to replace it with "242".
+- API: address autocomplete may return the advice `address.village_street` with the completed
+  `street_line`, and a suggestion without a street carries `village_street_line`. Both are
+  additions; existing fields are unchanged.
+- Migrations: `0035_village_street_fill` adds the field option. It is additive; existing
+  configurations do not change.
+
 ## 0.1.7 — 2026-11-24
 
 - **New checks take effect within ten minutes.** Browsers may keep using an older copy of the

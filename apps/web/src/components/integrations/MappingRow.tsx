@@ -142,6 +142,7 @@ export function MappingRow({
                   require_domestic_address:
                     value === "postal_code" ? field.require_domestic_address : false,
                   require_valid_phone: value === "phone" ? field.require_valid_phone : false,
+                  fill_village_street: value === "street_line" ? field.fill_village_street : false,
                   validation_mode:
                     value === "unmapped"
                       ? "off"
@@ -175,6 +176,7 @@ export function MappingRow({
                   require_domestic_address:
                     value === "off" ? false : field.require_domestic_address,
                   require_valid_phone: value === "off" ? false : field.require_valid_phone,
+                  fill_village_street: value === "suggest" ? field.fill_village_street : false,
                   validation_trigger:
                     value === "suggest"
                       ? ["street_line", "company_name", "company_id"].includes(
@@ -387,6 +389,24 @@ export function MappingRow({
                   </label>
                 )}
               </>
+            )}
+            {field.canonical_field === "street_line" && field.validation_mode === "suggest" && (
+              <label className="required-control">
+                <input
+                  type="checkbox"
+                  checked={field.fill_village_street ?? false}
+                  disabled={ignored}
+                  onChange={(event) =>
+                    onChange({ fill_village_street: event.currentTarget.checked })
+                  }
+                />
+                <span>
+                  {t(
+                    "Doplňovat obec u adres bez ulic (242 → Sudoměřice 242)",
+                    "Add the village to addresses without streets (242 → Sudoměřice 242)",
+                  )}
+                </span>
+              </label>
             )}
             <button
               className="quiet-button danger-text"

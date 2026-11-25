@@ -96,15 +96,19 @@ describe("runtime integration projection and concurrent editing", () => {
       String(call[0]).includes("INSERT INTO app.integration_fields"),
     );
     expect(insert?.[0]).toContain("require_valid_phone");
-    expect(insert?.[1]).toHaveLength(19);
-    expect(insert?.[1]?.at(-1)).toBe(true);
-    expect(insert?.[1]?.at(-2)).toBe(false);
+    expect(insert?.[0]).toContain("fill_village_street");
+    expect(insert?.[1]).toHaveLength(20);
+    // require_domestic_address, require_valid_phone, fill_village_street
+    expect(insert?.[1]?.slice(-3)).toEqual([false, true, false]);
 
     mocks.query.mockReset();
     mocks.query.mockResolvedValue({ rows: [{ runtime: { id: "integration-a", forms: [] } }] });
     await store.getRuntimeConfigById?.("integration-a");
     expect(mocks.query.mock.calls[0]?.[0]).toContain(
       "'requireValidPhone', field.require_valid_phone",
+    );
+    expect(mocks.query.mock.calls[0]?.[0]).toContain(
+      "'fillVillageStreet', field.fill_village_street",
     );
   });
   it("checks the saved version under a lock and rolls back before deleting any fields", async () => {

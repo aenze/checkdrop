@@ -49,6 +49,23 @@ describe("saved configuration behaviour", () => {
     );
   });
 
+  it("describes the village street completion only where it is on", () => {
+    const street = field({
+      selector: "#street",
+      canonical_field: "street_line",
+      validation_trigger: "input",
+    });
+    const village = "V obci bez ulic doplníme k číslu domu název obce";
+    expect(assistanceSummary([street]).description).not.toContain(village);
+    expect(assistanceSummary([{ ...street, fill_village_street: true }]).description).toContain(
+      village,
+    );
+    expect(
+      assistanceSummary([{ ...street, validation_mode: "shadow", fill_village_street: true }])
+        .description,
+    ).not.toContain(village);
+  });
+
   it("ignores guards on switched-off fields and still describes a measuring-only guard", () => {
     const phone = field({ selector: "#phone", canonical_field: "phone" });
     const off = assistanceSummary([
